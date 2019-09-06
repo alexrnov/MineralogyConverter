@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane prefHeight="460.0" prefWidth="840.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainLayout">
+   <children>
+      <HBox layoutX="14.0" layoutY="30.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ListView fx:id="listViewTasks" onKeyPressed="#selectTask" onMouseClicked="#selectTask" prefHeight="460.0" prefWidth="300.0" />
+            <AnchorPane fx:id="contentTaskAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="460.0" prefWidth="540.0" />
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

@@ -1,0 +1,328 @@
+/* список с выбором задач */
+.list-view {
+    -fx-background-color: #f2f2f2;
+    -fx-font-size: 10pt;
+    -fx-font-family: "Helvetica";
+    -fx-font-style: italic;
+    /* показать рамку только сверху и снизу */
+    -fx-border-color: #b1b1b1;
+    -fx-border-width: 1 0 1 0;
+    -fx-text-alignment: center;
+}
+
+.list-cell:even { /* четные ячейки */
+    -fx-background-color: #f2f2f2;
+    -fx-text-fill: black;
+    -fx-padding: 10 0 10 0;
+    -fx-alignment: center; /* выравнить текст по центру */
+}
+
+.list-cell:odd { /* нечетные ячейки */
+    -fx-background-color: #f2f2f2;
+    -fx-text-fill: black;
+    -fx-padding: 10 0 10 0;
+    -fx-alignment: center;
+}
+
+/* выбранная ячейка с названием задачи */
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: rgba(88,130,212,1.0), /* внешняя рамка */
+        linear-gradient(#e6fbff 0%, #a6f0ff 20%, #18d7ff 100%), /* внутренняя рамка */
+        linear-gradient(#d0f7ff, rgba(23,207,245,1.0)), /* градиент кнопки (верх, низ) */
+        /* радиальная тень вверху отмеченной задачи */
+        radial-gradient(center 50% 0%, radius 100%, rgba(36,113,190,1.0), rgba(255,255,255,0));
+        -fx-background-insets: 0,1,2,0;
+        -fx-text-fill: white;
+        -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+        -fx-font-family: "Helvetica";
+        -fx-text-fill: white;
+        -fx-font-weight: bold;
+        -fx-font-size: 10pt;
+        -fx-padding: 10 0 10 0; /* отступы от надиси до краев кнопки: сверху, слева, снизу, справа */
+}
+
+/* мышка над названием задачи */
+/*
+.list-cell:filled:hover {
+    -fx-background-color: #00ff4c;
+    -fx-text-fill: white;
+}
+*/
+
+/* стиль для текстового поля ввода */
+.text-field {
+    -fx-font-size: 10pt;
+    -fx-font-family: "Arial";
+    -fx-background-color: #fffbf8;
+    -fx-border-color: #b1b1b1;
+    -fx-border-width: 1.3px;
+    -fx-padding: 5,5,5,5;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-text-fill: grey;
+    -fx-highlight-fill: #17cff5; /* цвет области выделенного текста */
+}
+
+/* стиль для неактивного текстового поля */
+.text-field: disabled {
+    -fx-opacity: 1.0; /* убрать прозрачность */
+    -fx-background-color: #dcdcdc;
+}
+
+/* стиль для содержимого правой панели приложения, на которую выносятся
+элементы управления для текущей выбранной задачи */
+#content-pane {
+    -fx-background-color: #e8e8e8;
+}
+
+.label {
+    -fx-font-size: 10pt;
+    -fx-font-family: "Helvetica";
+    -fx-text-fill: #047196;
+}
+
+/* убрать фокус со всех элементов */
+.root {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* отображение полос прокрутки */
+.text-area .scroll-pane {
+    -fx-vbar-policy: always;
+    -fx-hbar-policy: never;
+}
+
+/* решение Ondrej Kvasnovsky https://gist.github.com/ondrej-kvasnovsky/ad2c62c41d1906f242f7 */
+.text-area {
+    -fx-font-size: 10pt;
+    -fx-font-family: "Arial";
+    -fx-text-fill: gray;
+    -fx-background-insets: 0;
+    -fx-background-color: #c8c8c8;
+    -fx-border-width: 0;
+    -fx-background-radius: 0, 0, 0, 0;
+}
+
+.text-area .content {
+    -fx-background-color: #fffbf8;
+}
+
+.text-area:focused {
+    -fx-highlight-fill: #17cff5;
+    -fx-background-insets: 0;
+    -fx-background-color: #c8c8c8;
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 0, 0, 0, 0;
+}
+
+.scroll-pane {
+    /* цвет фона полосы прокрутки и рамок pane */
+    -fx-background-color: #b1b1b1;
+    -fx-font-size: 15px;
+}
+
+/* отменить выделение при фокусировке */
+.scroll-pane:focused {
+    -fx-highlight-fill: #17cff5;
+    -fx-background-insets: 0;
+    -fx-background-color: #b1b1b1;
+    -fx-border-width: 1.0px;
+    -fx-background-radius: 0, 0, 0, 0;
+}
+
+/* решение Philipp Brucker https://stackoverflow.com/questions/41804373/javafx-scrollpane-styling */
+.scroll-bar:horizontal, .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0em;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    /* вертикальный градиент */
+    /*-fx-background-color: linear-gradient(to left, rgba(23,207,245,1.0), #0ca8dc, rgba(23,207,245,1.0));*/
+    /*-fx-background-color: linear-gradient(to left, #f2f2f2, #e8e8e8, #f2f2f2);*/
+    /*-fx-background-color: linear-gradient(to left, #c4e8ff, #99d8ff, #c4e8ff);*/
+    /*-fx-background-color: linear-gradient(to left, #e1e1e1, #cecece, #e1e1e1);*/
+    -fx-background-color: linear-gradient(to left, #f2f2f2, #e1e1e1, #f2f2f2);
+    -fx-background-radius: 5em;
+}
+
+/* стили для индикатора прогресса процесса */
+.progress-bar > .bar {
+    /*-fx-background-color: linear-gradient(#defcff, #346d74, #defcff);*/
+    -fx-background-color: #00cfbe;
+    -fx-background-insets: 3 3 4 3;
+    -fx-background-radius: 2;
+    -fx-padding: 0.75em;
+    -fx-font-size: 10px;
+}
+
+.progress-bar > .track {
+  -fx-control-inner-background: #fffbf8;
+  -fx-padding: 5,5,5,5;
+}
+
+/* эффект вокруг расплывающейся рамки */
+.combo-box {
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.7) , 3, 0.0 , 0 , 0);
+}
+
+/* стили для выпадающего списка */
+.combo-box .list-cell
+{
+    -fx-background: white;
+    -fx-background-color: transparent; /* цвет значения по умолчанию */
+    -fx-text-fill: white;
+    -fx-font-size: 10pt;
+    -fx-font-family: "Helvetica";
+
+    -fx-padding: 7 0 7 12; /* отступы для значения по умолчанию */
+    -fx-cell-size: 2.66667em; /* ширина элементов выпадающего списка */
+    -fx-effect: dropshadow( one-pass-box , rgba(255,255,255,0.0), 0, 0.0, 0, 1);
+}
+
+.combo-box-popup .list-view
+{
+    -fx-background-color: #b1b1b1, transparent; /* цвет для рамок выпадающего списка */
+    -fx-background-insets: 0, 1;
+    -fx-border-width: 0 0 0 0; /* чтобы не было лишних рамок */
+    /* эффект расплывающейся рамки вокруг выпадающего списка */
+    /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0);*/
+}
+
+.combo-box-popup .list-view .list-cell
+{
+    -fx-padding: 4 0 4 5;
+    -fx-text-fill: black;
+    /* цвет фона для невыделенных пунктов меню */
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover
+{
+    -fx-background: -fx-accent;
+    -fx-background-color: rgba(88,130,212,1.0), /* внешняя рамка */
+        linear-gradient(#e6fbff 0%, #a6f0ff 20%, #18d7ff 100%), /* внутренняя рамка */
+        linear-gradient(#d0f7ff, rgba(23,207,245,1.0)), /* градиент кнопки (верх, низ) */
+        /* радиальная тень вверху отмеченной задачи */
+        radial-gradient(center 50% 0%, radius 100%, rgba(36,113,190,1.0), rgba(255,255,255,0));
+    /* текст для надписи выделенного меню(белый) */
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover
+{
+    /* цвет пункта меню при наведении мыши */
+    -fx-background-color: white;
+    /* цвет текста меню при наведении мыши */
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.combo-box-base
+{
+    -fx-background-color:transparent, transparent, rgba(88,130,212,1.0), /* внешняя рамка */
+        linear-gradient(#e6fbff 0%, #a6f0ff 20%, #18d7ff 100%), /* внутренняя рамка */
+        linear-gradient(#d0f7ff, rgba(23,207,245,1.0)), /* градиент кнопки (верх, низ) */
+        /* радиальная тень вверху отмеченной задачи */
+        radial-gradient(center 50% 0%, radius 100%, rgba(36,113,190,1.0), rgba(255,255,255,0));
+    -fx-background-radius: 5, 5, 5, 5;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 0;
+}
+
+.combo-box-base:hover
+{
+    -fx-color: -fx-hover-base;
+    -fx-background-color:transparent, transparent, rgba(88,130,212,1.0),/* внешняя рамка */
+        linear-gradient(#e6fbff 0%, #a6f0ff 20%, #18d7ff 100%), /* внутренняя рамка */
+        linear-gradient(#d0f7ff, rgba(23,207,245,1.0)), /* градиент кнопки (верх, низ) */
+        /* радиальная тень вверху отмеченной задачи */
+        radial-gradient(center 50% 0%, radius 100%, rgba(36,113,190,1.0), rgba(255,255,255,0));
+    -fx-background-radius: 5, 5, 5, 5;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 0;
+}
+
+/*
+.combo-box-base:showing
+{
+    -fx-color: -fx-pressed-base;
+    -fx-background-color: red;
+}
+*/
+.combo-box:disabled { /* стиль для como-box, когда он неактивен */
+    -fx-opacity: 1.0;
+    -fx-color: -fx-hover-base;
+        -fx-background-color:transparent, transparent, #9f9f9f,/* внешняя рамка */
+            linear-gradient(#f0f0f0 0%, #dddddd 20%, #bfbfbf 100%), /* внутренняя рамка */
+            linear-gradient(white, #9f9f9f), /* градиент кнопки (верх, низ) */
+            /* радиальная тень вверху отмеченной задачи */
+            radial-gradient(center 50% 0%, radius 100%, #797979, rgba(255,255,255,0));
+        -fx-background-radius: 5, 5, 5, 5;
+        -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+        -fx-padding: 0;
+}
+
+.combo-box:disabled .list-cell {
+        -fx-opacity: 1.0;
+        -fx-text-fill: #f7f7f7; /* цвет текста при неактивном combo-box */
+}
+
+.combo-box-base:focused {
+    -fx-background-color:transparent, transparent, rgba(88,130,212,1.0),/* внешняя рамка */
+    linear-gradient(#e6fbff 0%, #a6f0ff 20%, #18d7ff 100%), /* внутренняя рамка */
+    linear-gradient(#d0f7ff, rgba(23,207,245,1.0)), /* градиент кнопки (верх, низ) */
+    /* радиальная тень вверху отмеченной задачи */
+    radial-gradient(center 50% 0%, radius 100%, rgba(36,113,190,1.0), rgba(255,255,255,0));
+    -fx-background-radius: 5, 5, 5, 5;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 0;
+}
+
+.combo-box .arrow { /* стиль для стрелки на кнопке выпадающего списка */
+    -fx-background-color: white;
+}
+
+/* стили для элемента интерфейса check-box */
+.check-box .box {
+    -fx-background-color:transparent, /* внутренняя рамка */
+    linear-gradient(#d0f7ff, rgba(23,207,245,1.0)), /* градиент кнопки (верх, низ) */
+    /* радиальная тень вверху отмеченной задачи */
+    radial-gradient(center 50% 0%, radius 100%, rgba(36,113,190,1.0), rgba(255,255,255,0));
+    -fx-border-color:rgba(88,130,212,1.0);
+    -fx-border-radius:2px;
+}
+
+.check-box:selected .mark { /* стиль галочки */
+    -fx-background-color: white;
+}
+
+.check-box:selected .box {
+    -fx-background-color:transparent, /* внутренняя рамка */
+    linear-gradient(#d0f7ff, rgba(23,207,245,1.0)), /* градиент кнопки (верх, низ) */
+    /* радиальная тень вверху отмеченной задачи */
+    radial-gradient(center 50% 0%, radius 100%, rgba(36,113,190,1.0), rgba(255,255,255,0));
+    -fx-border-color:rgba(88,130,212,1.0);
+    -fx-border-radius:2px;
+}
+
+.check-box:focused .box {
+    -fx-background-color: /* не устанавливать внутреннюю рамку */
+    linear-gradient(#d0f7ff, rgba(23,207,245,1.0)), /* градиент кнопки (верх, низ) */
+    /* радиальная тень вверху отмеченной задачи */
+    radial-gradient(center 50% 0%, radius 100%, rgba(36,113,190,1.0), rgba(255,255,255,0));
+    -fx-border-color:rgba(88,130,212,1.0);
+    -fx-border-radius:2px;
+}

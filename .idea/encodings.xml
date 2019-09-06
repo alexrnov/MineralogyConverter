@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/absForFirstLastProbes.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/isihogy client/dotWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/isihogy client/intervalWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/isihogy client/topWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with MSD/MicromineTextFileTest.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with MSD/dotWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with MSD/intervalWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with MSD/topWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with all MSD/dotWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with all MSD/intervalWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with all MSD/topWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes without MSD/intervalWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probes without MSD/topWells.txt" charset="windows-1251" />
+  </component>
+</project>
