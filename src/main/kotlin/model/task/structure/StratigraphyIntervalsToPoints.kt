@@ -121,7 +121,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       //println("---------------------")
       if (addPoints) {
         stratigraphicTable = addPointsToIntervals(stratigraphicTable)
-        //(0..23).forEach { println(stratigraphicTable[it]) }
+        (0..23).forEach { println(stratigraphicTable[it]) }
       }
 
       // объединить таблицы с данными стратиграфии и данными точек наблюдений
@@ -145,7 +145,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         pointsZOfAdditionalIntervals(stratigraphicTable)
         //(0..23).forEach { println(stratigraphicTable[it]["generateZ"] + " " +
                 //stratigraphicTable[it]["Z"]) }
-        println(stratigraphicTable[0])
+        //println(stratigraphicTable[0])
       } else {
         averageZByInterval(stratigraphicTable)
       }
@@ -154,7 +154,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         it.keys.retainAll(setOf("X факт.", "Y факт.", "Z", attributeOfBooleanStratigraphy))
       }
 
-      stratigraphicTable.forEach { println(it)}
+      //stratigraphicTable.forEach { println(it)}
 
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")

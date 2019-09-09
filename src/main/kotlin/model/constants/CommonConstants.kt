@@ -16,4 +16,7 @@ object CommonConstants {
 
   /** Название атрибута: глубина ТН */
   val nameOfAttributeDepth = "Глубина ТН"
+
+  /** */
+  val nameOfAttributeGenerateZ = "generateZ"
 }
