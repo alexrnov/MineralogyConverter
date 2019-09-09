@@ -1,6 +1,7 @@
 package model.utils
 
 import java.io.File
+import java.lang.Double.valueOf
 
 /**
  * Вычислить абсолютную отметку центра интервала (пробы или
@@ -19,14 +20,27 @@ fun averageZByInterval(intervalWells: List<MutableMap<String, String>>,
   var to: Double
   var z: Double
   for (probe in intervalWells) {
-    from = java.lang.Double.valueOf(probe["От"])
-    to = java.lang.Double.valueOf(probe["До"])
-    z = java.lang.Double.valueOf(probe["Z"])
+    from = valueOf(probe["От"])
+    to = valueOf(probe["До"])
+    z = valueOf(probe["Z"])
     from = z - from
     to = z - to
     var averageZ = (from + to) / 2
     averageZ = Math.round(averageZ * 100.00) / 100.0
     probe[nameOfZAttribute] = averageZ.toString()
+  }
+}
+
+fun pointsZOfAdditionalIntervals(intervalWells: List<MutableMap<String, String>>,
+        nameOfZAttribute: String = "Z") {
+  var generateZ: Double
+  var absZOfWell: Double
+  for (probe in intervalWells) {
+    generateZ = probe["generateZ"]?.toDouble() ?: 2000.0
+    absZOfWell = probe["Z"]?.toDouble() ?: 1000.0
+    var newZ = absZOfWell - generateZ
+    newZ = (Math.round(newZ * 100.0) / 100.0)
+    probe[nameOfZAttribute] = newZ.toString()
   }
 }
 

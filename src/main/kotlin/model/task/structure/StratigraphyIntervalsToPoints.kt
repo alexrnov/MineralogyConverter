@@ -14,8 +14,8 @@ import model.exception.ExcelException
 import model.exception.GeoTaskException
 import model.file.MicromineTextFile
 import model.task.GeoTaskManyFiles
+import model.utils.*
 import model.utils.CollectionUtils.copyListWithSubMap
-import model.utils.ExcelUtils
 import model.utils.ExcelUtils.getCodesOfIsihogyClient
 import model.utils.ExcelUtils.getSheetOfIsihogyClient
 import model.utils.ExcelUtils.getTableOfIsihogyClient
@@ -25,9 +25,6 @@ import model.utils.IsihogyClientUtils.decodingField
 import model.utils.IsihogyClientUtils.deleteDecimalPart
 import model.utils.IsihogyClientUtils.interchangeXY
 import model.utils.IsihogyClientUtils.makeAmendment
-import model.utils.UnionAgeLayers
-import model.utils.addPointsToIntervals
-import model.utils.averageZByInterval
 import java.io.File
 import java.io.File.separator as s
 import java.io.IOException
@@ -75,7 +72,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
   /* общее количество точек для файла точек */
   private var overallNumberDotWells = 0
 
-  private var titleDot = HashSet<String>()
+  //private var titleDot = HashSet<String>()
 
   // атрибут для записи значения 1.0 или 0.0. Значение 1.0 обозначяет,
   // что индекс данного стратиграфического пласта совпал с индексом,
@@ -111,22 +108,20 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         val unionAgeLayers = UnionAgeLayers(stratigraphicTable)
         stratigraphicTable = unionAgeLayers.getTableWithUnionLayers()
       }
-      // добавить атрибут совпадения/несовподения страт. индекса
+      // добавить атрибут совпадения/несовпадения страт. индекса
       stratigraphicTable.map {
         if (it[nameOfAttributeLCodeAge] in ageIndexesAsSet)
           it.put(attributeOfBooleanStratigraphy, "1.0")
         else it.put(attributeOfBooleanStratigraphy, "0.0")
       }
 
-      //stratigraphicTable.forEach { println(it) }
       println(stratigraphicTable[0])
       println(stratigraphicTable[1])
       println(stratigraphicTable[2])
-      println("---------------------")
+      //println("---------------------")
       if (addPoints) {
         stratigraphicTable = addPointsToIntervals(stratigraphicTable)
-        //println("${stratigraphicTable.size} ${newCollection.size}")
-        (0..23).forEach { println(stratigraphicTable[it]) }
+        //(0..23).forEach { println(stratigraphicTable[it]) }
       }
 
       // объединить таблицы с данными стратиграфии и данными точек наблюдений
@@ -146,7 +141,20 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         }
       }
 
-      averageZByInterval(stratigraphicTable)
+      if (addPoints) {
+        pointsZOfAdditionalIntervals(stratigraphicTable)
+        //(0..23).forEach { println(stratigraphicTable[it]["generateZ"] + " " +
+                //stratigraphicTable[it]["Z"]) }
+        println(stratigraphicTable[0])
+      } else {
+        averageZByInterval(stratigraphicTable)
+      }
+
+      stratigraphicTable.forEach {
+        it.keys.retainAll(setOf("X факт.", "Y факт.", "Z", attributeOfBooleanStratigraphy))
+      }
+
+      stratigraphicTable.forEach { println(it)}
 
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")
@@ -193,12 +201,14 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       throw ExcelException("Нет названий полей в листе для литостратиграфии")
     }
 
-    titleDot = HashSet(titleObservationsPoints)
-    titleDot.addAll(titleLithostratigraphic)
-    titleDot.add(attributeOfBooleanStratigraphy)
+    //titleDot = HashSet(titleObservationsPoints)
+    //titleDot.addAll(titleLithostratigraphic)
+    //titleDot.add(attributeOfBooleanStratigraphy)
 
     dotWellsFile = MicromineTextFile(outputFilePath)
-    dotWellsFile.writeTitle(titleDot.toList())
+    //dotWellsFile.writeTitle(titleDot.toList())
+    dotWellsFile.writeTitle(listOf("X факт.", "Y факт.",
+            "Z", attributeOfBooleanStratigraphy))
   }
 
   @Throws(ExcelException::class, DataException::class)
