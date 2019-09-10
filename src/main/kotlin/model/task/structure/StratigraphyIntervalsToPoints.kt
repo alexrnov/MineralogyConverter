@@ -123,6 +123,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         stratigraphicTable = addPointsToIntervals(stratigraphicTable)
         //(0..23).forEach { println(stratigraphicTable[it]) }
       }
+      println()
       correctIntervals(stratigraphicTable)
       // объединить таблицы с данными стратиграфии и данными точек наблюдений
       stratigraphicTable.forEach { row ->

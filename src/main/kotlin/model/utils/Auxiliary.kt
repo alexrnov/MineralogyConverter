@@ -87,7 +87,8 @@ fun correctIntervals(intervals: List<Map<String, String>>) {
     well.forEach {
       println(it)
     }
-    println("------------")
+
+    println("-----------")
   }
 
   val ids = intervals.map {it[nameOfAttributeID]}.toSet() // уникальные ID
