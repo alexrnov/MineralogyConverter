@@ -1,6 +1,7 @@
 package model.utils
 
 import model.constants.CommonConstants.nameOfAttributeGenerateZ
+import model.constants.IsihogyClientConstants.nameOfAttributeID
 import java.io.File
 import java.lang.Double.valueOf
 
@@ -78,6 +79,22 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
     }
   }
   return backCollection
+}
+
+fun correctIntervals(intervals: List<Map<String, String>>) {
+  fun correct(well: List<Map<String, String>>) {
+    well.filter {it[""] == ""}
+    well.forEach {
+      println(it)
+    }
+    println("------------")
+  }
+
+  val ids = intervals.map {it[nameOfAttributeID]}.toSet() // уникальные ID
+  ids.forEach { idWell ->
+    val layersForCurrentWell = intervals.filter {it[nameOfAttributeID] == idWell}
+    correct(layersForCurrentWell)
+  }
 }
 
 /*

@@ -62,10 +62,11 @@ internal class StratigraphyIntervalsToPointsTest {
   @Test
   fun `add points true`() {
     parameters?.set("addPoints", true)
+    parameters?.set("unionLayers", true)
     val task = StratigraphyIntervalsToPoints(parameters!!)
     task.setThreadingTask(mockTask)
     task.perform(excelFile)
-    val table = task.getStratigraphicTable
+    //val table = task.getStratigraphicTable
 
     //assertEquals(1404, table.size)
     //assertEquals(33, table[0].size)

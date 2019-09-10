@@ -115,15 +115,15 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         else it.put(attributeOfBooleanStratigraphy, "0.0")
       }
 
-      println(stratigraphicTable[0])
-      println(stratigraphicTable[1])
-      println(stratigraphicTable[2])
+      //println(stratigraphicTable[0])
+      //println(stratigraphicTable[1])
+      //println(stratigraphicTable[2])
       //println("---------------------")
       if (addPoints) {
         stratigraphicTable = addPointsToIntervals(stratigraphicTable)
-        (0..23).forEach { println(stratigraphicTable[it]) }
+        //(0..23).forEach { println(stratigraphicTable[it]) }
       }
-
+      correctIntervals(stratigraphicTable)
       // объединить таблицы с данными стратиграфии и данными точек наблюдений
       stratigraphicTable.forEach { row ->
         // если в таблице "Точки наблюдений" найдена скважина с таким же id
@@ -201,12 +201,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       throw ExcelException("Нет названий полей в листе для литостратиграфии")
     }
 
-    //titleDot = HashSet(titleObservationsPoints)
-    //titleDot.addAll(titleLithostratigraphic)
-    //titleDot.add(attributeOfBooleanStratigraphy)
-
     dotWellsFile = MicromineTextFile(outputFilePath)
-    //dotWellsFile.writeTitle(titleDot.toList())
     dotWellsFile.writeTitle(listOf("X факт.", "Y факт.",
             "Z", attributeOfBooleanStratigraphy))
   }
