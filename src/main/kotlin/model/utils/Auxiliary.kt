@@ -4,6 +4,7 @@ import model.constants.CommonConstants.nameOfAttributeGenerateZ
 import model.constants.IsihogyClientConstants.nameOfAttributeID
 import java.io.File
 import java.lang.Double.valueOf
+import java.util.*
 
 /**
  * Вычислить абсолютную отметку центра интервала (пробы или
@@ -81,14 +82,27 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
   return backCollection
 }
 
-fun correctIntervals(intervals: List<Map<String, String>>) {
-  fun correct(well: List<Map<String, String>>) {
-    well.filter {it[""] == ""}
+fun correctIntervals(intervals: List<MutableMap<String, String>>) {
+  fun correct(well: List<MutableMap<String, String>>) {
     well.forEach {
       println(it)
     }
-
+    val well2 = well.toMutableList()
+    val list2 = well2.groupBy{it[nameOfAttributeGenerateZ]!!.toDouble()}
+            .values.filter { it.size == 2}
+    val list3 = list2.toMutableList()
+    list3.forEach {
+      it[0][nameOfAttributeGenerateZ] =
+              (it[0][nameOfAttributeGenerateZ]!!.toDouble() - 0.01).toString()
+      it[1][nameOfAttributeGenerateZ] =
+              (it[1][nameOfAttributeGenerateZ]!!.toDouble() + 0.01 ).toString()
+    }
+    Collections.replaceAll(well2 as List<Any>?, list2, list3)
     println("-----------")
+    well2.forEach {
+      println(it)
+    }
+    println("________________")
   }
 
   val ids = intervals.map {it[nameOfAttributeID]}.toSet() // уникальные ID
