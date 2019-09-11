@@ -102,7 +102,7 @@ fun correctIntervals(intervals: List<MutableMap<String, String>>) {
     well2.forEach {
       println(it)
     }
-    println("________________")
+    println("_________________")
   }
 
   val ids = intervals.map {it[nameOfAttributeID]}.toSet() // уникальные ID
