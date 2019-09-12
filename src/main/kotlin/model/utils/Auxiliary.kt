@@ -61,7 +61,6 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
   var range: Double
   val backCollection = ArrayList<MutableMap<String, String>>()
   intervals.forEach { interval ->
-    //println(interval)
     start = interval["От"]?.toDouble() ?: 1000.0
     end = interval["До"]?.toDouble() ?: 1100.0
     range = Math.round((end - start) * 100.0) / 100.0
@@ -82,32 +81,46 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
   return backCollection
 }
 
-fun correctIntervals(intervals: List<MutableMap<String, String>>) {
+/**
+ * Скорректировать точки таким образом, что если две точки имеют
+ * одинаковое значение generateZ (когда один слой заканчивается и
+ * начинается другой), то первая точка незначительно приподнимается
+ * вверх, а вторая незначительно опускается вниз
+ */
+fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
   fun correct(well: List<MutableMap<String, String>>) {
-    well.forEach {
-      println(it)
+    //well.forEach { println(it) }
+    val correctWell = well.toMutableList()
+    // получить группы с одинаковым значением атрибута generateZ
+    val groupWithEqualZ = correctWell
+            .groupBy { it[nameOfAttributeGenerateZ]?.toDouble() }
+            .values.filter { it.size == 2 } // взять группы с двумя элементами
+    // группы со скорректированными значениями generateZ
+    val groupWithCorrectZ = groupWithEqualZ.toMutableList()
+    var v: Double
+    groupWithCorrectZ.forEach { // перебор групп
+      // взять значение generateZ из первого элемента группы. Первый
+      // и второй элементы группы равны, поэтому здесь и далее
+      // используется только первый элемент
+      v = it.first()[nameOfAttributeGenerateZ]?.toDouble() ?: 0.0
+      // скорректировать значения: первую отметку незначительно
+      // приподнять, вторую отметку незначительно опустить
+      it[0][nameOfAttributeGenerateZ] = (Math.round((v - 0.01) * 100.0) / 100.0).toString()
+      it[1][nameOfAttributeGenerateZ] = (Math.round((v + 0.01) * 100.0) / 100.0).toString()
     }
-    val well2 = well.toMutableList()
-    val list2 = well2.groupBy{it[nameOfAttributeGenerateZ]!!.toDouble()}
-            .values.filter { it.size == 2}
-    val list3 = list2.toMutableList()
-    list3.forEach {
-      it[0][nameOfAttributeGenerateZ] =
-              (it[0][nameOfAttributeGenerateZ]!!.toDouble() - 0.01).toString()
-      it[1][nameOfAttributeGenerateZ] =
-              (it[1][nameOfAttributeGenerateZ]!!.toDouble() + 0.01 ).toString()
-    }
-    Collections.replaceAll(well2 as List<Any>?, list2, list3)
-    println("-----------")
-    well2.forEach {
-      println(it)
-    }
-    println("_________________")
+    // заменить элементы исходных групп на элементы из групп со
+    // скорректированными значениями
+    Collections.replaceAll(correctWell as List<Any>?, groupWithEqualZ,
+            groupWithCorrectZ)
+    //println("-----------")
+    //correctWell.forEach { println(it) }
+    //println("_________________")
   }
 
   val ids = intervals.map {it[nameOfAttributeID]}.toSet() // уникальные ID
   ids.forEach { idWell ->
-    val layersForCurrentWell = intervals.filter {it[nameOfAttributeID] == idWell}
+    // получить интервалы текущей скважины
+    val layersForCurrentWell = intervals.filter { it[nameOfAttributeID] == idWell }
     correct(layersForCurrentWell)
   }
 }

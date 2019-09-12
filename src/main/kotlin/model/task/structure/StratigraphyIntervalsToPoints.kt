@@ -123,7 +123,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         stratigraphicTable = addPointsToIntervals(stratigraphicTable)
         //(0..23).forEach { println(stratigraphicTable[it]) }
       }
-      correctIntervals(stratigraphicTable)
+      correctPointsOfIntervals(stratigraphicTable)
       // объединить таблицы с данными стратиграфии и данными точек наблюдений
       stratigraphicTable.forEach { row ->
         // если в таблице "Точки наблюдений" найдена скважина с таким же id
