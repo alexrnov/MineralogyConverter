@@ -31,7 +31,7 @@ import model.utils.WebServiceUtils.selectionByGeologicalAge
 import model.utils.WebServiceUtils.updateCrystalNumberWithMSD
 import model.utils.WebServiceUtils.updateCrystalNumberWithoutMSD
 import model.utils.averageZByInterval
-import model.utils.checkIndustrial5
+import model.utils.checkWorkingObjects
 import java.io.File
 import java.io.File.separator
 import java.io.IOException
@@ -114,7 +114,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       } else {
         getTableOfProbesWithMSD(sheet)
       }
-      checkIndustrial5(file, table)
+      checkWorkingObjects(file, table)
 
       table = selectionByGeologicalAge(table, typeOfSelectionAge)
       if (table.isEmpty()) {

@@ -142,7 +142,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       }
 
       if (addPoints) {
-        pointsZOfAdditionalIntervals(stratigraphicTable)
+        calculateAbsZForAdditionalPoints(stratigraphicTable)
         //(0..23).forEach { println(stratigraphicTable[it]["generateZ"] + " " +
                 //stratigraphicTable[it]["Z"]) }
         //println(stratigraphicTable[0])

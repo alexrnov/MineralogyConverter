@@ -25,7 +25,7 @@ import model.utils.WebServiceUtils.makeAmendment
 import model.utils.WebServiceUtils.replaceCommaForWells
 import model.utils.WebServiceUtils.updateCrystalNumberWithoutMSD
 import model.utils.averageZByInterval
-import model.utils.checkIndustrial5
+import model.utils.checkWorkingObjects
 import java.io.File
 import java.io.File.separator
 import java.io.IOException
@@ -93,7 +93,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       val sheet = getSheetOfWebResource(file)
       nameOfObject = ExcelUtils.getNameOfObject(sheet)
       var table = getTableOfProbesWithoutMSD(sheet)
-      checkIndustrial5(file, table)
+      checkWorkingObjects(file, table)
 
       table = selectionByGeologicalAge(table, typeOfSelectionAge)
       if (table.isEmpty()) {

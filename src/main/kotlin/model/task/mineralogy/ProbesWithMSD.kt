@@ -26,7 +26,7 @@ import model.utils.WebServiceUtils.replaceCommaForWells
 import model.utils.WebServiceUtils.selectionByGeologicalAge
 import model.utils.WebServiceUtils.updateCrystalNumberWithMSD
 import model.utils.averageZByInterval
-import model.utils.checkIndustrial5
+import model.utils.checkWorkingObjects
 import java.io.File
 import java.io.File.separator
 import java.io.IOException
@@ -89,7 +89,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
   override fun perform(file: File) {
     try {
       var table = getTableOfProbesWithMSD(getSheetOfWebResource(file))
-      checkIndustrial5(file, table)
+      checkWorkingObjects(file, table)
       table = selectionByGeologicalAge(table, typeOfSelectionAge)
 
       if (table.isEmpty()) {

@@ -34,8 +34,8 @@ fun averageZByInterval(intervalWells: List<MutableMap<String, String>>,
   }
 }
 
-/** */
-fun pointsZOfAdditionalIntervals(intervalWells: List<MutableMap<String, String>>,
+/** Для дополнительных точек вычисляются абсолютные отметки */
+fun calculateAbsZForAdditionalPoints(intervalWells: List<MutableMap<String, String>>,
         nameOfZAttribute: String = "Z") {
   var generateZ: Double
   var absZOfWell: Double
@@ -89,7 +89,7 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
  */
 fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
   fun correct(well: List<MutableMap<String, String>>) {
-    //well.forEach { println(it) }
+    well.forEach { println(it) }
     val correctWell = well.toMutableList()
     // получить группы с одинаковым значением атрибута generateZ
     val groupWithEqualZ = correctWell
@@ -112,9 +112,9 @@ fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
     // скорректированными значениями
     Collections.replaceAll(correctWell as List<Any>?, groupWithEqualZ,
             groupWithCorrectZ)
-    //println("-----------")
-    //correctWell.forEach { println(it) }
-    //println("_________________")
+    println("-----------")
+    correctWell.forEach { println(it) }
+    println("_________________")
   }
 
   val ids = intervals.map {it[nameOfAttributeID]}.toSet() // уникальные ID
@@ -126,12 +126,13 @@ fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
 }
 
 /*
-* Обработка пустых значений z в Промышленном-5 и Нижне-Накынском-4
-* добавлено в код, потому что редактирование входного файла
+* Обработка пустых значений z в объектах, которые находятся в работе.
+* В этих объектах могут отсутствовать значения по высотной отметке z.
+* Добавлено в код, потому что редактирование входного файла
 * приводит к изменению количества ячеек. Используется как временное
-* решение, поха исходные данные не будут исправлены в БД
+* решение, пока исходные данные не будут исправлены в БД
  */
-fun checkIndustrial5(file: File, table: MutableList<MutableMap<String, String>>) {
+fun checkWorkingObjects(file: File, table: MutableList<MutableMap<String, String>>) {
   if (file.name == "Промышленный-5.xls" || file.name == "Нижне-Накынский-4.xls") {
     table.forEach {
       when {
@@ -146,7 +147,7 @@ fun checkIndustrial5(file: File, table: MutableList<MutableMap<String, String>>)
         it["ID"] == "1756664" -> it["Z"] = "253,77"
         it["ID"] == "1756764" -> it["Z"] = "252,29"
         it["ID"] == "2050002" -> it["Z"] = "256,7"
-        // необходимо добавить скважины по Нижне-Накынскому-4
+        // возможно потребуется добавить скважины по Нижне-Накынскому-4
       }
     }
   }
