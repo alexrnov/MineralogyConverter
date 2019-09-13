@@ -56,7 +56,7 @@ internal class StratigraphyIntervalsToPointsTest {
     task.perform(excelFile)
     val table = task.getStratigraphicTable
     assertEquals(1404, table.size)
-    assertEquals(33, table[0].size)
+    assertEquals(4, table[0].size)
   }
 
   @Test

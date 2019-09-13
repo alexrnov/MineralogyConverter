@@ -3,20 +3,20 @@ package model.constants
 object CommonConstants {
 
   /** Эта надпись вставляется вместо пустого значения ячейки excel-таблицы */
-  val noData = "Нет данных"
+  const val noData = "Нет данных"
 
   /** имя файла с расширением для устьев скважин */
-  val nameOfTopWellsFile = "topWells.txt"
+  const val nameOfTopWellsFile = "topWells.txt"
 
   /** имя файла с расширением для интервалов скважин */
-  val nameOfIntervalWellsFile = "intervalWells.txt"
+  const val nameOfIntervalWellsFile = "intervalWells.txt"
 
   /** имя файла с расширением для точек по пробам, или по структурным отметкам */
-  val nameOfDotWellsFile = "dotWells.txt"
+  const val nameOfDotWellsFile = "dotWells.txt"
 
   /** Название атрибута: глубина ТН */
-  val nameOfAttributeDepth = "Глубина ТН"
+  const val nameOfAttributeDepth = "Глубина ТН"
 
   /** */
-  val nameOfAttributeGenerateZ = "generateZ"
+  const val nameOfAttributeGenerateZ = "generateZ"
 }

@@ -52,33 +52,54 @@ fun calculateAbsZForAdditionalPoints(intervalWells: List<MutableMap<String, Stri
  * Метод добавляет дополнительные точки для интервала. Это может
  * понадобиться при моделировании в Micromine - чтобы блочная модель
  * получалась более точной. Точки добавляются через каждый метр.
- * Если интервал меньше метра, тогда точки не добавляются
+ * Если интервал меньше метра, тогда точки не добавляются. Метод
+ * возвращает коллекцию, в которую записываются интервалы с
+ * дополнительным атрибутом, который хранит сгенерированные значения
+ * для дополнительных точек. Этих интервалов будет значительно
+ * больше чем в исходной коллекции.
+ * [intervals] - коллекция стратиграфических интервалов по всем скважинам
+ * Возвращаются размноженные стратиграфические интервалы с
+ * дополнительными точками
  */
 fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
     List<MutableMap<String, String>> {
-  var start: Double
-  var end: Double
-  var range: Double
-  val backCollection = ArrayList<MutableMap<String, String>>()
+  var start: Double // начало интервала
+  var end: Double // конец интервала
+  var length: Double // длина пробы
+  val intervalsWithAdditionalPoints = ArrayList<MutableMap<String, String>>()
   intervals.forEach { interval ->
     start = interval["От"]?.toDouble() ?: 1000.0
     end = interval["До"]?.toDouble() ?: 1100.0
-    range = Math.round((end - start) * 100.0) / 100.0
-    val step = Math.round((range / (Math.ceil(range))) * 100.0) / 100.0
-    val list = ArrayList<Double>()
-    var i = start
-    while (i <= step * Math.ceil(range) + start) {
-      list.add(i)
-      i = Math.round((i + step) * 100.0) / 100.0
+    length = Math.round((end - start) * 100.0) / 100.0
+    // определить шаг, через который будут идти дополнительные точки
+    // ceil() округляет число до большего: 0.1 вернет 1. Если
+    // интервал меньше одного метра, точки добавлены не будут
+    val step = Math.round((length / (Math.ceil(length))) * 100.0) / 100.0
+    val listOfGenerateZ = ArrayList<Double>()
+    var generateZ = start // генерируемое значение Z для каждой точки
+    // если интервал меньше метра, то и шаг будет меньше единицы
+    // и цикл не запуститься, т.е. на выходе будут только два генерируемых
+    // значения z (start и end), т.е. дополнительных точек не будет
+    while (generateZ <= step * Math.ceil(length) + start) {
+      listOfGenerateZ.add(generateZ)
+      generateZ = Math.round((generateZ + step) * 100.0) / 100.0
     }
-    list[list.lastIndex] = end
-    list.forEach {
-      val col = interval.toMutableMap()
-      col[nameOfAttributeGenerateZ] = it.toString()
-      backCollection.add(col)
+    // перезаписать последний элемент, поскольку сумма элементов
+    // с десятичным шагом может вернуть последний элемент, значение
+    // которого будет немного отличаться
+    listOfGenerateZ[listOfGenerateZ.lastIndex] = end
+    // размножить исходный интевал, и каждому размноженному интервалу
+    // добавить атрибут с сгенериованным значением Z для точки
+    listOfGenerateZ.forEach {
+      val c = interval.toMutableMap() // копировать исходный интервал
+      // добавить интервалу атрибут со сгенерированным значением Z для точки
+      c[nameOfAttributeGenerateZ] = it.toString()
+      // добавить полученный интервал в общую коллекцию интервалов со
+      // сгенерированными точками
+      intervalsWithAdditionalPoints.add(c)
     }
   }
-  return backCollection
+  return intervalsWithAdditionalPoints
 }
 
 /**
@@ -88,7 +109,7 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
  * вверх, а вторая незначительно опускается вниз
  */
 fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
-  fun correct(well: List<MutableMap<String, String>>) {
+  fun correctIntervalsForWell(well: List<MutableMap<String, String>>) {
     well.forEach { println(it) }
     val correctWell = well.toMutableList()
     // получить группы с одинаковым значением атрибута generateZ
@@ -121,7 +142,7 @@ fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
   ids.forEach { idWell ->
     // получить интервалы текущей скважины
     val layersForCurrentWell = intervals.filter { it[nameOfAttributeID] == idWell }
-    correct(layersForCurrentWell)
+    correctIntervalsForWell(layersForCurrentWell)
   }
 }
 
