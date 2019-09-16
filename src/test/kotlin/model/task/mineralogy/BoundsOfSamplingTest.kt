@@ -31,9 +31,6 @@ internal class BoundsOfSamplingTest {
             "outputFile" to outputFileABSFirstLastProbes))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
-    table.forEach {
-      println(it)
-    }
     table.forEach { task.perform(it) }
     task.writeData()
     assertTrue(Files.exists(outputFile))

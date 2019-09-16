@@ -323,8 +323,9 @@ object WebServiceUtils {
                          intervalWells: List<MutableMap<String, String>>) {
     topWells.forEach { well ->
       // максимальное значение подошвы интервала опробования, которое
-      // и будет глубиной скважины
-      val max = intervalWells
+      // и будет глубиной скважины. Последовательность sequence
+      // позволяет ускорить процесс нахождения максимального значения
+      val max = intervalWells.asSequence()
               .filter { it["IDW"] == well["IDW"] } // слои для текущей скважины
               .map { it["До"]?.toDouble()?: 1000.0 } // получить значение подошвы
               .max() // получить максимальное значение

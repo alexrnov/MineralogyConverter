@@ -30,7 +30,7 @@ internal class StratigraphyIntervalsToPointsTest {
   @BeforeEach
   fun setUp() {
     // если инициализировать коллекцию при объявлении,
-    // он теста к тесту она будет модифицироваться, что приведет
+    // от теста к тесту она будет модифицироваться, что приведет
     // к ошибке, поэтому она инициализируется здесь
     parameters = mutableMapOf("inputFolder" to inputFolderIsihogyClient,
             "outputFile" to outputFilePointsForStarigraphy,
