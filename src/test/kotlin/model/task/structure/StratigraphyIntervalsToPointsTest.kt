@@ -50,25 +50,53 @@ internal class StratigraphyIntervalsToPointsTest {
   }
 
   @Test
-  fun `add points false`() {
+  fun `add points false _ union layers false`() {
     val task = StratigraphyIntervalsToPoints(parameters!!)
     task.setThreadingTask(mockTask)
     task.perform(excelFile)
     val table = task.getStratigraphicTable
     assertEquals(1404, table.size)
     assertEquals(4, table[0].size)
+    assertEquals("232.8", table[0]["Z"])
+    assertEquals("141.75", table[20]["Z"])
   }
 
   @Test
-  fun `add points true`() {
+  fun `addPoints false _ unionLayers true`() {
+    parameters?.set("unionLayers", true)
+    val task = StratigraphyIntervalsToPoints(parameters!!)
+    task.setThreadingTask(mockTask)
+    task.perform(excelFile)
+    val table = task.getStratigraphicTable
+    assertEquals(720, table.size)
+  }
+
+  @Test
+  fun `add points true _ unionLayers true`() {
     parameters?.set("addPoints", true)
     parameters?.set("unionLayers", true)
     val task = StratigraphyIntervalsToPoints(parameters!!)
     task.setThreadingTask(mockTask)
     task.perform(excelFile)
-    //val table = task.getStratigraphicTable
+    val table = task.getStratigraphicTable
+    assertEquals(9978, table.size)
+    assertEquals(4, table[0].size)
+    assertEquals("244.61", table[195]["Z"])
+    assertEquals("244.59", table[196]["Z"])
+    assertEquals("217.01", table[226]["Z"])
+    assertEquals("216.99", table[227]["Z"])
+    assertEquals("197.01", table[247]["Z"])
+    assertEquals("196.99", table[248]["Z"])
+    assertEquals("105.2", table[346]["Z"])
+  }
 
-    //assertEquals(1404, table.size)
-    //assertEquals(33, table[0].size)
+  @Test
+  fun `addPoints true _ unionLayers false`() {
+    parameters?.set("addPoints", true)
+    val task = StratigraphyIntervalsToPoints(parameters!!)
+    task.setThreadingTask(mockTask)
+    task.perform(excelFile)
+    val table = task.getStratigraphicTable
+    assertEquals(10870, table.size)
   }
 }

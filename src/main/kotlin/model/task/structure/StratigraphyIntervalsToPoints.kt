@@ -96,6 +96,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       getTablesAndDecodeFields(file)
       deleteDecimalPart(nameOfAttributeID, observationsPointsTable)
       val mistakes = checkOnMissDataXYZDAndFix(observationsPointsTable)
+
       if (mistakes.isNotEmpty()) {
         task.printConsole("Ошибки отсутствия данных:")
         mistakes.forEach { task.printConsole(it) }
@@ -115,14 +116,10 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         else it.put(attributeOfBooleanStratigraphy, "0.0")
       }
 
-      //println(stratigraphicTable[0])
-      //println(stratigraphicTable[1])
-      //println(stratigraphicTable[2])
-      //println("---------------------")
       if (addPoints) {
         stratigraphicTable = addPointsToIntervals(stratigraphicTable)
+        // скорректировать точки в местах сопряжения пластов
         correctPointsOfIntervals(stratigraphicTable)
-        //(0..23).forEach { println(stratigraphicTable[it]) }
       }
       // объединить таблицы с данными стратиграфии и данными точек наблюдений
       stratigraphicTable.forEach { row ->
@@ -141,20 +138,19 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         }
       }
 
-      if (addPoints) {
-        calculateAbsZForAdditionalPoints(stratigraphicTable)
-        //(0..23).forEach { println(stratigraphicTable[it]["generateZ"] + " " +
-                //stratigraphicTable[it]["Z"]) }
-        //println(stratigraphicTable[0])
-      } else {
-        averageZByInterval(stratigraphicTable)
-      }
+      /*
+       * Если была применена функция дополнительных точек, тогда
+       * вычислить абсолютные отметки этих точек. Если дополнитеьные точки
+       * не применялись, вычислить абсолютную отметку центра интервала.
+       */
+      if (addPoints) calculateAbsZForAdditionalPoints(stratigraphicTable)
+      else averageZByInterval(stratigraphicTable)
 
+      // оставить только необходимые атрибуты, иначе выходной файл
+      // может получиться слишком большой
       stratigraphicTable.forEach {
         it.keys.retainAll(setOf("X факт.", "Y факт.", "Z", attributeOfBooleanStratigraphy))
       }
-
-      //stratigraphicTable.forEach { println(it)}
 
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")

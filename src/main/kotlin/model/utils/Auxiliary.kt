@@ -110,7 +110,6 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
  */
 fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
   fun correctIntervalsForWell(well: List<MutableMap<String, String>>) {
-    well.forEach { println(it) }
     val correctWell = well.toMutableList()
     // получить группы с одинаковым значением атрибута generateZ
     val groupWithEqualZ = correctWell
@@ -133,9 +132,6 @@ fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
     // скорректированными значениями
     Collections.replaceAll(correctWell as List<Any>?, groupWithEqualZ,
             groupWithCorrectZ)
-    println("-----------")
-    correctWell.forEach { println(it) }
-    println("_________________")
   }
 
   val ids = intervals.map {it[nameOfAttributeID]}.toSet() // уникальные ID
