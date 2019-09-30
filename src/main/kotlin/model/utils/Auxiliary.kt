@@ -71,7 +71,11 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
     start = interval["От"]?.toDouble() ?: 1000.0
     end = interval["До"]?.toDouble() ?: 1100.0
     length = Math.round((end - start) * 100.0) / 100.0
-    val ceil = Math.ceil(length)
+    // в случае, когда точку не нужно добалять при интервале меньше
+    // метра, следует использовать:
+    // val ceil = Math.ceil(length)
+    // если интервал меньше одного метра все равно добавлять точки
+    val ceil = if (length <= 1.0) 2.0 else Math.ceil(length)
     // определить шаг, через который будут идти дополнительные точки
     // ceil() округляет число до большего: 0.1 вернет 1. Если
     // интервал меньше одного метра, точки добавлены не будут
