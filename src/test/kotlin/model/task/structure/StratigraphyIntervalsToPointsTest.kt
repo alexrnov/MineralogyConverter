@@ -99,4 +99,17 @@ internal class StratigraphyIntervalsToPointsTest {
     val table = task.getStratigraphicTable
     assertEquals(10870, table.size)
   }
+
+  @Test
+  fun `several points empty`() {
+    parameters?.set("unionLayers", true)
+    parameters?.set("addPoints", true)
+    val path = "$folder/Южно_накынский/Южно_накынский_Лиственничный_part1.xls"
+    val validPath = URLDecoder.decode(ClassLoader.getSystemResource(path).file, "UTF-8")
+    val excelFile = File(validPath)
+    val task = StratigraphyIntervalsToPoints(parameters!!)
+    task.setThreadingTask(mockTask)
+    task.perform(excelFile)
+    val table = task.getStratigraphicTable
+  }
 }

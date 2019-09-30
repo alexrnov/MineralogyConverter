@@ -77,12 +77,16 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
     val step = Math.round((length / (Math.ceil(length))) * 100.0) / 100.0
     val listOfGenerateZ = ArrayList<Double>()
     var generateZ = start // генерируемое значение Z для каждой точки
+    listOfGenerateZ.add(generateZ)
     // если интервал меньше метра, то и шаг будет меньше единицы
     // и цикл не запуститься, т.е. на выходе будут только два генерируемых
     // значения z (start и end), т.е. дополнительных точек не будет
     while (generateZ <= step * Math.ceil(length) + start) {
-      listOfGenerateZ.add(generateZ)
       generateZ = Math.round((generateZ + step) * 100.0) / 100.0
+      listOfGenerateZ.add(generateZ)
+    }
+    if (listOfGenerateZ[listOfGenerateZ.lastIndex] > end) {
+      listOfGenerateZ.removeAt(listOfGenerateZ.lastIndex)
     }
     // перезаписать последний элемент, поскольку сумма элементов
     // с десятичным шагом может вернуть последний элемент, значение
