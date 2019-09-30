@@ -29,7 +29,7 @@ fun averageZByInterval(intervalWells: List<MutableMap<String, String>>,
     from = z - from
     to = z - to
     var averageZ = (from + to) / 2
-    averageZ = Math.round(averageZ * 100.00) / 100.0
+    averageZ = Math.round(averageZ * 100.0) / 100.0
     probe[nameOfZAttribute] = averageZ.toString()
   }
 }
