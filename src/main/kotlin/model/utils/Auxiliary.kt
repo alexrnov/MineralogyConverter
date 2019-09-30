@@ -82,7 +82,7 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
     // если интервал меньше метра, то и шаг будет меньше единицы
     // и цикл не запуститься, т.е. на выходе будут только два генерируемых
     // значения z (start и end), т.е. дополнительных точек не будет
-    for (it in 0 until ceil.toInt()) { // количество итераций соответствует количеству точек
+    for (it in 0 until ceil.toInt()) {
       generateZ = Math.round((generateZ + step) * 100.0) / 100.0
       listOfGenerateZ.add(generateZ)
     }
