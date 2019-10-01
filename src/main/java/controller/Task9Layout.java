@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import model.task.thread.OneFileThreadTask;
+import model.task.thread.ManyFilesThreadTask;
 
 import java.io.File;
 import java.util.HashMap;
@@ -14,20 +14,24 @@ import java.util.concurrent.Executors;
 
 import static application.StaticConstants.*;
 
-/** Контроллер для интерфейса задачи "Интервалы опробования в точки" */
-public class Task4Layout extends TaskLayout {
+/** Контроллер для интерфейса задачи "Стратиграфия в точки (ИСИХОГИ) " */
+public class Task9Layout extends TaskLayout {
 
-  @FXML private TextField inputFileTextField;
+  @FXML private TextField inputFolderTextField;
   @FXML private TextField outputFileTextField;
-  @FXML private Button inputFileButton;
+  @FXML private TextField stratigraphicTextField;
+  @FXML private Button inputFolderButton;
   @FXML private Button outputFileButton;
   @FXML private Button runTaskButton;
   @FXML private Button cancelTaskButton;
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
+  @FXML private CheckBox unionLayersCheckBox;
+  @FXML private CheckBox addPointsCheckBox;
+  @FXML private CheckBox amendmentCheckBox;
 
-  private ButtonAnimation inputFileAnimation;
+  private ButtonAnimation inputFolderAnimation;
   private ButtonAnimation outputFileAnimation;
   private ButtonAnimation runTaskAnimation;
   private ButtonAnimation cancelTaskAnimation;
@@ -37,14 +41,14 @@ public class Task4Layout extends TaskLayout {
     consoleTextArea.setEditable(false);
     consoleTextArea.setWrapText(true); // автоперенос строк в консоли
 
-    createInputFileButton(new ImageView(getOpenDialogPath()));
+    createInputFolderButton(new ImageView(getOpenDialogPath()));
     createOutputFileButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();
     createButtonCancelTask();
 
-    inputFileTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
+    inputFolderTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
       if (newValue) {
-        defaultStyle(inputFileTextField);
+        defaultStyle(inputFolderTextField);
       }
     });
 
@@ -54,23 +58,41 @@ public class Task4Layout extends TaskLayout {
       }
     });
 
-  }
-
-  private void createInputFileButton(ImageView openDialogPathImage) {
-    inputFileButton.setGraphic(openDialogPathImage);
-    inputFileAnimation = new ButtonAnimation(inputFileButton,
-            "5 5 5 5", true);
-    inputFileButton.setOnAction(e -> {
-      File f = mineralogy.txtFileOpenDialog();
-      if (f != null) {
-        inputFileTextField.setText(f.getPath());
-        defaultStyle(inputFileTextField);
+    stratigraphicTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
+      if (newValue) {
+        defaultStyle(stratigraphicTextField);
       }
     });
-    inputFileButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
-            e -> inputFileAnimation.mouseEntered());
-    inputFileButton.addEventHandler(MouseEvent.MOUSE_EXITED,
-            e -> inputFileAnimation.mouseExited());
+
+    unionLayersCheckBox.setSelected(true);
+    addPointsCheckBox.setSelected(true);
+    amendmentCheckBox.setSelected(true);
+
+    // задать предел длины текстового поля для ввода стратиграфического индекса
+    stratigraphicTextField.textProperty().addListener((ov, oldValue, newValue) -> {
+      final byte maxLength = 20;
+      if (stratigraphicTextField.getText().length() > maxLength) {
+        String s = stratigraphicTextField.getText().substring(0, maxLength);
+        stratigraphicTextField.setText(s);
+      }
+    });
+  }
+
+  private void createInputFolderButton(ImageView openDialogPathImage) {
+    inputFolderButton.setGraphic(openDialogPathImage);
+    inputFolderAnimation = new ButtonAnimation(inputFolderButton,
+            "5 5 5 5", true);
+    inputFolderButton.setOnAction(e -> {
+      File f = mineralogy.directoryChooser();
+      if (f != null) {
+        inputFolderTextField.setText(f.getPath());
+        defaultStyle(inputFolderTextField);
+      }
+    });
+    inputFolderButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
+            e -> inputFolderAnimation.mouseEntered());
+    inputFolderButton.addEventHandler(MouseEvent.MOUSE_EXITED,
+            e -> inputFolderAnimation.mouseExited());
   }
 
   private void createOutputFileButton(ImageView openDialogPathImage) {
@@ -121,7 +143,6 @@ public class Task4Layout extends TaskLayout {
   }
 
   private void runTask() {
-
     if (threadTask != null && threadTask.isRunning()) {
       return;
     }
@@ -132,10 +153,14 @@ public class Task4Layout extends TaskLayout {
 
     //if (threadTask == null || threadTask.isDone())
     Map<String, Object> parameters = new HashMap<>();
-    parameters.put("inputFile", inputFileTextField.getText());
+    parameters.put("inputFolder", inputFolderTextField.getText());
     parameters.put("outputFile", outputFileTextField.getText());
+    parameters.put("ageIndexes", stratigraphicTextField.getText());
+    parameters.put("unionLayers", unionLayersCheckBox.isSelected());
+    parameters.put("addPoints", addPointsCheckBox.isSelected());
+    parameters.put("useAmendment", amendmentCheckBox.isSelected());
 
-    threadTask = new OneFileThreadTask(mainLayout.getNameOfCurrentTask(),
+    threadTask = new ManyFilesThreadTask(mainLayout.getNameOfCurrentTask(),
             parameters);
 
     threadTask.setOnRunning(event -> {
@@ -187,9 +212,9 @@ public class Task4Layout extends TaskLayout {
    */
   private boolean checkInputParameters() {
     boolean b = true;
-    File inputFile = new File(inputFileTextField.getText());
-    if (!inputFile.isFile()) {
-      inputFileTextField.setStyle(getErrorStyleTextField());
+    File inputFolder = new File(inputFolderTextField.getText());
+    if (!inputFolder.isDirectory()) {
+      inputFolderTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
 
@@ -200,6 +225,10 @@ public class Task4Layout extends TaskLayout {
       b = false;
     }
 
+    if (stratigraphicTextField.getText().trim().length() == 0) {
+      stratigraphicTextField.setStyle(getErrorStyleTextField());
+      b = false;
+    }
     return b;
   }
 

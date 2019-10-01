@@ -12,7 +12,7 @@
         <TextField fx:id="inputFileTextField" layoutX="14.0" layoutY="36.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="34.0" />
         <TextField fx:id="outputFileTextField" layoutX="14.0" layoutY="105.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="101.0" />
         <Label layoutX="14.0" layoutY="14.0" text="Входной файл интервалов из задачи &quot;Все пробы (web-сервис)&quot;:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="10.0" />
-        <Label layoutX="14.0" layoutY="77.0" text="Выходной файл с точками ABS по верхней/нижней пробам:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="77.0" />
+        <Label layoutX="14.0" layoutY="77.0" text="Выходной файл с точками ABS по интервалам опробования:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="77.0" />
         <Button fx:id="outputFileButton" layoutX="438.0" layoutY="126.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="99.0" />
         <Button fx:id="inputFileButton" layoutX="438.0" layoutY="57.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="32.0" />
         <Button fx:id="runTaskButton" layoutX="343.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="123.0" />
