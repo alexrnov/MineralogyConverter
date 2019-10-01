@@ -16,11 +16,12 @@ object TypeOfGeoTask {
       StaticConstants.namesOfTasks[0] -> ProbesWithMSD(parameters)
       StaticConstants.namesOfTasks[1] -> ProbesWithoutMSD(parameters)
       StaticConstants.namesOfTasks[2] -> ProbesWithAllMSD(parameters)
-      StaticConstants.namesOfTasks[3] -> BoundsOfSampling(parameters)
-      StaticConstants.namesOfTasks[4] -> ProbesIsihogyClient(parameters)
-      StaticConstants.namesOfTasks[5] -> TopAndBottomOfWells(parameters)
-      StaticConstants.namesOfTasks[6] -> RoofAndSoleStratigraphicLayer(parameters)
-      StaticConstants.namesOfTasks[7] -> StratigraphyIntervalsToPoints(parameters)
+      StaticConstants.namesOfTasks[3] -> IntervalsOfSamplingToPoints(parameters)
+      StaticConstants.namesOfTasks[4] -> BoundsOfSamplingToPoints(parameters)
+      StaticConstants.namesOfTasks[5] -> ProbesIsihogyClient(parameters)
+      StaticConstants.namesOfTasks[6] -> TopAndBottomOfWells(parameters)
+      StaticConstants.namesOfTasks[7] -> RoofAndSoleStratigraphicLayer(parameters)
+      StaticConstants.namesOfTasks[8] -> StratigraphyIntervalsToPoints(parameters)
       else -> throw IllegalArgumentException("incorrect name of task")
     }
 }

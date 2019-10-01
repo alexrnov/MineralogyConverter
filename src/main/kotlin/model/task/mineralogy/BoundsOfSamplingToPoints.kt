@@ -21,7 +21,7 @@ import java.util.stream.Collectors
  * используется для вычисления блочной модели с
  * минералогическими ореолами.
  */
-class BoundsOfSampling
+class BoundsOfSamplingToPoints
 
   @Throws(IllegalArgumentException::class)
   constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {

@@ -14,12 +14,11 @@ import java.util.concurrent.Executors;
 
 import static application.StaticConstants.*;
 
-/** Контроллер для интерфейса задачи "Кровля/подошва пласта (ИСИХОГИ)" */
+/** Контроллер для интерфейса задачи "Устье/забой скважин (ИСИХОГИ)". */
 public class Task7Layout extends TaskLayout {
 
   @FXML private TextField inputFolderTextField;
   @FXML private TextField outputFileTextField;
-  @FXML private TextField stratigraphicTextField;
   @FXML private Button inputFolderButton;
   @FXML private Button outputFileButton;
   @FXML private Button runTaskButton;
@@ -27,8 +26,7 @@ public class Task7Layout extends TaskLayout {
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
-  @FXML private CheckBox unionLayersCheckBox;
-  @FXML private CheckBox unionPacketsCheckBox;
+  @FXML private CheckBox exportAllFieldsCheckBox;
   @FXML private CheckBox amendmentCheckBox;
 
   private ButtonAnimation inputFolderAnimation;
@@ -42,7 +40,7 @@ public class Task7Layout extends TaskLayout {
     consoleTextArea.setWrapText(true); // автоперенос строк в консоли
 
     createInputFolderButton(new ImageView(getOpenDialogPath()));
-    createOutputFolderButton(new ImageView(getOpenDialogPath()));
+    createOutputFileButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();
     createButtonCancelTask();
 
@@ -58,36 +56,8 @@ public class Task7Layout extends TaskLayout {
       }
     });
 
-    stratigraphicTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
-      if (newValue) {
-        defaultStyle(stratigraphicTextField);
-      }
-    });
-
-    // слушатель для чекбокса объединения сопредельных стратиграфических
-    // пластов с одинаковым индексом; если чекбокс выбран, тогда
-    // активируется checkbox для объеинения пачек, в противном случае он
-    // деактивируется, поскольку не играет самостоятельной роли
-    unionLayersCheckBox.selectedProperty().addListener((arg, oldValue, newValue) -> {
-      if (unionLayersCheckBox.isSelected()) {
-        unionPacketsCheckBox.setDisable(false);
-      } else {
-        unionPacketsCheckBox.setDisable(true);
-      }
-    });
-
-    unionLayersCheckBox.setSelected(true);
-    unionPacketsCheckBox.setSelected(true);
     amendmentCheckBox.setSelected(true);
-
-    // задать предел длины текстового поля для ввода стратиграфического индекса
-    stratigraphicTextField.textProperty().addListener((ov, oldValue, newValue) -> {
-      final byte maxLength = 20;
-      if (stratigraphicTextField.getText().length() > maxLength) {
-        String s = stratigraphicTextField.getText().substring(0, maxLength);
-        stratigraphicTextField.setText(s);
-      }
-    });
+    exportAllFieldsCheckBox.setSelected(true);
   }
 
   private void createInputFolderButton(ImageView openDialogPathImage) {
@@ -107,7 +77,7 @@ public class Task7Layout extends TaskLayout {
             e -> inputFolderAnimation.mouseExited());
   }
 
-  private void createOutputFolderButton(ImageView openDialogPathImage) {
+  private void createOutputFileButton(ImageView openDialogPathImage) {
     outputFileButton.setGraphic(openDialogPathImage);
     outputFileAnimation = new ButtonAnimation(outputFileButton,
             "5 5 5 5", true);
@@ -155,6 +125,7 @@ public class Task7Layout extends TaskLayout {
   }
 
   private void runTask() {
+
     if (threadTask != null && threadTask.isRunning()) {
       return;
     }
@@ -167,9 +138,7 @@ public class Task7Layout extends TaskLayout {
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("inputFolder", inputFolderTextField.getText());
     parameters.put("outputFile", outputFileTextField.getText());
-    parameters.put("ageIndex", stratigraphicTextField.getText());
-    parameters.put("unionLayers", unionLayersCheckBox.isSelected());
-    parameters.put("unionPackets", unionPacketsCheckBox.isSelected());
+    parameters.put("exportAllFields", exportAllFieldsCheckBox.isSelected());
     parameters.put("useAmendment", amendmentCheckBox.isSelected());
 
     threadTask = new ManyFilesThreadTask(mainLayout.getNameOfCurrentTask(),
@@ -233,10 +202,6 @@ public class Task7Layout extends TaskLayout {
     if (outputFile.length() <= 4 || !outputFile.substring(outputFile.length() - 4,
             outputFile.length()).equals(".txt")) {
       outputFileTextField.setStyle(getErrorStyleTextField());
-      b = false;
-    }
-    if (stratigraphicTextField.getText().trim().length() == 0) {
-      stratigraphicTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
     return b;

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Paths
 
-internal class BoundsOfSamplingTest {
+internal class BoundsOfSamplingToPointsTest {
 
   private val mockTask = mockk<ThreadTask>()
 
@@ -26,7 +26,7 @@ internal class BoundsOfSamplingTest {
   fun `compute task and write file`() {
     val outputFile = Paths.get(outputFileABSFirstLastProbes)
     Files.deleteIfExists(outputFile)
-    val task = BoundsOfSampling(mapOf(
+    val task = BoundsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileABSFirstLastProbes))
     task.setThreadingTask(mockTask)
@@ -40,7 +40,7 @@ internal class BoundsOfSamplingTest {
   @Test
   fun `invalid path to input file`() {
     val e = assertThrows(IllegalArgumentException::class.java) {
-        BoundsOfSampling(mapOf("inputFile" to "1D:\\incorrect.txt",
+        BoundsOfSamplingToPoints(mapOf("inputFile" to "1D:\\incorrect.txt",
                 "outputFile" to "1D:\\incorrect.txt"))
     }
     assertEquals("invalid path input or output file", e.message)

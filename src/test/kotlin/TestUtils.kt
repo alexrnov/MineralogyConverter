@@ -31,6 +31,9 @@ object TestUtils {
   val outputFileABSFirstLastProbes = "." + s + "src" + s + "test" +
           s + "resources" + s + "output" + s + "absForFirstLastProbes.txt"
 
+  val outputFileProbesIntervalsToPoints = "." + s + "src" + s + "test" +
+          s + "resources" + s + "output" + s + "probesIntervalsToPoints.txt"
+
   val outputFilePointsForStarigraphy = "." + s + "src" + s + "test" + s +
           "resources" + s + "output" + s + "isihogy client" +
           s + "absPointsForStratigraphy.txt"
