@@ -79,15 +79,15 @@ internal class StratigraphyIntervalsToPointsTest {
     task.setThreadingTask(mockTask)
     task.perform(excelFile)
     val table = task.getStratigraphicTable
-    assertEquals(9978, table.size)
+    assertEquals(10067, table.size)
     assertEquals(4, table[0].size)
-    assertEquals("244.61", table[195]["Z"])
-    assertEquals("244.59", table[196]["Z"])
-    assertEquals("217.01", table[226]["Z"])
-    assertEquals("216.99", table[227]["Z"])
-    assertEquals("197.01", table[247]["Z"])
-    assertEquals("196.99", table[248]["Z"])
-    assertEquals("105.2", table[346]["Z"])
+    val list1 = listOf("248.2", "247.3", "246.4", "245.5", "244.61", "244.59",
+                              "229.21", "229.19", "217.01", "216.99", "197.01", "196.99",
+                              "186.41", "186.39", "179.41", "179.39", "162.51", "162.49")
+    val list2 = listOf(193, 194, 195, 196, 197, 198, 214, 215, 228, 229, 249,
+                              250, 261, 262, 269, 270, 287, 288)
+    val map = list1.associate { Pair(it, list2[list1.indexOf(it)]) }
+    map.forEach { abs, idx -> assertEquals(abs, table[idx]["Z"]) }
   }
 
   @Test
@@ -97,19 +97,6 @@ internal class StratigraphyIntervalsToPointsTest {
     task.setThreadingTask(mockTask)
     task.perform(excelFile)
     val table = task.getStratigraphicTable
-    assertEquals(10870, table.size)
-  }
-
-  @Test
-  fun `several points empty`() {
-    parameters?.set("unionLayers", true)
-    parameters?.set("addPoints", true)
-    val path = "$folder/Южно_накынский/Южно_накынский_Лиственничный_part1.xls"
-    val validPath = URLDecoder.decode(ClassLoader.getSystemResource(path).file, "UTF-8")
-    val excelFile = File(validPath)
-    val task = StratigraphyIntervalsToPoints(parameters!!)
-    task.setThreadingTask(mockTask)
-    task.perform(excelFile)
-    val table = task.getStratigraphicTable
+    assertEquals(11168, table.size)
   }
 }
