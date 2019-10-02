@@ -2,6 +2,7 @@ package model.task.mineralogy
 
 import TestUtils.initToolkit
 import TestUtils.inputFileIntervalWellsAllMSD
+import TestUtils.inputFileIntervalWellsOnlyMSD
 import TestUtils.outputFileProbesIntervalsToPoints
 import io.mockk.Runs
 import io.mockk.every
@@ -22,7 +23,7 @@ internal class IntervalsOfSamplingToPointsTest {
   }
 
   @Test
-  fun perform() {
+  fun `input interval file ProbesWithAllMSD`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
@@ -31,6 +32,19 @@ internal class IntervalsOfSamplingToPointsTest {
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
+    task.writeData()
+  }
+
+  @Test
+  fun `input interval file ProbesWithMSD`() {
+    val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
+    Files.deleteIfExists(outputFile)
+    val task = IntervalsOfSamplingToPoints(mapOf(
+            "inputFile" to inputFileIntervalWellsOnlyMSD,
+            "outputFile" to outputFileProbesIntervalsToPoints))
+    task.setThreadingTask(mockTask)
+    val table: Collection<Any?> = task.getTableFromFile()
+    table.forEach {task.perform(it) }
     task.writeData()
   }
 }

@@ -28,6 +28,9 @@ object TestUtils {
   val inputFileIntervalWellsAllMSD = "." + s + "src" + s + "test" + s +
           "resources" + s + "input" + s + "intervalWellsAllMSD.txt"
 
+  val inputFileIntervalWellsOnlyMSD = "." + s + "src" + s + "test" + s +
+          "resources" + s + "input" + s + "intervalWellsOnlyMSD.txt"
+
   val outputFileABSFirstLastProbes = "." + s + "src" + s + "test" +
           s + "resources" + s + "output" + s + "absForFirstLastProbes.txt"
 

@@ -19,8 +19,14 @@ class IntervalsOfSamplingToPoints
 
 @Throws(IllegalArgumentException::class)
 constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
-  // количество атрибутов во входном файле
-  private val numberAttributes = 268
+  // количество атрибутов во входном файле интервалов со всеми пробами
+  // (с находками МСА и без таковых). В этом файле на одно атрибутивное
+  // поле больше("находки"), но оно расположено в самом конце и не влияет
+  // на порядок индексов предшедствующх атрибутов
+  private val numberAttributesAllMSD = 268
+
+  // колчество атрибутов во входном файле интервалов только для непустых проб
+  private val numberAttributesOnlyMSD = 267
 
   private val inputFile: String by parameters
   private val outputFile: String by parameters
@@ -51,7 +57,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       var line: String?
       while (noEnd) {
         line = it.readLine()
-        noEnd = line?.let {probes.add(line)} ?: false
+        noEnd = line?.let { probes.add(line) } ?: false
         //или: if (line != null) probes.add(line)
         //else noEnd = false
       }
@@ -60,20 +66,25 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     if (probes.size < 2)
       throw IOException("Неверный формат входного файла")
     keys = probes[0].split(";")
-    if (keys.size != numberAttributes)
+    val titleAttributes = keys.size
+    // или if (keys.size != numberAttributesOnlyMSD && keys.size != numberAttributesAllMSD)
+    if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
       throw IOException("Неверный формат входного файла")
     for (i in 1 until probes.size) {
       val currentProbe = probes[i].split(";")
-      if (keys.size != numberAttributes)
+      if (keys.size != titleAttributes)
         throw IOException("Неверный формат входного файла")
       val map = HashMap<String, String>()
-      map.put(keys[1], currentProbe[1]) // ID
-      map.put(keys[7], currentProbe[7]) // east
-      map.put(keys[8], currentProbe[8]) // north
-      map.put(keys[9], currentProbe[9]) // z
-      map.put(keys[11], currentProbe[11]) // from
-      map.put(keys[12], currentProbe[12]) // to
-      map.put(keys[23], currentProbe[23]) // all MSD
+      map[keys[1]] = currentProbe[1] // ID
+      map[keys[7]] = currentProbe[7] // east
+      map[keys[8]] = currentProbe[8] // north
+      map[keys[9]] = currentProbe[9] // z
+      map[keys[11]] = currentProbe[11] // from
+      map[keys[12]] = currentProbe[12] // to
+      map[keys[23]] = currentProbe[23] // all MSD
+      if (keys.size == numberAttributesAllMSD) {
+        map[keys[267]] = currentProbe[267] // находки
+      }
       simpleProbes.add(map)
     }
 
@@ -87,23 +98,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
-      var min = layersForCurrentWell
-              .map { it[keys[11]]?.toDouble() ?: 1000.0 }
-              .min()!!
-      var max = layersForCurrentWell
-              .map { it[keys[12]]?.toDouble() ?: 1100.0 }
-              .max()!!
-      val z = layersForCurrentWell[0][keys[9]]?.toDouble()!!
-      min = Math.round((z - min) * 100.0) / 100.0
-      max = Math.round((z - max) * 100.0) / 100.0
-      val map = HashMap<String, String>()
-      map.put(keys[0], idWell)
-      map.put(keys[7], layersForCurrentWell[0][keys[7]]!!) // east
-      map.put(keys[8], layersForCurrentWell[0][keys[8]]!!) // north
-      map.put("Z", min.toString()) // abs z
-      map.put("D", max.toString())
-      map.put(keys[23], layersForCurrentWell[0][keys[23]]!!) // all MSD
-      dotWells.add(map)
+      layersForCurrentWell.forEach {
+        println(it)
+      }
+      println("----------------")
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let{e.message} ?: "perform error")
     }
@@ -111,10 +109,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   @Throws(SecurityException::class, IOException::class)
   override fun writeData() {
-    val title = dotWells[0].keys.toList()
-    val dotWellsFile = MicromineTextFile(outputFilePath)
-    dotWellsFile.writeTitle(title)
-    dotWellsFile.writeContent(dotWells)
   }
 
   @Throws(IllegalArgumentException::class)
