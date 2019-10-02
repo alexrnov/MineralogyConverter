@@ -12,6 +12,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Collectors
 
+typealias AddFindsAttribute = (MutableMap<String, String>, List<String>) -> Unit
+
 /**
  * Задача "Интервалы опробования в точки".
  */
@@ -66,27 +68,16 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     if (probes.size < 2)
       throw IOException("Неверный формат входного файла")
     keys = probes[0].split(";")
-    val titleAttributes = keys.size
     // или if (keys.size != numberAttributesOnlyMSD && keys.size != numberAttributesAllMSD)
     if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
       throw IOException("Неверный формат входного файла")
-    for (i in 1 until probes.size) {
-      val currentProbe = probes[i].split(";")
-      if (keys.size != titleAttributes)
-        throw IOException("Неверный формат входного файла")
-      val map = HashMap<String, String>()
-      map[keys[1]] = currentProbe[1] // ID
-      map[keys[7]] = currentProbe[7] // east
-      map[keys[8]] = currentProbe[8] // north
-      map[keys[9]] = currentProbe[9] // z
-      map[keys[11]] = currentProbe[11] // from
-      map[keys[12]] = currentProbe[12] // to
-      map[keys[23]] = currentProbe[23] // all MSD
-      if (keys.size == numberAttributesAllMSD) {
-        map[keys[267]] = currentProbe[267] // находки
-      }
-      simpleProbes.add(map)
+
+    var f: AddFindsAttribute = { _, _ -> }
+    if (keys.size == numberAttributesAllMSD) {
+      f = { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
     }
+
+    fillSimpleProbes(probes, f)
 
     return simpleProbes.stream()
             .map { it[keys[1]] }
@@ -98,10 +89,12 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
+
       layersForCurrentWell.forEach {
         println(it)
       }
       println("----------------")
+
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let{e.message} ?: "perform error")
     }
@@ -132,4 +125,24 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     task.printConsole("")
     task.printConsole("В выходной файл записано точек: ${dotWells.size}")
   }
+
+  @Throws(IOException::class)
+  private inline fun fillSimpleProbes(probes: List<String>, addFinds: AddFindsAttribute) {
+    for (i in 1 until probes.size) {
+      val currentProbe = probes[i].split(";")
+      if (currentProbe.size != keys.size)
+        throw IOException("Неверный формат входного файла")
+      val map = HashMap<String, String>()
+      map[keys[1]] = currentProbe[1] // ID
+      map[keys[7]] = currentProbe[7] // east
+      map[keys[8]] = currentProbe[8] // north
+      map[keys[9]] = currentProbe[9] // z
+      map[keys[11]] = currentProbe[11] // from
+      map[keys[12]] = currentProbe[12] // to
+      map[keys[23]] = currentProbe[23] // all MSD
+      addFinds.invoke(map, currentProbe)
+      simpleProbes.add(map)
+    }
+  }
+
 }
