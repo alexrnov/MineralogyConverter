@@ -72,12 +72,11 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
       throw IOException("Неверный формат входного файла")
 
-    var f: AddFindsAttribute = { _, _ -> }
+    var addFindsAttribute: AddFindsAttribute = { _, _ -> }
     if (keys.size == numberAttributesAllMSD) {
-      f = { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
+      addFindsAttribute = { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
     }
-
-    fillSimpleProbes(probes, f)
+    probes.fillSimpleProbes(addFindsAttribute)
 
     return simpleProbes.stream()
             .map { it[keys[1]] }
@@ -89,6 +88,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
+
 
       layersForCurrentWell.forEach {
         println(it)
@@ -127,9 +127,9 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   }
 
   @Throws(IOException::class)
-  private inline fun fillSimpleProbes(probes: List<String>, addFinds: AddFindsAttribute) {
-    for (i in 1 until probes.size) {
-      val currentProbe = probes[i].split(";")
+  private inline fun List<String>.fillSimpleProbes(addFinds: AddFindsAttribute) {
+    for (i in 1 until this.size) {
+      val currentProbe = this[i].split(";")
       if (currentProbe.size != keys.size)
         throw IOException("Неверный формат входного файла")
       val map = HashMap<String, String>()
