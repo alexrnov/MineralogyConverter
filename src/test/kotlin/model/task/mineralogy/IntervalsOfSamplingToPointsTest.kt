@@ -44,7 +44,7 @@ internal class IntervalsOfSamplingToPointsTest {
             "outputFile" to outputFileProbesIntervalsToPoints))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
-    table.forEach {task.perform(it) }
+    table.forEach { task.perform(it) }
     task.writeData()
   }
 }

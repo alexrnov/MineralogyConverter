@@ -1,8 +1,11 @@
 package model.task.mineralogy
 
+import model.constants.IsihogyClientConstants.nameOfAttributeID
 import model.exception.GeoTaskException
 import model.file.MicromineTextFile
 import model.task.GeoTaskOneFile
+import model.utils.addPointsToIntervals
+import model.utils.correctPointsOfProbesIntervals
 import java.io.BufferedReader
 import java.io.IOException
 import java.nio.charset.Charset
@@ -72,10 +75,12 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
       throw IOException("Неверный формат входного файла")
 
-    var addFindsAttribute: AddFindsAttribute = { _, _ -> }
-    if (keys.size == numberAttributesAllMSD) {
-      addFindsAttribute = { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
-    }
+    // при чтении файла, в коллеекцию с упрощенными пробами добавлять
+    // атрибут "находки"
+    val addFindsAttribute: AddFindsAttribute = if (keys.size == numberAttributesAllMSD)
+        { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
+      else { _, _ -> }
+
     probes.fillSimpleProbes(addFindsAttribute)
 
     return simpleProbes.stream()
@@ -88,13 +93,17 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
+      /*
+      layersForCurrentWell.forEach { println(it) }
 
+      println("-")
+      val list = addPointsToIntervals(layersForCurrentWell)
+      // скорректировать точки в местах сопряжения пластов
+      correctPointsOfProbesIntervals(list)
+      list.forEach { println(it) }
 
-      layersForCurrentWell.forEach {
-        println(it)
-      }
       println("----------------")
-
+      */
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let{e.message} ?: "perform error")
     }
@@ -126,6 +135,11 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     task.printConsole("В выходной файл записано точек: ${dotWells.size}")
   }
 
+  /**
+   * Функци расширения для списка проб, которая читает эти пробы, и
+   * заполняет на основе прочитанных данных коллекцию с упрощенными
+   * пробами (т.е. имеющими меньшее количество атрибутов)
+   */
   @Throws(IOException::class)
   private inline fun List<String>.fillSimpleProbes(addFinds: AddFindsAttribute) {
     for (i in 1 until this.size) {
@@ -133,6 +147,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       if (currentProbe.size != keys.size)
         throw IOException("Неверный формат входного файла")
       val map = HashMap<String, String>()
+
+      if (currentProbe[1] == "482953") {
+        println(currentProbe)
+      }
       map[keys[1]] = currentProbe[1] // ID
       map[keys[7]] = currentProbe[7] // east
       map[keys[8]] = currentProbe[8] // north
@@ -140,7 +158,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       map[keys[11]] = currentProbe[11] // from
       map[keys[12]] = currentProbe[12] // to
       map[keys[23]] = currentProbe[23] // all MSD
-      addFinds.invoke(map, currentProbe)
+      addFinds.invoke(map, currentProbe) // находки (0 или 1)
       simpleProbes.add(map)
     }
   }

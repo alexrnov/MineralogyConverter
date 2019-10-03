@@ -61,7 +61,7 @@ fun calculateAbsZForAdditionalPoints(intervalWells: List<MutableMap<String, Stri
  * Возвращаются размноженные стратиграфические интервалы с
  * дополнительными точками
  */
-fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
+fun addPointsToIntervals(intervals: List<Map<String, String>>):
     List<MutableMap<String, String>> {
   var start: Double // начало интервала
   var end: Double // конец интервала
@@ -116,9 +116,8 @@ fun addPointsToIntervals(intervals: List<MutableMap<String, String>>):
  */
 fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
   fun correctIntervalsForWell(well: List<MutableMap<String, String>>) {
-    val correctWell = well.toMutableList()
     // получить группы с одинаковым значением атрибута generateZ
-    val groupWithEqualZ = correctWell
+    val groupWithEqualZ = well
             .groupBy { it[nameOfAttributeGenerateZ]?.toDouble() }
             .values.filter { it.size == 2 } // взять группы с двумя элементами
     // группы со скорректированными значениями generateZ
@@ -136,8 +135,7 @@ fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
     }
     // заменить элементы исходных групп на элементы из групп со
     // скорректированными значениями
-    Collections.replaceAll(correctWell as List<Any>?, groupWithEqualZ,
-            groupWithCorrectZ)
+    Collections.replaceAll(well as List<Any>?, groupWithEqualZ, groupWithCorrectZ)
   }
 
   val ids = intervals.map {it[nameOfAttributeID]}.toSet() // уникальные ID
@@ -146,6 +144,19 @@ fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
     val layersForCurrentWell = intervals.filter { it[nameOfAttributeID] == idWell }
     correctIntervalsForWell(layersForCurrentWell)
   }
+}
+
+fun correctPointsOfProbesIntervals(intervals: List<MutableMap<String, String>>) {
+  // получить группы с одинаковым значением атрибута generateZ
+  val groupWithEqualZ = intervals
+          .groupBy { it[nameOfAttributeGenerateZ]?.toDouble() }
+          .values.filter { it.size >= 2 } // взять группы с двумя или более элементами
+  val groupWithCorrectZ = groupWithEqualZ.toMutableList()
+  println("$$$$$$$$$$$$")
+  groupWithCorrectZ.forEach {
+    println(it)
+  }
+  println("$$$$$$$$$$$$")
 }
 
 /*

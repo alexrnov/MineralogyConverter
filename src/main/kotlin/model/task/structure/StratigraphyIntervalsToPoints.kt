@@ -138,12 +138,6 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         }
       }
 
-      stratigraphicTable.forEach {
-        if (it[nameOfAttributeID] == "179566") {
-          println(it)
-        }
-      }
-
       /*
        * Если была применена функция дополнительных точек, тогда
        * вычислить абсолютные отметки этих точек. Если дополнитеьные точки
