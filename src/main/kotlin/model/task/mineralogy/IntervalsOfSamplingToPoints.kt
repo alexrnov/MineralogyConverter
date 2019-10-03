@@ -93,17 +93,16 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
-      /*
-      layersForCurrentWell.forEach { println(it) }
 
-      println("-")
+      //layersForCurrentWell.forEach { println(it) }
+
+      //println("-")
       val list = addPointsToIntervals(layersForCurrentWell)
       // скорректировать точки в местах сопряжения пластов
-      correctPointsOfProbesIntervals(list)
-      list.forEach { println(it) }
-
-      println("----------------")
-      */
+      //correctPointsOfProbesIntervals(list)
+      //list.forEach { println(it) }
+      //println("----------------")
+      dotWells.addAll(list)
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let{e.message} ?: "perform error")
     }
@@ -111,6 +110,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   @Throws(SecurityException::class, IOException::class)
   override fun writeData() {
+    val title = dotWells[0].keys.toList()
+    val dotWellsFile = MicromineTextFile(outputFilePath)
+    dotWellsFile.writeTitle(title)
+    dotWellsFile.writeContent(dotWells)
   }
 
   @Throws(IllegalArgumentException::class)
@@ -147,10 +150,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       if (currentProbe.size != keys.size)
         throw IOException("Неверный формат входного файла")
       val map = HashMap<String, String>()
-
-      if (currentProbe[1] == "482953") {
-        println(currentProbe)
-      }
       map[keys[1]] = currentProbe[1] // ID
       map[keys[7]] = currentProbe[7] // east
       map[keys[8]] = currentProbe[8] // north
