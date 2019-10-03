@@ -5,6 +5,7 @@ import model.exception.GeoTaskException
 import model.file.MicromineTextFile
 import model.task.GeoTaskOneFile
 import model.utils.addPointsToIntervals
+import model.utils.calculateAbsZForAdditionalPoints
 import model.utils.correctPointsOfProbesIntervals
 import java.io.BufferedReader
 import java.io.IOException
@@ -67,9 +68,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         //else noEnd = false
       }
     }
-
-    if (probes.size < 2)
-      throw IOException("Неверный формат входного файла")
+    if (probes.size < 2) throw IOException("Неверный формат входного файла")
     keys = probes[0].split(";")
     // или if (keys.size != numberAttributesOnlyMSD && keys.size != numberAttributesAllMSD)
     if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
@@ -80,7 +79,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     val addFindsAttribute: AddFindsAttribute = if (keys.size == numberAttributesAllMSD)
         { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
       else { _, _ -> }
-
     probes.fillSimpleProbes(addFindsAttribute)
 
     return simpleProbes.stream()
@@ -102,6 +100,12 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       //correctPointsOfProbesIntervals(list)
       //list.forEach { println(it) }
       //println("----------------")
+      calculateAbsZForAdditionalPoints(list)
+      val list2 = list.filter { it["ID"] == "977735" }
+      list2.forEach {
+        println(it)
+      }
+      //println("-----------------------")
       dotWells.addAll(list)
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let{e.message} ?: "perform error")
@@ -114,6 +118,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     val dotWellsFile = MicromineTextFile(outputFilePath)
     dotWellsFile.writeTitle(title)
     dotWellsFile.writeContent(dotWells)
+    println("-----------")
+    dotWells.filter {it["ID"] == "977735"}.forEach {
+      println(it)
+    }
   }
 
   @Throws(IllegalArgumentException::class)

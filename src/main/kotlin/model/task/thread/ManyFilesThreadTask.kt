@@ -22,7 +22,7 @@ class ManyFilesThreadTask(private val nameOfTask: String,
         ThreadTask() {
 
   @Throws(Exception::class)
-  override public fun call(): Boolean {
+  public override fun call(): Boolean {
     val geoTask: GeoTask
     try {
       geoTask = TypeOfGeoTask.getType(nameOfTask, parameters)

@@ -12,6 +12,7 @@ import model.constants.CommonConstants
 import model.constants.IsihogyClientConstants
 import model.exception.GeoTaskException
 import model.file.MicromineTextFile
+import model.task.thread.ManyFilesThreadTask
 import model.task.thread.ThreadTask
 import model.utils.ExcelUtils.listOfExcelFiles
 import org.junit.jupiter.api.Test
@@ -239,4 +240,56 @@ internal class ProbesWithAllMSDTest {
     assertEquals("0.6", table[6]["Глубина ТН"])
     assertEquals("0.5", table[7]["Глубина ТН"])
   }
+
+  @Test
+  fun perform7() {
+    /*
+    val task = ProbesWithAllMSD(parameters)
+    task.setThreadingTask(mockTask)
+    val resourceWithMSD = ClassLoader.getSystemResource(
+            "input/excel files probes with MSD/Нижне-Накынский-4.xls")
+    val configPathWithMSD = URLDecoder.decode(resourceWithMSD.file, "UTF-8")
+    val excelFileWithMSD = File(configPathWithMSD)
+    task.perform(excelFileWithMSD)
+    task.getIntervalWells.filter {it["ID"] == "977735"}.forEach {
+      println("От = " + it["От"] + ", До = " + it["До"] + ", Все МСА = " + it["Все МСА"])
+    }
+    */
+
+
+    val task = ProbesWithAllMSD(parameters)
+    task.setThreadingTask(mockTask)
+    val inputFiles2: MutableList<File> = ArrayList()
+
+    /*
+    val nameOfExcelFileWithoutMSD =
+            "input/excel files probes without MSD/Нижне-накынский-4.xls"
+    val nameOfExcelFileWithMSD =
+            "input/excel files probes with MSD/Нижне-накынский-4.xls"
+    */
+    val nameOfExcelFileWithoutMSD =
+            "input/excel files All MSD/Нижне-накынский-4_withoutMSD.xls"
+    val nameOfExcelFileWithMSD =
+            "input/excel files All MSD/Нижне-накынский-4_withMSD.xls"
+
+
+    val resourceWithoutMSD = ClassLoader.getSystemResource(nameOfExcelFileWithoutMSD)
+    val configPathWithoutMSD = URLDecoder.decode(resourceWithoutMSD.file, "UTF-8")
+    val excelFileWithoutMSD = File(configPathWithoutMSD)
+
+    val resourceWithMSD = ClassLoader.getSystemResource(nameOfExcelFileWithMSD)
+    val configPathWithMSD = URLDecoder.decode(resourceWithMSD.file, "UTF-8")
+    val excelFileWithMSD = File(configPathWithMSD)
+
+    inputFiles2.add(excelFileWithoutMSD)
+    inputFiles2.add(excelFileWithMSD)
+
+    for (excelFile in inputFiles2) {
+      println(excelFile.name)
+      task.perform(excelFile)
+      println(task.getIntervalWells.size)
+    }
+
+  }
 }
+
