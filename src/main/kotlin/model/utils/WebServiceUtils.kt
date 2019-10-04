@@ -237,9 +237,8 @@ object WebServiceUtils {
                                  referenceVolumeProbe: Byte) {
     intervalWells.forEach { currentProbe ->
       var realProbeVolume: String? = currentProbe["Объем"]
-      if (realProbeVolume != noData) {
-        realProbeVolume = realProbeVolume!!.substring(0,
-                realProbeVolume.length - 2)
+      if (realProbeVolume != null && realProbeVolume != noData) {
+        realProbeVolume = realProbeVolume.replace("л", "").trim()
         // перебрать все значения с количеством кристаллов МСА для различных типов
         // минералов, и заменить эти значения на пересчитанные с эталонным объемом
         (firstIndexOfNumberCrystal..lastIndexOfNumberCrystal).forEach {

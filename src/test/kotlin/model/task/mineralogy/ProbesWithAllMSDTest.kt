@@ -241,55 +241,33 @@ internal class ProbesWithAllMSDTest {
     assertEquals("0.5", table[7]["Глубина ТН"])
   }
 
+
+  // проверка исходного файла, где значения объема проб указаны без
+  // без буквы 'л'
   @Test
   fun perform7() {
-    /*
-    val task = ProbesWithAllMSD(parameters)
-    task.setThreadingTask(mockTask)
-    val resourceWithMSD = ClassLoader.getSystemResource(
-            "input/excel files probes with MSD/Нижне-Накынский-4.xls")
-    val configPathWithMSD = URLDecoder.decode(resourceWithMSD.file, "UTF-8")
-    val excelFileWithMSD = File(configPathWithMSD)
-    task.perform(excelFileWithMSD)
-    task.getIntervalWells.filter {it["ID"] == "977735"}.forEach {
-      println("От = " + it["От"] + ", До = " + it["До"] + ", Все МСА = " + it["Все МСА"])
-    }
-    */
-
+    val intervalsFile = Paths.get(outputFolderAllProbes + s + "intervalWells.txt")
+    Files.deleteIfExists(intervalsFile)
 
     val task = ProbesWithAllMSD(parameters)
     task.setThreadingTask(mockTask)
-    val inputFiles2: MutableList<File> = ArrayList()
 
-    /*
-    val nameOfExcelFileWithoutMSD =
-            "input/excel files probes without MSD/Нижне-накынский-4.xls"
-    val nameOfExcelFileWithMSD =
-            "input/excel files probes with MSD/Нижне-накынский-4.xls"
-    */
-    val nameOfExcelFileWithoutMSD =
-            "input/excel files All MSD/Нижне-накынский-4_withoutMSD.xls"
-    val nameOfExcelFileWithMSD =
-            "input/excel files All MSD/Нижне-накынский-4_withMSD.xls"
-
-
+    val nameOfExcelFileWithoutMSD = "input/excel files All MSD/Нижне-накынский-4_withoutMSD.xls"
     val resourceWithoutMSD = ClassLoader.getSystemResource(nameOfExcelFileWithoutMSD)
     val configPathWithoutMSD = URLDecoder.decode(resourceWithoutMSD.file, "UTF-8")
-    val excelFileWithoutMSD = File(configPathWithoutMSD)
 
+    val nameOfExcelFileWithMSD = "input/excel files All MSD/Нижне-накынский-4_withMSD.xls"
     val resourceWithMSD = ClassLoader.getSystemResource(nameOfExcelFileWithMSD)
     val configPathWithMSD = URLDecoder.decode(resourceWithMSD.file, "UTF-8")
-    val excelFileWithMSD = File(configPathWithMSD)
 
-    inputFiles2.add(excelFileWithoutMSD)
-    inputFiles2.add(excelFileWithMSD)
+    task.perform(File(configPathWithoutMSD))
+    assertEquals(11380, task.getIntervalWells.size)
 
-    for (excelFile in inputFiles2) {
-      println(excelFile.name)
-      task.perform(excelFile)
-      println(task.getIntervalWells.size)
-    }
+    task.perform(File(configPathWithMSD))
+    assertEquals(181, task.getIntervalWells.size)
 
+    assertTrue(Files.exists(intervalsFile))
+    assertEquals(7580516, intervalsFile.toFile().length())
   }
 }
 

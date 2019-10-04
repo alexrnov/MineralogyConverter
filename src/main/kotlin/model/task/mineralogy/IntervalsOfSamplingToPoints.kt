@@ -91,21 +91,12 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
-
-      //layersForCurrentWell.forEach { println(it) }
-
-      //println("-")
       val list = addPointsToIntervals(layersForCurrentWell)
       // скорректировать точки в местах сопряжения пластов
       //correctPointsOfProbesIntervals(list)
       //list.forEach { println(it) }
       //println("----------------")
       calculateAbsZForAdditionalPoints(list)
-      val list2 = list.filter { it["ID"] == "977735" }
-      list2.forEach {
-        println(it)
-      }
-      //println("-----------------------")
       dotWells.addAll(list)
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let{e.message} ?: "perform error")
@@ -118,10 +109,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     val dotWellsFile = MicromineTextFile(outputFilePath)
     dotWellsFile.writeTitle(title)
     dotWellsFile.writeContent(dotWells)
-    println("-----------")
-    dotWells.filter {it["ID"] == "977735"}.forEach {
-      println(it)
-    }
   }
 
   @Throws(IllegalArgumentException::class)

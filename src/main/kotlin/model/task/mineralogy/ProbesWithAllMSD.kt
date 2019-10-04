@@ -101,7 +101,6 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
 
   override fun perform(file: File) {
     try {
-      println("1")
       val sheet = getSheetOfWebResource(file)
       if (isTableOfProbesWithoutMSD(sheet)) {
         nameOfObject = getNameOfObject(sheet)
@@ -109,69 +108,53 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       } else {
         isTableWithoutMSD = false
       }
-      println("2")
       var table: MutableList<MutableMap<String, String>>
       table = if (isTableWithoutMSD) {
         getTableOfProbesWithoutMSD(sheet)
       } else {
         getTableOfProbesWithMSD(sheet)
       }
-      println("3")
       checkWorkingObjects(file, table)
-      println("4")
       table = selectionByGeologicalAge(table, typeOfSelectionAge)
       if (table.isEmpty()) {
         logger.info("Probes with stratigraphic index are not found")
         throw DataException("Проб с указанной выборкой по стратиграфии не найдено")
       }
-      println("5")
       val mistakes = checkOnMissSpatialData(table)
       if (mistakes.isNotEmpty()) {
         task.printConsole("Ошибки отсутствия данных:")
         mistakes.forEach { task.printConsole(it) }
       }
-      println("6")
       replaceCommaForWells(table)
       if (useAmendment) makeAmendment(table)
-      println("7")
       topWells = copyListWithSubMap(table)
-      println("8")
       topWells.forEach { it.keys.retainAll(requiredKeysTopWell) }
       topWells = getWellsWithUniqueNames(topWells)
-      println("9")
       topWells.forEach { well ->
         well["IDW"] = idWell.toString()
         idWell++
       }
-      println("10")
       fixCoincidentCollarOfWell(topWells)
       if (isTableWithoutMSD) {
         topWells.forEach {
           it["Объект"] = nameOfObject
         }
       }
-      println("11")
       intervalWells = copyListWithSubMap(table)
       assignIDToIntervals(topWells, intervalWells)
       checkSequenceIntervals(intervalWells)
-      println("12")
       defineDepthOfWells(topWells, intervalWells)
-      println("12.1")
       if (useReferenceVolume) {
         if (isTableWithoutMSD) {
           updateCrystalNumberWithoutMSD(intervalWells, probeVolume)
         } else {
-          println("12.2")
           updateCrystalNumberWithMSD(intervalWells, probeVolume)
-          println("12.3")
         }
       }
-      println("13")
       checkSequenceIntervals(intervalWells)
       // сортировать сначала по ID, потом по отметке кровли пробы
       intervalWells = intervalWells.sortedWith(
               compareBy({ it["IDW"]!!.toInt() }, { it["От"]!!.toDouble() })).toMutableList()
-      println("14")
       if (isTableWithoutMSD) {
         intervalWells.forEach {
           it["Объект"] = nameOfObject
@@ -182,7 +165,6 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
           it["находки"] = "1.0"
         }
       }
-      println("15")
       task.printConsole("Из файла прочитано скважин: ${topWells.size}")
       task.printConsole("Из файла прочитано интервалов: ${intervalWells.size}")
       overallNumberTopWells += topWells.size
