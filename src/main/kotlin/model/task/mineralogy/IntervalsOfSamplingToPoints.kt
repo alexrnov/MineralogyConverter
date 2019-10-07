@@ -98,7 +98,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
-      if (age) {
+      if (age && keys.contains("находки")) {
         layersForCurrentWell.forEach {
           it[keys.last()] = if (it[keys[16]] == strat && it[keys.last()] == "1.0") "1.0" else "0.0"
         }
