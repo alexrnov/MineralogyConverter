@@ -15,6 +15,7 @@ import java.nio.file.Paths
 import java.util.stream.Collectors
 
 typealias AddAttribute = (MutableMap<String, String>, List<String>) -> Unit
+typealias changeByAge = (List<MutableMap<String, String>>) -> Unit
 
 /**
  * Задача "Интервалы опробования в точки".
@@ -51,6 +52,8 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   // названия необходимых атрибутов во входном/выходном файле
   private var keys: List<String> = ArrayList()
+
+  private var f: changeByAge? = null
   init { checkInputParameters() }
 
   @Throws(SecurityException::class, IOException::class)
@@ -84,6 +87,20 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
     else { _, _ -> } // не добавлять атрибут
 
+    // выделять точки со стратиграфическим индексом, указанном
+    // во входных параметрах, при условии, что для них есть находки МСА
+    f = if (selectByAge && keys.contains("находки"))
+      { layersForCurrentWell ->
+        layersForCurrentWell.map {
+          // если у текущего пласта стратиграфический возраст
+          // не совпадает с искомым стратиграфическим индексом и для
+          // этого пласта есть находки, тогда для атрибута
+          // "находки" установить значение "0.0".
+          val layerAge = it[keys[16]] ?: "" // стратиграфия
+          if (!layerAge.contains(ageIndex) && it[keys.last()] == "1.0") it[keys.last()] = "0.0"
+        }
+      } else { _ -> }
+
     probes.fillSimpleProbes(addAgeAttribute, addFindAttribute)
 
     return simpleProbes.stream()
@@ -95,16 +112,8 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   override fun perform(any: Any?) {
     try {
       val idWell = any as String
-      val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
-      if (selectByAge && keys.contains("находки")) {
-        // если у текущего пласта стратиграфический возраст
-        // не совпадает с искомым стратиграфическим индексом и для
-        // этого пласта есть находки, тогда для атрибута
-        // "находки" установить значение "0.0"
-        layersForCurrentWell.map {
-          if (it[keys[16]] != ageIndex && it[keys.last()] == "1.0") it[keys.last()] = "0.0"
-        }
-      }
+      val layersForCurrentWell: List<MutableMap<String, String>> = simpleProbes.filter { it[keys[1]] == idWell }
+      f?.invoke(layersForCurrentWell)
       val list = addPointsToIntervals(layersForCurrentWell)
       calculateAbsZForAdditionalPoints(list)
       dotWells.addAll(list)
@@ -133,8 +142,8 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   override fun printIntro() {
     task.printConsole("Входные параметры: ")
-    task.printConsole("Входной файл: ${inputFilePath.toAbsolutePath()}")
-    task.printConsole("Выходной файл: ${outputFilePath.toAbsolutePath()}")
+    task.printConsole("Входной файл: ${ inputFilePath.toAbsolutePath() }")
+    task.printConsole("Выходной файл: ${ outputFilePath.toAbsolutePath() }")
     var s = "Выделять по стратиграфическим индексам: "
     s += if (selectByAge) ageIndex else "нет"
     task.printConsole(s)

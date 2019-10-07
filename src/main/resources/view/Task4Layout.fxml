@@ -25,8 +25,9 @@
         <Label layoutX="14.0" layoutY="416.0" text="Выполнено:" AnchorPane.bottomAnchor="40.0" />
         <Button fx:id="cancelTaskButton" layoutX="452.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="14.0" />
       <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#ffffff00" height="51.0" layoutX="14.0" layoutY="155.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="491.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="145.0" />
-      <Label layoutX="51.0" layoutY="171.0" prefHeight="20.0" prefWidth="328.0" text="Выделить пласты со стратиграфическим индексом: " AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="158.0" />
+      <Label layoutX="51.0" layoutY="171.0" prefHeight="20.0" prefWidth="328.0" text="Выделить точки со стратиграфическим индексом,  " AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="152.0" />
       <CheckBox fx:id="selectByAgeCheckBox" layoutX="21.0" layoutY="172.0" mnemonicParsing="false" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="159.0" />
       <TextField fx:id="stratigraphicTextField" layoutX="410.0" layoutY="166.0" prefHeight="30.0" prefWidth="84.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="156.0" />
+      <Label layoutX="61.0" layoutY="181.0" prefHeight="20.0" prefWidth="328.0" text="при условии, что есть находки МСА" AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="170.0" />
     </children>
 </AnchorPane>
