@@ -97,11 +97,12 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
       if (selectByAge && keys.contains("находки")) {
-        layersForCurrentWell.forEach {
-          // если у текущего пласта стратиграфический возраст
-          // совпадает с искомым стратиграфическим индксом, для атрибута
-          // "находки" установить значение "1.0" иначе "0.0"
-          it[keys.last()] = if (it[keys[16]] == ageIndex) "1.0" else "0.0"
+        // если у текущего пласта стратиграфический возраст
+        // не совпадает с искомым стратиграфическим индексом и для
+        // этого пласта есть находки, тогда для атрибута
+        // "находки" установить значение "0.0"
+        layersForCurrentWell.map {
+          if (it[keys[16]] != ageIndex && it[keys.last()] == "1.0") it[keys.last()] = "0.0"
         }
       }
       val list = addPointsToIntervals(layersForCurrentWell)
