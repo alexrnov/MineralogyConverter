@@ -135,6 +135,9 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     task.printConsole("Входные параметры: ")
     task.printConsole("Входной файл: ${inputFilePath.toAbsolutePath()}")
     task.printConsole("Выходной файл: ${outputFilePath.toAbsolutePath()}")
+    var s = "Выделять по стратиграфическим индексам: "
+    s += if (selectByAge) ageIndex else "нет"
+    task.printConsole(s)
     task.printConsole("")
   }
 
