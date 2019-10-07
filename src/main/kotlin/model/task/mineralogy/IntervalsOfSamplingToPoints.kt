@@ -1,12 +1,10 @@
 package model.task.mineralogy
 
-import model.constants.IsihogyClientConstants.nameOfAttributeID
 import model.exception.GeoTaskException
 import model.file.MicromineTextFile
 import model.task.GeoTaskOneFile
 import model.utils.addPointsToIntervals
 import model.utils.calculateAbsZForAdditionalPoints
-import model.utils.correctPointsOfProbesIntervals
 import java.io.BufferedReader
 import java.io.IOException
 import java.nio.charset.Charset
@@ -16,7 +14,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Collectors
 
-typealias AddFindsAttribute = (MutableMap<String, String>, List<String>) -> Unit
+typealias AddAttribute = (MutableMap<String, String>, List<String>) -> Unit
 
 /**
  * Задача "Интервалы опробования в точки".
@@ -41,7 +39,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   // коллекция с пробами, которые были считаны из файла.
   // Для проб остаются только необходимые атрибуты
-  private val simpleProbes = ArrayList<Map<String, String>>()
+  private val simpleProbes = ArrayList<MutableMap<String, String>>()
 
   // коллекция содержит точки с данными по кровле верхней пробы
   // и подошве нижней пробы. Эти данные записываются в
@@ -50,6 +48,9 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   // названия необходимых атрибутов во входном/выходном файле
   private var keys: List<String> = ArrayList()
+
+  private var age = true
+  private var strat = "J1dh"
 
   init { checkInputParameters() }
 
@@ -74,12 +75,18 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
       throw IOException("Неверный формат входного файла")
 
-    // при чтении файла, в коллеекцию с упрощенными пробами добавлять
+    val addAgeAttribute: AddAttribute =
+      if (age) { map, currentProbe -> map[keys[16]] = currentProbe[16]}
+      else { _, _ -> } // не добавлять атрибут
+
+
+    val addFindAttribute: AddAttribute = if (keys.size == numberAttributesAllMSD)
+    // при чтении файла, в коллекцию с упрощенными пробами добавлять
     // атрибут "находки"
-    val addFindsAttribute: AddFindsAttribute = if (keys.size == numberAttributesAllMSD)
-        { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
-      else { _, _ -> }
-    probes.fillSimpleProbes(addFindsAttribute)
+      { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
+    else { _, _ -> } // не добавлять атрибут
+
+    probes.fillSimpleProbes(addAgeAttribute, addFindAttribute)
 
     return simpleProbes.stream()
             .map { it[keys[1]] }
@@ -91,12 +98,14 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
+      if (age) {
+        layersForCurrentWell.forEach {
+          it[keys.last()] = if (it[keys[16]] == strat && it[keys.last()] == "1.0") "1.0" else "0.0"
+        }
+      }
       val list = addPointsToIntervals(layersForCurrentWell)
-      // скорректировать точки в местах сопряжения пластов
-      //correctPointsOfProbesIntervals(list)
-      //list.forEach { println(it) }
-      //println("----------------")
       calculateAbsZForAdditionalPoints(list)
+      println("-------------")
       dotWells.addAll(list)
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let{e.message} ?: "perform error")
@@ -139,7 +148,8 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
    * пробами (т.е. имеющими меньшее количество атрибутов)
    */
   @Throws(IOException::class)
-  private inline fun List<String>.fillSimpleProbes(addFinds: AddFindsAttribute) {
+  private inline fun List<String>.fillSimpleProbes(addAge: AddAttribute,
+                                                   addFind: AddAttribute) {
     for (i in 1 until this.size) {
       val currentProbe = this[i].split(";")
       if (currentProbe.size != keys.size)
@@ -152,9 +162,9 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       map[keys[11]] = currentProbe[11] // from
       map[keys[12]] = currentProbe[12] // to
       map[keys[23]] = currentProbe[23] // all MSD
-      addFinds.invoke(map, currentProbe) // находки (0 или 1)
+      addAge.invoke(map, currentProbe) // стратиграфия
+      addFind.invoke(map, currentProbe) // находки (0 или 1)
       simpleProbes.add(map)
     }
   }
-
 }

@@ -147,19 +147,6 @@ fun correctPointsOfIntervals(intervals: List<MutableMap<String, String>>) {
   }
 }
 
-fun correctPointsOfProbesIntervals(intervals: List<MutableMap<String, String>>) {
-  // получить группы с одинаковым значением атрибута generateZ
-  val groupWithEqualZ = intervals
-          .groupBy { it[nameOfAttributeGenerateZ]?.toDouble() }
-          .values.filter { it.size >= 2 } // взять группы с двумя или более элементами
-  val groupWithCorrectZ = groupWithEqualZ.toMutableList()
-  println("$$$$$$$$$$$$")
-  groupWithCorrectZ.forEach {
-    println(it)
-  }
-  println("$$$$$$$$$$$$")
-}
-
 /*
 * Обработка пустых значений z в объектах, которые находятся в работе.
 * В этих объектах могут отсутствовать значения по высотной отметке z.
