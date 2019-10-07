@@ -28,7 +28,8 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsAllMSD,
-            "outputFile" to outputFileProbesIntervalsToPoints))
+            "outputFile" to outputFileProbesIntervalsToPoints,
+            "selectByAge" to true, "ageIndex" to "J1dh"))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
@@ -41,7 +42,8 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsOnlyMSD,
-            "outputFile" to outputFileProbesIntervalsToPoints))
+            "outputFile" to outputFileProbesIntervalsToPoints,
+            "selectByAge" to true, "ageIndex" to "J1dh"))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="458.0" prefWidth="518.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Task4Layout">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="514.0" prefWidth="518.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Task4Layout">
     <children>
         <TextField fx:id="inputFileTextField" layoutX="14.0" layoutY="36.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="34.0" />
         <TextField fx:id="outputFileTextField" layoutX="14.0" layoutY="105.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="101.0" />
@@ -17,10 +19,14 @@
         <Button fx:id="inputFileButton" layoutX="438.0" layoutY="57.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="32.0" />
         <Button fx:id="runTaskButton" layoutX="343.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="123.0" />
         <ProgressBar fx:id="progressBar" layoutX="14.0" layoutY="438.0" prefHeight="18.0" prefWidth="259.0" progress="0.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="14.0" />
-        <TextArea fx:id="consoleTextArea" layoutX="14.0" layoutY="229.0" prefHeight="215.0" prefWidth="490.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="171.0" />
-        <Label layoutX="14.0" layoutY="205.0" text="Информация по ходу выполнения процесса:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="149.0" />
+        <TextArea fx:id="consoleTextArea" layoutX="14.0" layoutY="255.0" prefHeight="215.0" prefWidth="490.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+        <Label layoutX="14.0" layoutY="218.0" text="Информация по ходу выполнения процесса:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="208.0" />
         <Label fx:id="processPercentLabel" layoutX="89.0" layoutY="416.0" text="0%" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="89.0" />
         <Label layoutX="14.0" layoutY="416.0" text="Выполнено:" AnchorPane.bottomAnchor="40.0" />
         <Button fx:id="cancelTaskButton" layoutX="452.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="14.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#ffffff00" height="51.0" layoutX="14.0" layoutY="155.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="491.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="145.0" />
+      <Label layoutX="51.0" layoutY="171.0" prefHeight="20.0" prefWidth="328.0" text="Выделить пласты со стратиграфическим индексом: " AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="158.0" />
+      <CheckBox fx:id="selectByAgeCheckBox" layoutX="21.0" layoutY="172.0" mnemonicParsing="false" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="159.0" />
+      <TextField fx:id="stratigraphicTextField" layoutX="410.0" layoutY="166.0" prefHeight="30.0" prefWidth="84.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="156.0" />
     </children>
 </AnchorPane>

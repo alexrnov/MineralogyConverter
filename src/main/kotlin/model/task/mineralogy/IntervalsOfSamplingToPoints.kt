@@ -34,6 +34,9 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   private val inputFile: String by parameters
   private val outputFile: String by parameters
+  private val selectByAge: Boolean by parameters // нужно ли выделять пласты со страт. индексом
+  private val ageIndex: String by parameters
+
   private lateinit var inputFilePath: Path
   private lateinit var outputFilePath: Path
 
@@ -48,10 +51,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   // названия необходимых атрибутов во входном/выходном файле
   private var keys: List<String> = ArrayList()
-
-  private var age = true
-  private var strat = "J1dh"
-
   init { checkInputParameters() }
 
   @Throws(SecurityException::class, IOException::class)
@@ -76,9 +75,8 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       throw IOException("Неверный формат входного файла")
 
     val addAgeAttribute: AddAttribute =
-      if (age) { map, currentProbe -> map[keys[16]] = currentProbe[16]}
+      if (selectByAge) { map, currentProbe -> map[keys[16]] = currentProbe[16]}
       else { _, _ -> } // не добавлять атрибут
-
 
     val addFindAttribute: AddAttribute = if (keys.size == numberAttributesAllMSD)
     // при чтении файла, в коллекцию с упрощенными пробами добавлять
@@ -98,14 +96,16 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell = simpleProbes.filter { it[keys[1]] == idWell }
-      if (age && keys.contains("находки")) {
+      if (selectByAge && keys.contains("находки")) {
         layersForCurrentWell.forEach {
-          it[keys.last()] = if (it[keys[16]] == strat && it[keys.last()] == "1.0") "1.0" else "0.0"
+          // если у текущего пласта стратиграфический возраст
+          // совпадает с искомым стратиграфическим индксом, для атрибута
+          // "находки" установить значение "1.0" иначе "0.0"
+          it[keys.last()] = if (it[keys[16]] == ageIndex) "1.0" else "0.0"
         }
       }
       val list = addPointsToIntervals(layersForCurrentWell)
       calculateAbsZForAdditionalPoints(list)
-      println("-------------")
       dotWells.addAll(list)
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let{e.message} ?: "perform error")

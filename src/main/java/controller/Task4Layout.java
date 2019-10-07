@@ -19,6 +19,7 @@ public class Task4Layout extends TaskLayout {
 
   @FXML private TextField inputFileTextField;
   @FXML private TextField outputFileTextField;
+  @FXML private TextField stratigraphicTextField;
   @FXML private Button inputFileButton;
   @FXML private Button outputFileButton;
   @FXML private Button runTaskButton;
@@ -26,6 +27,7 @@ public class Task4Layout extends TaskLayout {
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
+  @FXML private CheckBox selectByAgeCheckBox;
 
   private ButtonAnimation inputFileAnimation;
   private ButtonAnimation outputFileAnimation;
@@ -43,17 +45,26 @@ public class Task4Layout extends TaskLayout {
     createButtonCancelTask();
 
     inputFileTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
-      if (newValue) {
-        defaultStyle(inputFileTextField);
-      }
+      if (newValue) defaultStyle(inputFileTextField);
     });
 
     outputFileTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
-      if (newValue) {
-        defaultStyle(outputFileTextField);
-      }
+      if (newValue) defaultStyle(outputFileTextField);
     });
 
+    stratigraphicTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
+      if (newValue) defaultStyle(stratigraphicTextField);
+    });
+
+    stratigraphicTextField.setDisable(true);
+    selectByAgeCheckBox.setSelected(false);
+    selectByAgeCheckBox.setOnAction( e -> {
+      if (selectByAgeCheckBox.isSelected()) {
+        stratigraphicTextField.setDisable(false);
+      } else {
+        stratigraphicTextField.setDisable(true);
+      }
+    });
   }
 
   private void createInputFileButton(ImageView openDialogPathImage) {
@@ -134,6 +145,8 @@ public class Task4Layout extends TaskLayout {
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("inputFile", inputFileTextField.getText());
     parameters.put("outputFile", outputFileTextField.getText());
+    parameters.put("selectByAge", selectByAgeCheckBox.isSelected());
+    parameters.put("ageIndex", stratigraphicTextField.getText());
 
     threadTask = new OneFileThreadTask(mainLayout.getNameOfCurrentTask(),
             parameters);
@@ -197,6 +210,11 @@ public class Task4Layout extends TaskLayout {
     if (outputFile.length() <= 4 || !outputFile.substring(outputFile.length() - 4,
             outputFile.length()).equals(".txt")) {
       outputFileTextField.setStyle(getErrorStyleTextField());
+      b = false;
+    }
+
+    if (selectByAgeCheckBox.isSelected() && stratigraphicTextField.getText().isEmpty()) {
+      stratigraphicTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
 
