@@ -35,7 +35,7 @@ internal class RoofOfBaseLayersToPointsTest {
     // к ошибке, поэтому она инициализируется здесь
     parameters = mutableMapOf("inputFolder" to inputFolderIsihogyClient,
             "outputFile" to outputFilePointsRoofOfBaseLayers,
-            "ageIndexes" to "O1", "useAmendment" to true)
+            "ageIndexes" to "O1ol; мБD2-3vm", "useAmendment" to true)
   }
 
   @AfterEach

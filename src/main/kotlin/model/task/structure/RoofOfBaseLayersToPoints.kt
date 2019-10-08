@@ -31,6 +31,7 @@ import java.io.IOException
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.stream.Collectors
 
 class RoofOfBaseLayersToPoints
 
@@ -43,7 +44,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
   private val ageIndexes: String by parameters // стратиграфический индекс
   private val useAmendment: Boolean by parameters // поправка ИСИХОГИ
 
-  var ageIndexesAsSet: MutableSet<String> = HashSet()
+  var ageIndexesAsList: List<String> = ArrayList()
     private set
 
   /* объект для записи точечных данных в файл micromine */
@@ -92,6 +93,8 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       if (useAmendment) makeAmendment(observationsPointsTable)
       deleteDecimalPart(nameOfAttributeID, stratigraphicTable)
 
+      stratigraphicTable.f()
+
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")
       overallNumberDotWells += stratigraphicTable.size
@@ -115,10 +118,13 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
     } catch (e: InvalidPathException) {
       throw IllegalArgumentException("invalid path output file")
     }
-    ageIndexesAsSet = ageIndexes.split(";")
+    ageIndexesAsList = ageIndexes.split(";")
             .map { it.trim() } // удалить лишние пробелы
             .filter { it.isNotEmpty() } // удалить пустые записи
-            .toHashSet()
+
+    ageIndexesAsList.forEach {
+      println(it)
+    }
   }
 
   @Throws(ExcelException::class, IOException::class)
@@ -217,5 +223,39 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
     task.printConsole("${outputFilePath.toAbsolutePath()}")
     task.printConsole("Общее количество точек, записанных в точечный файл: " +
             overallNumberDotWells)
+  }
+
+  private fun List<MutableMap<String, String>>.f() {
+    val ids = this.stream() // получить набор уникальных id скважин
+            .map { it[nameOfAttributeID] }
+            .collect(Collectors.toSet())
+    ids.forEach { idWell -> // перебор скважин
+      val layersForCurrentWell = this.filter { it[nameOfAttributeID] == idWell }
+
+      var first: Map<String, String>? = null
+    /*
+    ageIndexesAsList.forEach Find@{ ageIndex ->
+      first = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
+      if (first != null) return@Find
+    }
+    */
+      for (ageIndex in ageIndexesAsList) {
+        first = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
+        if (first != null) break
+      }
+
+      if (first != null) {
+        println(first?.get(nameOfAttributeLCodeAge))
+      } else {
+        println("null")
+      }
+
+    /*
+    layersForCurrentWell.forEach {
+      println(it)
+    }
+    */
+    println("---------------")
+    }
   }
 }
