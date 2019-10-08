@@ -154,8 +154,8 @@ internal class ProbesWithoutMSDTest {
     task.setThreadingTask(mockTask)
     task.perform(excelFile)
     assertEquals(253, task.getTopWells.size)
-    assertEquals(2106, task.getIntervalWells.size)
-    assertEquals(2106, task.getDotWells.size)
+    assertEquals(2119, task.getIntervalWells.size)
+    assertEquals(2119, task.getDotWells.size)
   }
 
   @Test

@@ -241,7 +241,6 @@ internal class ProbesWithAllMSDTest {
     assertEquals("0.5", table[7]["Глубина ТН"])
   }
 
-
   // проверка исходного файла, где значения объема проб указаны без
   // без буквы 'л'
   @Test
@@ -268,6 +267,58 @@ internal class ProbesWithAllMSDTest {
 
     assertTrue(Files.exists(intervalsFile))
     assertEquals(7580516, intervalsFile.toFile().length())
+  }
+
+  // проба с одним и тем же интервалом встречается как в файле с находками
+  // МСА, так и в файле с "пустыми пробыми"
+  @Disabled
+  @Test
+  fun `contradiction probes`() {
+    val intervalsFile = Paths.get(outputFolderAllProbes + s + "intervalWells.txt")
+    Files.deleteIfExists(intervalsFile)
+
+    val task = ProbesWithAllMSD(parameters)
+    task.setThreadingTask(mockTask)
+
+    val nameOfExcelFileWithoutMSD = "input/excel files probes without MSD/Россыпной.xls"
+    val resourceWithoutMSD = ClassLoader.getSystemResource(nameOfExcelFileWithoutMSD)
+    val configPathWithoutMSD = URLDecoder.decode(resourceWithoutMSD.file, "UTF-8")
+
+    val nameOfExcelFileWithMSD = "input/excel files probes with MSD/Россыпной.xls"
+    val resourceWithMSD = ClassLoader.getSystemResource(nameOfExcelFileWithMSD)
+    val configPathWithMSD = URLDecoder.decode(resourceWithMSD.file, "UTF-8")
+
+    task.perform(File(configPathWithoutMSD))
+    task.getIntervalWells.filter {it["ID"] == "134391"}.forEach {
+      println(it["Стратиграфия"] + " " + it["От"] + " " + it["До"] + " " + it["Все МСА"] + " " + it["Тип пробы"])
+    }
+    println("--------------")
+    task.perform(File(configPathWithMSD))
+    task.getIntervalWells.filter {it["ID"] == "134391"}.forEach {
+      println(it["Стратиграфия"] + " " + it["От"] + " " + it["До"] + " " + it["Все МСА"] + " " + it["Тип пробы"])
+    }
+  }
+
+  @Test
+  fun `contains string in index age`() {
+    val parameters = mapOf("inputFolderWithoutMSD" to inputFolderProbesWithoutMSD,
+            "inputFolderWithMSD" to inputFolderProbesWithMSD,
+            "outputFolder" to outputFolderAllProbes,
+            "probeVolume" to volume, "useReferenceVolume" to true,
+            "useAmendment" to true, "createDotFile" to true,
+            "typeOfSelectionAge" to "Указать возраст:J1tn")
+    val task = ProbesWithAllMSD(parameters)
+    task.setThreadingTask(mockTask)
+    val nameOfExcelFileWithMSD =
+            "input/excel files probes with MSD/Южно-Накынский.xls"
+
+    val resourceWithMSD = ClassLoader.getSystemResource(nameOfExcelFileWithMSD)
+    val configPathWithMSD = URLDecoder.decode(resourceWithMSD.file, "UTF-8")
+    val excelFileWithMSD = File(configPathWithMSD)
+    task.perform(excelFileWithMSD)
+    val table = task.getIntervalWells
+    assertEquals(20, table.filter { it["Стратиграфия"] == "J1tn" }.count())
+    assertEquals(4, table.filter { it["Стратиграфия"] == "J1tn!" }.count())
   }
 }
 

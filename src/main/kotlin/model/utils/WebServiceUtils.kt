@@ -114,9 +114,16 @@ object WebServiceUtils {
       "Без возрастов" -> probes.stream()
                 .filter { it["Стратиграфия"] == "Нет данных" }
                 .collect(Collectors.toList())
-      else -> probes.stream()
-                .filter { it["Стратиграфия"] == typeOfSelectionAge}
+      else -> {
+        // проверяется вложенность: например если искомый стратиграфический
+        // индекс будет J1tn, то J1tn! тоже попадет в итоговую коллекцию
+        probes.stream()
+                .filter { val s = it["Стратиграфия"] ?: ""; s.contains(typeOfSelectionAge) }
                 .collect(Collectors.toList())
+        // если нужно строгое соответствие индексов
+        // тогда следует использовать выражение:
+        // probes.stream().filter { it["Стратиграфия"] == typeOfSelectionAge }
+      }
   }
 
   /**
