@@ -22,7 +22,7 @@ object TypeOfGeoTask {
       namesOfTasks[6] -> TopAndBottomOfWells(parameters)
       namesOfTasks[7] -> RoofAndSoleStratigraphicLayer(parameters)
       namesOfTasks[8] -> StratigraphyIntervalsToPoints(parameters)
-      namesOfTasks[9] -> RoofOfBaseLayers(parameters)
+      namesOfTasks[9] -> RoofOfBaseLayersToPoints(parameters)
       else -> throw IllegalArgumentException("incorrect name of task")
     }
 }

@@ -41,6 +41,10 @@ object TestUtils {
           "resources" + s + "output" + s + "isihogy client" +
           s + "absPointsForStratigraphy.txt"
 
+  val outputFilePointsRoofOfBaseLayers = "." + s + "src" + s + "test" + s +
+          "resources" + s + "output" + s + "isihogy client" +
+          s + "absPointsForRoofOfBaseLayers.txt"
+
   // Инициализировать JavaFX, чтобы не возникала ошибка: Toolkit not initialized
   @Throws(InterruptedException::class)
   fun initToolkit() {

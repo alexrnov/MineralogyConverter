@@ -32,7 +32,7 @@ import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class RoofOfBaseLayers
+class RoofOfBaseLayersToPoints
 
 @Throws(IllegalArgumentException::class, SecurityException::class,
         IOException::class, ExcelException::class)
