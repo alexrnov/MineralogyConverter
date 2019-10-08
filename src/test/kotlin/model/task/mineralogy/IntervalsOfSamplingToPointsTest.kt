@@ -26,14 +26,29 @@ internal class IntervalsOfSamplingToPointsTest {
   fun `input interval file ProbesWithAllMSD`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
-    val task = IntervalsOfSamplingToPoints(mapOf(
-            "inputFile" to inputFileIntervalWellsAllMSD,
+    val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
-            "selectByAge" to true, "ageIndex" to "J1dh"))
+            "selectByAge" to true, "ageIndex" to "J1dh")
+    var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
-    val table: Collection<Any?> = task.getTableFromFile()
+    var table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
     task.writeData()
+    assertTrue(Files.exists(outputFile))
+    assertEquals(14229079, outputFile.toFile().length())
+
+    Files.deleteIfExists(outputFile)
+    parameters["ageIndex"] = "J1uk"
+    task = IntervalsOfSamplingToPoints(parameters)
+    task.setThreadingTask(mockTask)
+    table = task.getTableFromFile()
+    table.forEach { task.perform(it) }
+    task.writeData()
+    assertTrue(Files.exists(outputFile))
+    // размер файла будет такой же, даже несмотря на то, что
+    // во входных параметрах указан другой стратиграфический индекс.
+    // Т.е. изменение "1.0" на "0.0" и обратно не меняет размер файла
+    assertEquals(14229079, outputFile.toFile().length())
   }
 
   @Test
@@ -48,5 +63,50 @@ internal class IntervalsOfSamplingToPointsTest {
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
     task.writeData()
+    assertTrue(Files.exists(outputFile))
+    assertEquals(576351, outputFile.toFile().length())
+    assertEquals(false, task.getDotWells[1].containsKey("находки"))
+    assertEquals(false, task.getDotWells[2].containsKey("Стратиграфия"))
+  }
+
+  @Test
+  fun `contains string in index age`() {
+    val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
+    Files.deleteIfExists(outputFile)
+    val task = IntervalsOfSamplingToPoints(mapOf(
+            "inputFile" to inputFileIntervalWellsAllMSD,
+            "outputFile" to outputFileProbesIntervalsToPoints,
+            "selectByAge" to true, "ageIndex" to "J1tn"))
+    task.setThreadingTask(mockTask)
+    val table: Collection<Any?> = task.getTableFromFile()
+    table.forEach { task.perform(it) }
+    val dotWells = task.getDotWells
+    assertEquals(242145, dotWells.size)
+    assertEquals(12,
+            dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
+                          .filter { it["находки"] == "1.0" }
+                          .count())
+    assertEquals(0,
+            dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
+                          .filter { it["находки"] != "1.0" }
+                          .count())
+    // у всех скважин со стратиграфией "J1tn" и ненулевым количеством
+    // "Все_МСА" должен быть атрибут "находки" со значением "1.0"
+    assertEquals(dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
+                                      .count(),
+            dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
+                          .filter { it["находки"] == "1.0" }
+                          .count())
+
+    assertEquals(2613,
+            dotWells.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
+                          .count())
+    // все точки с другими стратиграфическимим индексами (например J1dh)
+    // , даже если атрибут "Все_МСА" != 0, должны иметь значение
+    // атрибута "находки" = 0.0
+    assertEquals(0,
+            dotWells.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
+                          .filter { it["находки"] == "1.0" }
+                          .count())
   }
 }

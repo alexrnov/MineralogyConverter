@@ -3,6 +3,7 @@ package model.task.mineralogy
 import model.exception.GeoTaskException
 import model.file.MicromineTextFile
 import model.task.GeoTaskOneFile
+import model.utils.CollectionUtils
 import model.utils.addPointsToIntervals
 import model.utils.calculateAbsZForAdditionalPoints
 import java.io.BufferedReader
@@ -15,7 +16,7 @@ import java.nio.file.Paths
 import java.util.stream.Collectors
 
 typealias AddAttribute = (MutableMap<String, String>, List<String>) -> Unit
-typealias changeByAge = (List<MutableMap<String, String>>) -> Unit
+typealias HightlightByAgeAndFind = (List<MutableMap<String, String>>) -> Unit
 
 /**
  * Задача "Интервалы опробования в точки".
@@ -49,11 +50,17 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   // и подошве нижней пробы. Эти данные записываются в
   // выходной текстовый файл
   private val dotWells: MutableList<MutableMap<String, String>> = ArrayList()
+  val getDotWells get() = CollectionUtils.copyListWithSubMap(dotWells.toList())
 
   // названия необходимых атрибутов во входном/выходном файле
   private var keys: List<String> = ArrayList()
 
-  private var f: changeByAge? = null
+  // функция выполняет выделение точек со стратиграфическим индексом,
+  // указанном во входных параметрах и с наличием находок МСА.
+  // Это может быть необходимо для Micromine - когда формирование
+  // шлихоминералогических ореолов выполняется по возрастам
+  private var hightlightByAgeAndFind: HightlightByAgeAndFind? = null
+
   init { checkInputParameters() }
 
   @Throws(SecurityException::class, IOException::class)
@@ -77,19 +84,24 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
       throw IOException("Неверный формат входного файла")
 
+    // если нужно выделить точки по стратиграфии и если в качестве входного
+    // файла используется файл интервалов по всем точкам наблюдения
     val addAgeAttribute: AddAttribute =
-      if (selectByAge) { map, currentProbe -> map[keys[16]] = currentProbe[16]}
-      else { _, _ -> } // не добавлять атрибут
+      if (selectByAge && keys.size == numberAttributesAllMSD)
+        { map, currentProbe -> map[keys[16]] = currentProbe[16]}
+      else { _, _ -> } // иначе не добавлять атрибут
 
+    // если в качестве входного файла используется файл интервалов
+    // по всем точкам наблюдения
     val addFindAttribute: AddAttribute = if (keys.size == numberAttributesAllMSD)
     // при чтении файла, в коллекцию с упрощенными пробами добавлять
     // атрибут "находки"
       { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
-    else { _, _ -> } // не добавлять атрибут
+    else { _, _ -> } // иначе не добавлять атрибут
 
     // выделять точки со стратиграфическим индексом, указанном
     // во входных параметрах, при условии, что для них есть находки МСА
-    f = if (selectByAge && keys.contains("находки"))
+    hightlightByAgeAndFind = if (selectByAge && keys.contains("находки"))
       { layersForCurrentWell ->
         layersForCurrentWell.map {
           // если у текущего пласта стратиграфический возраст
@@ -113,12 +125,12 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell: List<MutableMap<String, String>> = simpleProbes.filter { it[keys[1]] == idWell }
-      f?.invoke(layersForCurrentWell)
+      hightlightByAgeAndFind?.invoke(layersForCurrentWell)
       val list = addPointsToIntervals(layersForCurrentWell)
       calculateAbsZForAdditionalPoints(list)
       dotWells.addAll(list)
     } catch(e: Exception) {
-      throw GeoTaskException(e.message?.let{e.message} ?: "perform error")
+      throw GeoTaskException(e.message?.let { e.message } ?: "perform error")
     }
   }
 
