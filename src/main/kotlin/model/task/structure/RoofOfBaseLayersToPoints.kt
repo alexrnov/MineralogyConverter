@@ -93,8 +93,9 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       if (useAmendment) makeAmendment(observationsPointsTable)
       deleteDecimalPart(nameOfAttributeID, stratigraphicTable)
 
-      stratigraphicTable.f()
-
+      println("stratigraphicTable1 = ${stratigraphicTable.size}")
+      stratigraphicTable = stratigraphicTable.f()
+      println("stratigraphicTable2 = ${stratigraphicTable.size}")
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")
       overallNumberDotWells += stratigraphicTable.size
@@ -225,37 +226,47 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
             overallNumberDotWells)
   }
 
-  private fun List<MutableMap<String, String>>.f() {
+  /*             другие реализации алгоритма, представленного ниже            */
+  /*
+  run Find@{
+    ageIndexesAsList.forEach { ageIndex ->
+      firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
+      if (firstBaseLayer != null) return@Find
+    }
+  }
+
+  var i = 0
+  while (i < ageIndexesAsList.size && firstBaseLayer == null) {
+    firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndexesAsList[i] }
+    i++
+  }
+
+  val ageIndex = ageIndexesAsList.iterator()
+  while (ageIndex.hasNext() && firstBaseLayer == null) {
+    val index = ageIndex.next()
+    firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == index }
+  }
+  */
+  private fun List<MutableMap<String, String>>.f(): List<MutableMap<String, String>> {
+    val baseLayers = ArrayList<MutableMap<String, String>>()
     val ids = this.stream() // получить набор уникальных id скважин
             .map { it[nameOfAttributeID] }
             .collect(Collectors.toSet())
     ids.forEach { idWell -> // перебор скважин
       val layersForCurrentWell = this.filter { it[nameOfAttributeID] == idWell }
+      var firstBaseLayer: Map<String, String>? = null
 
-      var first: Map<String, String>? = null
-    /*
-    ageIndexesAsList.forEach Find@{ ageIndex ->
-      first = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
-      if (first != null) return@Find
-    }
-    */
-      for (ageIndex in ageIndexesAsList) {
-        first = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
-        if (first != null) break
+      // найти первое совпадение с индексом вмещающих отложений
+      for (ageIndex in ageIndexesAsList) { // перебор всех индексов вмещающих отложений
+        firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
+        if (firstBaseLayer != null) break // если совпадение найдено - выйти из цикла
       }
 
-      if (first != null) {
-        println(first?.get(nameOfAttributeLCodeAge))
-      } else {
-        println("null")
+      if (firstBaseLayer != null) { // если был найден индекс вмещающих отложений
+        //println(firstBaseLayer)
+        baseLayers.add(firstBaseLayer.toMutableMap())
       }
-
-    /*
-    layersForCurrentWell.forEach {
-      println(it)
     }
-    */
-    println("---------------")
-    }
+    return baseLayers
   }
 }
