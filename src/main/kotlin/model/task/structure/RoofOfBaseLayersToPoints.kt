@@ -94,7 +94,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       deleteDecimalPart(nameOfAttributeID, stratigraphicTable)
 
       println("stratigraphicTable1 = ${stratigraphicTable.size}")
-      stratigraphicTable = stratigraphicTable.f()
+      stratigraphicTable = stratigraphicTable.leavingTopBaseLayers()
       println("stratigraphicTable2 = ${stratigraphicTable.size}")
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")
@@ -122,10 +122,6 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
     ageIndexesAsList = ageIndexes.split(";")
             .map { it.trim() } // удалить лишние пробелы
             .filter { it.isNotEmpty() } // удалить пустые записи
-
-    ageIndexesAsList.forEach {
-      println(it)
-    }
   }
 
   @Throws(ExcelException::class, IOException::class)
@@ -226,28 +222,24 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
             overallNumberDotWells)
   }
 
-  /*             другие реализации алгоритма, представленного ниже            */
-  /*
-  run Find@{
-    ageIndexesAsList.forEach { ageIndex ->
+  /* функция возвращает список слоев, являющихся первыми (верхними) вмещающими отложениями  */
+  /* другие реализации алгоритма по поиску первого индекса вмещающих отложений
+  run Find@{ ageIndexesAsList.forEach { ageIndex ->
       firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
       if (firstBaseLayer != null) return@Find
     }
   }
-
   var i = 0
   while (i < ageIndexesAsList.size && firstBaseLayer == null) {
     firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndexesAsList[i] }
     i++
   }
-
   val ageIndex = ageIndexesAsList.iterator()
   while (ageIndex.hasNext() && firstBaseLayer == null) {
     val index = ageIndex.next()
     firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == index }
-  }
-  */
-  private fun List<MutableMap<String, String>>.f(): List<MutableMap<String, String>> {
+  } */
+  private fun List<MutableMap<String, String>>.leavingTopBaseLayers(): List<MutableMap<String, String>> {
     val baseLayers = ArrayList<MutableMap<String, String>>()
     val ids = this.stream() // получить набор уникальных id скважин
             .map { it[nameOfAttributeID] }
@@ -255,17 +247,12 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
     ids.forEach { idWell -> // перебор скважин
       val layersForCurrentWell = this.filter { it[nameOfAttributeID] == idWell }
       var firstBaseLayer: Map<String, String>? = null
-
       // найти первое совпадение с индексом вмещающих отложений
       for (ageIndex in ageIndexesAsList) { // перебор всех индексов вмещающих отложений
         firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
         if (firstBaseLayer != null) break // если совпадение найдено - выйти из цикла
       }
-
-      if (firstBaseLayer != null) { // если был найден индекс вмещающих отложений
-        //println(firstBaseLayer)
-        baseLayers.add(firstBaseLayer.toMutableMap())
-      }
+      firstBaseLayer?.let { baseLayers.add(firstBaseLayer.toMutableMap())}
     }
     return baseLayers
   }
