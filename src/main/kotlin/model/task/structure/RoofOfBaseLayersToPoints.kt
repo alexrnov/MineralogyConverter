@@ -3,8 +3,14 @@ package model.task.structure
 import application.Mineralogy.logger
 import model.constants.IsihogyClientConstants.lithologyCodesSheetName
 import model.constants.IsihogyClientConstants.lithostratigraphicSheetName
+import model.constants.IsihogyClientConstants.nameOfAttributeCodeTypeTN
+import model.constants.IsihogyClientConstants.nameOfAttributeFrom
 import model.constants.IsihogyClientConstants.nameOfAttributeID
 import model.constants.IsihogyClientConstants.nameOfAttributeLCodeAge
+import model.constants.IsihogyClientConstants.nameOfAttributeTo
+import model.constants.IsihogyClientConstants.nameOfAttributeX
+import model.constants.IsihogyClientConstants.nameOfAttributeY
+import model.constants.IsihogyClientConstants.nameOfAttributeZ
 import model.constants.IsihogyClientConstants.observationsPointsSheetName
 import model.constants.IsihogyClientConstants.stateDocumentationCodesSheetName
 import model.constants.IsihogyClientConstants.stratigraphicCodesSheetName
@@ -20,6 +26,7 @@ import model.utils.ExcelUtils.getCodesOfIsihogyClient
 import model.utils.ExcelUtils.getSheetOfIsihogyClient
 import model.utils.ExcelUtils.getTableOfIsihogyClient
 import model.utils.ExcelUtils.getTitleTableOfIsihogyClient
+import model.utils.IsihogyClientUtils.absOfFromTo
 import model.utils.IsihogyClientUtils.checkOnMissDataXYZDAndFix
 import model.utils.IsihogyClientUtils.decodingField
 import model.utils.IsihogyClientUtils.deleteDecimalPart
@@ -93,9 +100,32 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       if (useAmendment) makeAmendment(observationsPointsTable)
       deleteDecimalPart(nameOfAttributeID, stratigraphicTable)
 
-      println("stratigraphicTable1 = ${stratigraphicTable.size}")
       stratigraphicTable = stratigraphicTable.leavingTopBaseLayers()
-      println("stratigraphicTable2 = ${stratigraphicTable.size}")
+      stratigraphicTable.forEach { layer ->
+        if (observationsPointsTable.any {it[nameOfAttributeID] == layer[nameOfAttributeID]}) {
+          val necessaryAttributes = observationsPointsTable.first { it[nameOfAttributeID] == layer[nameOfAttributeID] }
+          necessaryAttributes.keys.retainAll(listOf(nameOfAttributeX, nameOfAttributeY,
+                  nameOfAttributeZ, nameOfAttributeCodeTypeTN))
+          // вставить необходимые пары ключ-значение из листа "Точки наблюдений"
+          // в таблицу со стратиграфией
+          layer.putAll(necessaryAttributes)
+        } else {
+          task.printConsole("Для стратиграфического слоя нет данных по " +
+                  "точке наблюдения")
+          logger.info("For stratigraphic layer not information by observation point. " +
+                  "Excel-file: " + file.name)
+        }
+      }
+
+      stratigraphicTable.forEach {
+        println(it)
+      }
+      absOfFromTo(stratigraphicTable) // деструктурирование
+      println("---------------------")
+      stratigraphicTable.forEach {
+        println(it)
+      }
+      stratigraphicTable.forEach { println(it) }
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")
       overallNumberDotWells += stratigraphicTable.size

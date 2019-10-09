@@ -37,31 +37,34 @@ object IsihogyClientConstants {
   val nameOfAttributeID = "ID ТН"
 
   /** Название атрибута: координата X фактическое значение */
-  val nameOfAttributeX = "X факт."
+  const val nameOfAttributeX = "X факт."
 
   /** Название атрибута: координата Y фактическое значение */
-  val nameOfAttributeY = "Y факт."
+  const val nameOfAttributeY = "Y факт."
 
   /** Название атрибута: координата Z фактическое значение */
-  val nameOfAttributeZ = "Z"
+  const val nameOfAttributeZ = "Z"
 
   /** Название атрибута: координата X проектное значение */
-  val nameOfAttributeProjectX = "X проект."
+  const val nameOfAttributeProjectX = "X проект."
 
   /** Название атрибута: координата Y проектное значение */
-  val nameOfAttributeProjectY = "Y проект."
+  const val nameOfAttributeProjectY = "Y проект."
 
   /** Название атрибута: глубина точки наблюдения */
   val nameOfAttributeDepth = "Глубина ТН"
 
   /** Название атрибута: От */
-  val nameOfAttributeFrom = "От"
+  const val nameOfAttributeFrom = "От"
 
   /** Название атрибута: До */
-  val nameOfAttributeTo = "До"
+  const val nameOfAttributeTo = "До"
+
+  /** Название атрибута: Код типа ТН */
+  const val nameOfAttributeCodeTypeTN = "Код типа ТН"
 
   /** Название для атрибута суммы всех находок МСА по текущей пробе */
-  val nameOfAttributeAllMinerals = "Все МСА"
+  const val nameOfAttributeAllMinerals = "Все МСА"
 
   /** Название для атрибута UIN */
   val nameOfAttributeUIN = "UIN"

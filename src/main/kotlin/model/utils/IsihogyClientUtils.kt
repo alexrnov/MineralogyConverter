@@ -392,4 +392,21 @@ object IsihogyClientUtils {
     }
   }
 
+  /**
+   * Функция для списка слоев пересчитывает значения "От" и "До"
+   * относительно абсолютной отметки устья скважины "Z"
+   */
+  fun absOfFromTo(layers: List<MutableMap<String, String>>) {
+    fun getABSValues(layer: Map<String, String>): Pair<String, String> {
+      val z = java.lang.Double.valueOf(layer[nameOfAttributeZ])
+      val absFrom = Math.round((z - java.lang.Double.valueOf(layer[nameOfAttributeFrom])) * 100.0) / 100.0
+      val absTo = Math.round((z - java.lang.Double.valueOf(layer[nameOfAttributeTo])) * 100.0) / 100.0
+      return Pair(absFrom.toString(), absTo.toString())
+    }
+    layers.forEach {
+      val (from, to) = getABSValues(it) // деструктурирование
+      it[nameOfAttributeFrom] = from
+      it[nameOfAttributeTo] = to
+    }
+  }
 }

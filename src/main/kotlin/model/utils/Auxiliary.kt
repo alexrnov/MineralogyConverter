@@ -1,7 +1,10 @@
 package model.utils
 
 import model.constants.CommonConstants.nameOfAttributeGenerateZ
+import model.constants.IsihogyClientConstants.nameOfAttributeFrom
 import model.constants.IsihogyClientConstants.nameOfAttributeID
+import model.constants.IsihogyClientConstants.nameOfAttributeTo
+import model.constants.IsihogyClientConstants.nameOfAttributeZ
 import java.io.File
 import java.lang.Double.valueOf
 import java.util.*
