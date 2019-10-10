@@ -38,7 +38,9 @@ public class Task10Layout extends TaskLayout {
   private void initialize() {
     consoleTextArea.setEditable(false);
     consoleTextArea.setWrapText(true); // автоперенос строк в консоли
-
+    // индексы по умолчанию: ордовик, кемрий, палеозой (кимберлиты)
+    // эти индексы подходят для накынского поля
+    stratigraphicTextField.setText("O;G;Pz");
     createInputFolderButton(new ImageView(getOpenDialogPath()));
     createOutputFileButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();

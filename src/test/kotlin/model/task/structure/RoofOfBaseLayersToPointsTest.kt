@@ -67,7 +67,7 @@ internal class RoofOfBaseLayersToPointsTest {
     assertEquals("O1ol", table[0][nameOfAttributeLCodeAge])
     assertEquals("мБD2-3vm", table[54][nameOfAttributeLCodeAge])
     assertTrue(Files.exists(outputFile))
-    assertEquals(9934, outputFile.toFile().length())
+    assertEquals(6909, outputFile.toFile().length())
   }
 
   @Test

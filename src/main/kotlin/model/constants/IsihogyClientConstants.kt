@@ -73,8 +73,10 @@ object IsihogyClientConstants {
   const val nameOfAttributeLCodeAge = "L_Code возраста"
 
   /** Название для атрибута литологии */
-  val nameOfAttributeLCodeLithology = "L_Code породы"
+  const val nameOfAttributeLCodeLithology = "L_Code породы"
 
+
+  const val nameOfAttributeLCodeDescription = "Описание"
   /**
    * Массив с числовыми значениями, которые встречаются в таблицах
    * ИСИХОГИ, когда нет реальных значений

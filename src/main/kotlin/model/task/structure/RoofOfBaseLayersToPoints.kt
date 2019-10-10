@@ -4,10 +4,10 @@ import application.Mineralogy.logger
 import model.constants.IsihogyClientConstants.lithologyCodesSheetName
 import model.constants.IsihogyClientConstants.lithostratigraphicSheetName
 import model.constants.IsihogyClientConstants.nameOfAttributeCodeTypeTN
-import model.constants.IsihogyClientConstants.nameOfAttributeFrom
 import model.constants.IsihogyClientConstants.nameOfAttributeID
 import model.constants.IsihogyClientConstants.nameOfAttributeLCodeAge
-import model.constants.IsihogyClientConstants.nameOfAttributeTo
+import model.constants.IsihogyClientConstants.nameOfAttributeLCodeDescription
+import model.constants.IsihogyClientConstants.nameOfAttributeLCodeLithology
 import model.constants.IsihogyClientConstants.nameOfAttributeX
 import model.constants.IsihogyClientConstants.nameOfAttributeY
 import model.constants.IsihogyClientConstants.nameOfAttributeZ
@@ -67,13 +67,6 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
   /* общее количество точек для файла точек */
   private var overallNumberDotWells = 0
 
-  //private var titleDot = HashSet<String>()
-
-  // атрибут для записи значения 1.0 или 0.0. Значение 1.0 обозначяет,
-  // что индекс данного стратиграфического пласта совпал с индексом,
-  // указанным во входном параметре, 0.0 - не совпал
-  private val attributeOfBooleanStratigraphy = "Выделенный_пласт"
-
   private lateinit var outputFilePath: Path
 
   init {
@@ -115,6 +108,10 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         }
       }
       absOfFromTo(stratigraphicTable) // деструктурирование
+      // удалить некоторые атрибуты
+      stratigraphicTable.forEach {
+        it.keys.removeAll(setOf(nameOfAttributeLCodeLithology, nameOfAttributeLCodeDescription))
+      }
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")
       if (stratigraphicTable.isNotEmpty()) {
@@ -164,6 +161,8 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
     val titleDot = ArrayList(titleLithostratigraphic)
     titleDot.addAll(listOf(nameOfAttributeX, nameOfAttributeY,
             nameOfAttributeZ, nameOfAttributeCodeTypeTN))
+    titleDot.removeAll(setOf(nameOfAttributeLCodeLithology, nameOfAttributeLCodeDescription))
+
     dotWellsFile = MicromineTextFile(outputFilePath)
     dotWellsFile.writeTitle(titleDot)
   }
@@ -230,8 +229,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
     task.printConsole(inputFolder)
     task.printConsole("Выходной файл для Micromine: ")
     task.printConsole("${outputFilePath.toAbsolutePath()}")
-    task.printConsole("Стратиграфический индекс/индексы: ")
-    task.printConsole(ageIndexes)
+    task.printConsole("Стратиграфический индекс/индексы: $ageIndexes")
     task.printConsole("Убрать поправку ИСИХОГИ для координат X и Y: " +
             if (useAmendment) "Да" else "Нет")
     task.printConsole("")
@@ -272,16 +270,22 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       val layersForCurrentWell = this.filter { it[nameOfAttributeID] == idWell }
       var firstBaseLayer: Map<String, String>? = null
       // найти первое совпадение с индексом вмещающих отложений
-      for (ageIndex in ageIndexesAsList) { // перебор всех индексов вмещающих отложений
+       // перебор всех индексов вмещающих отложений
         firstBaseLayer = layersForCurrentWell.firstOrNull {
           val currentAgeIndex = it[nameOfAttributeLCodeAge] ?: ""
-          // проверяется вложенность индексов (т.е. O1ol и O1or будут приравнены к O)
-          currentAgeIndex.contains(ageIndex)
-          // при поиске точного соответсвия следует использовать условие:
-          // it[nameOfAttributeLCodeAge] = ageIndex
+          var b = false
+          // если текущий индекс соответсвтует одному из индексов вмещающих отложений
+          for (ageIndex in ageIndexesAsList) {
+            // проверяется вложенность индексов (т.е. O1ol и O1or будут приравнены к O)
+            b = currentAgeIndex.contains(ageIndex)
+            // при поиске точного соответсвия следует использовать условие:
+            // currentAgeIndex = ageIndex
+            if (b) break // если совпадение найдено - выйти из цикла
+          }
+          b
         }
-        if (firstBaseLayer != null) break // если совпадение найдено - выйти из цикла
-      }
+
+
       firstBaseLayer?.let { baseLayers.add(firstBaseLayer.toMutableMap())}
     }
     return baseLayers
