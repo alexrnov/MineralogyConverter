@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.net.URLDecoder
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 
 internal class RoofOfBaseLayersToPointsTest {
@@ -55,7 +54,7 @@ internal class RoofOfBaseLayersToPointsTest {
   }
 
   @Test
-  fun perform1() {
+  fun performTest() {
     val outputFile = Paths.get(outputFilePointsRoofOfBaseLayers)
     Files.deleteIfExists(outputFile)
     val task = RoofOfBaseLayersToPoints(parameters!!)
@@ -77,6 +76,15 @@ internal class RoofOfBaseLayersToPointsTest {
     val task = RoofOfBaseLayersToPoints(parameters!!)
     task.setThreadingTask(mockTask)
     task.perform(excelFile)
-    println(task.getStratigraphicTable.size)
+    assertEquals(75, task.getStratigraphicTable.size)
+  }
+
+  @Test
+  fun noneBaseLayers() {
+    parameters!!["ageIndexes"] = "U"
+    val task = RoofOfBaseLayersToPoints(parameters!!)
+    task.setThreadingTask(mockTask)
+    task.perform(excelFile)
+    assertEquals(0, task.getStratigraphicTable.size)
   }
 }

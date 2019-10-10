@@ -91,7 +91,6 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       getTablesAndDecodeFields(file)
       deleteDecimalPart(nameOfAttributeID, observationsPointsTable)
       val mistakes = checkOnMissDataXYZDAndFix(observationsPointsTable)
-
       if (mistakes.isNotEmpty()) {
         task.printConsole("Ошибки отсутствия данных:")
         mistakes.forEach { task.printConsole(it) }
@@ -99,7 +98,6 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       interchangeXY(observationsPointsTable)
       if (useAmendment) makeAmendment(observationsPointsTable)
       deleteDecimalPart(nameOfAttributeID, stratigraphicTable)
-
       stratigraphicTable = stratigraphicTable.leavingTopBaseLayers()
       stratigraphicTable.forEach { layer ->
         if (observationsPointsTable.any {it[nameOfAttributeID] == layer[nameOfAttributeID]}) {
@@ -119,8 +117,10 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       absOfFromTo(stratigraphicTable) // деструктурирование
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")
-      overallNumberDotWells += stratigraphicTable.size
-      dotWellsFile.writeContent(stratigraphicTable)
+      if (stratigraphicTable.isNotEmpty()) {
+        overallNumberDotWells += stratigraphicTable.size
+        dotWellsFile.writeContent(stratigraphicTable)
+      }
     } catch (e: ExcelException) {
       throw GeoTaskException(e.message!!)
     } catch (e: DataException) {
@@ -273,7 +273,13 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       var firstBaseLayer: Map<String, String>? = null
       // найти первое совпадение с индексом вмещающих отложений
       for (ageIndex in ageIndexesAsList) { // перебор всех индексов вмещающих отложений
-        firstBaseLayer = layersForCurrentWell.firstOrNull { it[nameOfAttributeLCodeAge] == ageIndex }
+        firstBaseLayer = layersForCurrentWell.firstOrNull {
+          val currentAgeIndex = it[nameOfAttributeLCodeAge] ?: ""
+          // проверяется вложенность индексов (т.е. O1ol и O1or будут приравнены к O)
+          currentAgeIndex.contains(ageIndex)
+          // при поиске точного соответсвия следует использовать условие:
+          // it[nameOfAttributeLCodeAge] = ageIndex
+        }
         if (firstBaseLayer != null) break // если совпадение найдено - выйти из цикла
       }
       firstBaseLayer?.let { baseLayers.add(firstBaseLayer.toMutableMap())}
