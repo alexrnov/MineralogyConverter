@@ -178,7 +178,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       throw ExcelException("Нет названий полей в листе для литостратиграфии")
     }
 
-    titleDot = HashSet(titleObservationsPoints)
+    titleDot = HashSet(titleObservationsPoints) // set, - чтобы некоторые атрибуты не повторялись
     titleDot.addAll(titleLithostratigraphic)
     titleDot.add(numberOfLayers)
 

@@ -67,10 +67,10 @@ object IsihogyClientConstants {
   const val nameOfAttributeAllMinerals = "Все МСА"
 
   /** Название для атрибута UIN */
-  val nameOfAttributeUIN = "UIN"
+  const val nameOfAttributeUIN = "UIN"
 
   /** Название для атрибута возраста */
-  val nameOfAttributeLCodeAge = "L_Code возраста"
+  const val nameOfAttributeLCodeAge = "L_Code возраста"
 
   /** Название для атрибута литологии */
   val nameOfAttributeLCodeLithology = "L_Code породы"

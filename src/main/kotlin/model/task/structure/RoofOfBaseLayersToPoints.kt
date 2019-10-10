@@ -116,19 +116,11 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
                   "Excel-file: " + file.name)
         }
       }
-
-      stratigraphicTable.forEach {
-        println(it)
-      }
       absOfFromTo(stratigraphicTable) // деструктурирование
-      println("---------------------")
-      stratigraphicTable.forEach {
-        println(it)
-      }
-      stratigraphicTable.forEach { println(it) }
       task.printConsole("Из файла прочитано скважин: " +
               "${observationsPointsTable.size}")
       overallNumberDotWells += stratigraphicTable.size
+      dotWellsFile.writeContent(stratigraphicTable)
     } catch (e: ExcelException) {
       throw GeoTaskException(e.message!!)
     } catch (e: DataException) {
@@ -169,9 +161,11 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       throw ExcelException("Нет названий полей в листе для литостратиграфии")
     }
 
+    val titleDot = ArrayList(titleLithostratigraphic)
+    titleDot.addAll(listOf(nameOfAttributeX, nameOfAttributeY,
+            nameOfAttributeZ, nameOfAttributeCodeTypeTN))
     dotWellsFile = MicromineTextFile(outputFilePath)
-    dotWellsFile.writeTitle(listOf("X факт.", "Y факт.",
-            "Z", attributeOfBooleanStratigraphy))
+    dotWellsFile.writeTitle(titleDot)
   }
 
   @Throws(ExcelException::class, DataException::class)
@@ -246,7 +240,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
   override fun printReport() {
     task.printConsole("")
     task.printConsole("Файл точек для Micromine, полученных по " +
-            "стратиграфическим интервалам:")
+            "кровле кимберлитовмещающих отложений:")
     task.printConsole("${outputFilePath.toAbsolutePath()}")
     task.printConsole("Общее количество точек, записанных в точечный файл: " +
             overallNumberDotWells)
