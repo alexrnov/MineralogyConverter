@@ -141,10 +141,13 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       println("$i $it")
       i++
     }
-    println("-------")
 
     probes.fillSimpleProbes(addAgeAttribute, addFindAttribute, addSafetyAttributes)
 
+    println("------------------")
+    probes[0].forEach {
+      println(it)
+    }
     return simpleProbes.stream()
             .map { it[keys[1]] }
             .collect(Collectors.toSet()) // вернуть набор уникальных id скважин
