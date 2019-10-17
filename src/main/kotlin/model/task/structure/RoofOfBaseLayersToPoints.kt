@@ -268,7 +268,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
             .collect(Collectors.toSet())
     ids.forEach { idWell -> // перебор скважин
       val layersForCurrentWell = this.filter { it[nameOfAttributeID] == idWell }
-      var firstBaseLayer: Map<String, String>? = null
+      val firstBaseLayer: Map<String, String>?
       // найти первое совпадение с индексом вмещающих отложений
        // перебор всех индексов вмещающих отложений
         firstBaseLayer = layersForCurrentWell.firstOrNull {
