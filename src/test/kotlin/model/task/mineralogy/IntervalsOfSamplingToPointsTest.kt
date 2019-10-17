@@ -51,7 +51,8 @@ internal class IntervalsOfSamplingToPointsTest {
     assertEquals(14229079, outputFile.toFile().length())
   }
 
-
+  @Test
+  fun `input interval file with non-empty probes`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
@@ -83,30 +84,30 @@ internal class IntervalsOfSamplingToPointsTest {
     assertEquals(242145, dotWells.size)
     assertEquals(12,
             dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
-                          .filter { it["находки"] == "1.0" }
-                          .count())
+                    .filter { it["находки"] == "1.0" }
+                    .count())
     assertEquals(0,
             dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
-                          .filter { it["находки"] != "1.0" }
-                          .count())
+                    .filter { it["находки"] != "1.0" }
+                    .count())
     // у всех скважин со стратиграфией "J1tn" и ненулевым количеством
     // "Все_МСА" должен быть атрибут "находки" со значением "1.0"
     assertEquals(dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
-                                      .count(),
+            .count(),
             dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
-                          .filter { it["находки"] == "1.0" }
-                          .count())
+                    .filter { it["находки"] == "1.0" }
+                    .count())
 
     assertEquals(2613,
             dotWells.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
-                          .count())
+                    .count())
     // все точки с другими стратиграфическимим индексами (например J1dh)
     // , даже если атрибут "Все_МСА" != 0, должны иметь значение
     // атрибута "находки" = 0.0
     assertEquals(0,
             dotWells.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
-                          .filter { it["находки"] == "1.0" }
-                          .count())
+                    .filter { it["находки"] == "1.0" }
+                    .count())
   }
 
   @Test
@@ -115,7 +116,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
-
+            "taskName" to "подсветить точки по возрасту;;J1dh")
     val task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
