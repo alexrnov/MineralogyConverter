@@ -141,6 +141,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       println("$i $it")
       i++
     }
+    println("-------")
 
     probes.fillSimpleProbes(addAgeAttribute, addFindAttribute, addSafetyAttributes)
 
