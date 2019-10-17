@@ -109,4 +109,5 @@ internal class IntervalsOfSamplingToPointsTest {
                           .filter { it["находки"] == "1.0" }
                           .count())
   }
+  
 }

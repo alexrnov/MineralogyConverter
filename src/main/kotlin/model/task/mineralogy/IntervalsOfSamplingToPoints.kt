@@ -99,6 +99,29 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       { map, currentProbe -> map[keys.last()] = currentProbe[keys.lastIndex] }
     else { _, _ -> } // иначе не добавлять атрибут
 
+    val safety = true
+    val addSafetyAttributes: AddAttribute = if (safety)
+      { simpleProbeMap, currentProbeList ->
+        simpleProbeMap[keys[32]] = currentProbeList[32] // пироп/износ_механический/0
+        simpleProbeMap[keys[33]] = currentProbeList[33] // пироп/износ_механический/I
+        simpleProbeMap[keys[34]] = currentProbeList[34] // пироп/износ_механический/II
+        simpleProbeMap[keys[35]] = currentProbeList[35] // пироп/износ_механический/III
+        simpleProbeMap[keys[36]] = currentProbeList[36] // пироп/износ_механический/IV
+        simpleProbeMap[keys[37]] = currentProbeList[37] // пироп/осколки
+        simpleProbeMap[keys[38]] = currentProbeList[38] // пироп/гипергенные
+        simpleProbeMap[keys[39]] = currentProbeList[39] // пироп/трещиноватости
+        simpleProbeMap[keys[40]] = currentProbeList[40] // пироп/включения
+
+        simpleProbeMap[keys[126]] = currentProbeList[126] // пикроильменит/износ_механический/0
+        simpleProbeMap[keys[127]] = currentProbeList[127] // пикроильменит/износ_механический/I
+        simpleProbeMap[keys[128]] = currentProbeList[128] // пикроильменит/износ_механический/II
+        simpleProbeMap[keys[129]] = currentProbeList[129] // пикроильменит/износ_механический/III
+        simpleProbeMap[keys[130]] = currentProbeList[130] // пикроильменит/износ_механический/IV
+        simpleProbeMap[keys[131]] = currentProbeList[131] // пикроильменит/осколки
+        simpleProbeMap[keys[132]] = currentProbeList[132] // пикроильменит/гипергенные
+        simpleProbeMap[keys[133]] = currentProbeList[133] // пикроильменит/вторичные
+      } else { _, _ -> }
+
     // выделять точки со стратиграфическим индексом, указанном
     // во входных параметрах, при условии, что для них есть находки МСА
     hightlightByAgeAndFind = if (selectByAge && keys.contains("находки"))
@@ -113,7 +136,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         }
       } else { _ -> }
 
-    probes.fillSimpleProbes(addAgeAttribute, addFindAttribute)
+    probes.fillSimpleProbes(addAgeAttribute, addFindAttribute, addSafetyAttributes)
 
     return simpleProbes.stream()
             .map { it[keys[1]] }
@@ -174,22 +197,25 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
    */
   @Throws(IOException::class)
   private inline fun List<String>.fillSimpleProbes(addAge: AddAttribute,
-                                                   addFind: AddAttribute) {
+                                                   addFind: AddAttribute, addTask: AddAttribute) {
     for (i in 1 until this.size) {
-      val currentProbe = this[i].split(";")
-      if (currentProbe.size != keys.size)
+      val currentProbeList = this[i].split(";")
+      if (currentProbeList.size != keys.size)
         throw IOException("Неверный формат входного файла")
-      val map = HashMap<String, String>()
-      map[keys[1]] = currentProbe[1] // ID
-      map[keys[7]] = currentProbe[7] // east
-      map[keys[8]] = currentProbe[8] // north
-      map[keys[9]] = currentProbe[9] // z
-      map[keys[11]] = currentProbe[11] // from
-      map[keys[12]] = currentProbe[12] // to
-      map[keys[23]] = currentProbe[23] // all MSD
-      addAge.invoke(map, currentProbe) // стратиграфия
-      addFind.invoke(map, currentProbe) // находки (0 или 1)
-      simpleProbes.add(map)
+      val simpleProbeMap = HashMap<String, String>()
+      simpleProbeMap[keys[1]] = currentProbeList[1] // ID
+      simpleProbeMap[keys[7]] = currentProbeList[7] // east
+      simpleProbeMap[keys[8]] = currentProbeList[8] // north
+      simpleProbeMap[keys[9]] = currentProbeList[9] // z
+      simpleProbeMap[keys[11]] = currentProbeList[11] // from
+      simpleProbeMap[keys[12]] = currentProbeList[12] // to
+      simpleProbeMap[keys[23]] = currentProbeList[23] // all MSD
+      addAge.invoke(simpleProbeMap, currentProbeList) // стратиграфия
+      addFind.invoke(simpleProbeMap, currentProbeList) // находки (0 или 1)
+      // добавить атирбуты, необходимые для текущей задачи
+      addTask.invoke(simpleProbeMap, currentProbeList)
+      // атрибуты для реализации выбранной задачи
+      simpleProbes.add(simpleProbeMap)
     }
   }
 }
