@@ -36,7 +36,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   private val inputFile: String by parameters
   private val outputFile: String by parameters
-  private val ageIndex: String by parameters
   private val taskName: String by parameters
 
   private lateinit var inputFilePath: Path
@@ -83,31 +82,33 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
       throw IOException("Неверный формат входного файла")
 
-    when (taskName) {
-      "подсветить точки с указанным возрастом и с находками" -> {
+    var addAttributes: AddAttributes = { _, _ -> }
+    when {
+      // точки будут подсвечены по возрасту при условии, что по ним иеются находки
+      taskName.contains("подсветить точки по возрасту") -> {
+        val ageIndex = taskName.split(";;").run { this.takeIf { it.size > 1 }?.let { this[1].trim() } ?: "" }
         // если входной файл - интервалы по всем точкам наблюдения
-        if (keys.size == numberAttributesAllMSD) {
+        if (keys.size == numberAttributesAllMSD && ageIndex.isNotEmpty()) {
           // при чтении файла, в коллекцию упрощенных проб добавлять атрибуты
-          val addAttributes: AddAttributes = { simpleProbeMap, currentProbeList ->
+          addAttributes = { simpleProbeMap, currentProbeList ->
             simpleProbeMap[keys[16]] = currentProbeList[16] // стратиграфия
             simpleProbeMap[keys.last()] = currentProbeList[keys.lastIndex] // находки
           }
-          probes.fillSimpleProbes(addAttributes)
           // выделять точки со стратиграфическим индексом, указанным во
           // входных параметрах, при условии, что для них есть находки МСА
           calculationsTask = { layersForCurrentWell ->
             layersForCurrentWell.map {
-              // если у текущего пласта стратиграфический возраст не совпадает с искомым
-              // стратиграфическим индексом и для этого пласта есть находки, тогда для
-              // атрибута "находки" установить значение "0.0"
-              val layerAge = it[keys[16]] ?: "" // стратиграфия
-              if (!layerAge.contains(ageIndex) && it[keys.last()] == "1.0") it[keys.last()] = "0.0"
+            // если у текущего пласта стратиграфический возраст не совпадает с искомым
+            // стратиграфическим индексом и для этого пласта есть находки, тогда для
+            // атрибута "находки" установить значение "0.0"
+            val layerAge = it[keys[16]] ?: "" // стратиграфия
+            if (!layerAge.contains(ageIndex) && it[keys.last()] == "1.0") it[keys.last()] = "0.0"
             }
           }
         }
       }
-      "общая сохранность" -> {
-        val addAttributes: AddAttributes = { simpleProbeMap, currentProbeList ->
+      taskName == "общая сохранность" -> {
+        addAttributes = { simpleProbeMap, currentProbeList ->
           simpleProbeMap[keys[24]] = currentProbeList[24] // пиропы
           simpleProbeMap[keys[25]] = currentProbeList[25] // пикроильмениты
 
@@ -130,9 +131,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
           simpleProbeMap[keys[132]] = currentProbeList[132] // пикроильменит/гипергенные
           simpleProbeMap[keys[133]] = currentProbeList[133] // пикроильменит/вторичные
         }
-        probes.fillSimpleProbes(addAttributes)
       }
     }
+
+    probes.fillSimpleProbes(addAttributes)
 
     var i = 0
     keys.forEach {
