@@ -28,7 +28,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
-            "selectByAge" to true, "ageIndex" to "J1dh")
+            "taskName" to "подсветить точки по возрасту;;J1dh")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     var table: Collection<Any?> = task.getTableFromFile()
@@ -38,7 +38,7 @@ internal class IntervalsOfSamplingToPointsTest {
     assertEquals(14229079, outputFile.toFile().length())
 
     Files.deleteIfExists(outputFile)
-    parameters["ageIndex"] = "J1uk"
+    parameters["taskName"] = "подсветить точки по возрасту;;J1uk"
     task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     table = task.getTableFromFile()
@@ -52,13 +52,13 @@ internal class IntervalsOfSamplingToPointsTest {
   }
 
   @Test
-  fun `input interval file with probes which contain only MSD`() {
+  fun `input interval file with non-empty probes`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsOnlyMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
-            "selectByAge" to true, "ageIndex" to "J1dh"))
+            "taskName" to "подсветить точки по возрасту;;J1dh"))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
@@ -76,7 +76,7 @@ internal class IntervalsOfSamplingToPointsTest {
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
-            "selectByAge" to true, "ageIndex" to "J1tn"))
+            "taskName" to "подсветить точки по возрасту;;J1tn"))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
@@ -84,30 +84,30 @@ internal class IntervalsOfSamplingToPointsTest {
     assertEquals(242145, dotWells.size)
     assertEquals(12,
             dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
-                          .filter { it["находки"] == "1.0" }
-                          .count())
+                    .filter { it["находки"] == "1.0" }
+                    .count())
     assertEquals(0,
             dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
-                          .filter { it["находки"] != "1.0" }
-                          .count())
+                    .filter { it["находки"] != "1.0" }
+                    .count())
     // у всех скважин со стратиграфией "J1tn" и ненулевым количеством
     // "Все_МСА" должен быть атрибут "находки" со значением "1.0"
     assertEquals(dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
-                                      .count(),
+            .count(),
             dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
-                          .filter { it["находки"] == "1.0" }
-                          .count())
+                    .filter { it["находки"] == "1.0" }
+                    .count())
 
     assertEquals(2613,
             dotWells.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
-                          .count())
+                    .count())
     // все точки с другими стратиграфическимим индексами (например J1dh)
     // , даже если атрибут "Все_МСА" != 0, должны иметь значение
     // атрибута "находки" = 0.0
     assertEquals(0,
             dotWells.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
-                          .filter { it["находки"] == "1.0" }
-                          .count())
+                    .filter { it["находки"] == "1.0" }
+                    .count())
   }
 
   @Test
@@ -116,7 +116,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
-            "selectByAge" to false, "ageIndex" to "J1dh")
+            "taskName" to "подсветить точки по возрасту;;J1dh")
     val task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
