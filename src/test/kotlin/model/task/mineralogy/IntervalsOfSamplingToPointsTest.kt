@@ -51,8 +51,7 @@ internal class IntervalsOfSamplingToPointsTest {
     assertEquals(14229079, outputFile.toFile().length())
   }
 
-  @Test
-  fun `input interval file with non-empty probes`() {
+
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
@@ -116,7 +115,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
-            "taskName" to "подсветить точки по возрасту;;J1dh")
+
     val task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
