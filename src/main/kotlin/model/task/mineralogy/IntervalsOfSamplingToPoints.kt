@@ -79,7 +79,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         noEnd = line?.let { probes.add(line) } ?: false
       }
     }
-
+    println("1")
     if (probes.size < 2) throw IOException("Неверный формат входного файла")
     keys = probes[0].split(";")
     // или if (keys.size != numberAttributesOnlyMSD && keys.size != numberAttributesAllMSD)
