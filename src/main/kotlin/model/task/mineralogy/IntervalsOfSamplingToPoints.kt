@@ -136,6 +136,12 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         }
       } else { _ -> }
 
+    var i = 0
+    keys.forEach {
+      println("$i $it")
+      i++
+    }
+
     probes.fillSimpleProbes(addAgeAttribute, addFindAttribute, addSafetyAttributes)
 
     return simpleProbes.stream()
