@@ -58,7 +58,11 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   // указанном во входных параметрах и с наличием находок МСА.
   // Это может быть необходимо для Micromine - когда формирование
   // шлихоминералогических ореолов выполняется по возрастам
+ addCalculationsTask_to_IntervalsOfSamplingToPoints
   private var calculationsTask: CalculationsTask = { _ -> }
+
+  private var highlightByAgeAndFind: HightlightByAgeAndFind? = null
+
 
   init { checkInputParameters() }
 
@@ -75,67 +79,16 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         noEnd = line?.let { probes.add(line) } ?: false
       }
     }
-    println("5")
+    println("1")
     if (probes.size < 2) throw IOException("Неверный формат входного файла")
     keys = probes[0].split(";")
     // или if (keys.size != numberAttributesOnlyMSD && keys.size != numberAttributesAllMSD)
     if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
       throw IOException("Неверный формат входного файла")
 
-    var addAttributes: AddAttributes = { _, _ -> }
-    when {
-      // точки будут подсвечены по возрасту при условии, что по ним иеются находки
-      taskName.contains("подсветить точки по возрасту") -> {
-        val ageIndex = taskName.split(";;").run { this.takeIf { it.size > 1 }?.let { this[1].trim() } ?: "" }
-        // если входной файл - интервалы по всем точкам наблюдения
-        if (keys.size == numberAttributesAllMSD && ageIndex.isNotEmpty()) {
-          // при чтении файла, в коллекцию упрощенных проб добавлять атрибуты
-          addAttributes = { simpleProbeMap, currentProbeList ->
-            simpleProbeMap[keys[16]] = currentProbeList[16] // стратиграфия
-            simpleProbeMap[keys.last()] = currentProbeList[keys.lastIndex] // находки
-          }
-          // выделять точки со стратиграфическим индексом, указанным во
-          // входных параметрах, при условии, что для них есть находки МСА
-          calculationsTask = { layersForCurrentWell ->
-            layersForCurrentWell.map {
-            // если у текущего пласта стратиграфический возраст не совпадает с искомым
-            // стратиграфическим индексом и для этого пласта есть находки, тогда для
-            // атрибута "находки" установить значение "0.0"
-            val layerAge = it[keys[16]] ?: "" // стратиграфия
-            if (!layerAge.contains(ageIndex) && it[keys.last()] == "1.0") it[keys.last()] = "0.0"
-            }
-          }
-        }
-      }
-      taskName == "общая сохранность" -> {
-        addAttributes = { simpleProbeMap, currentProbeList ->
-          simpleProbeMap[keys[24]] = currentProbeList[24] // пиропы
-          simpleProbeMap[keys[25]] = currentProbeList[25] // пикроильмениты
 
-          simpleProbeMap[keys[32]] = currentProbeList[32] // пироп/износ_механический/0
-          simpleProbeMap[keys[33]] = currentProbeList[33] // пироп/износ_механический/I
-          simpleProbeMap[keys[34]] = currentProbeList[34] // пироп/износ_механический/II
-          simpleProbeMap[keys[35]] = currentProbeList[35] // пироп/износ_механический/III
-          simpleProbeMap[keys[36]] = currentProbeList[36] // пироп/износ_механический/IV
-          simpleProbeMap[keys[37]] = currentProbeList[37] // пироп/осколки
-          simpleProbeMap[keys[38]] = currentProbeList[38] // пироп/гипергенные
-          simpleProbeMap[keys[39]] = currentProbeList[39] // пироп/трещиноватости
-          simpleProbeMap[keys[40]] = currentProbeList[40] // пироп/включения
 
-          simpleProbeMap[keys[126]] = currentProbeList[126] // пикроильменит/износ_механический/0
-          simpleProbeMap[keys[127]] = currentProbeList[127] // пикроильменит/износ_механический/I
-          simpleProbeMap[keys[128]] = currentProbeList[128] // пикроильменит/износ_механический/II
-          simpleProbeMap[keys[129]] = currentProbeList[129] // пикроильменит/износ_механический/III
-          simpleProbeMap[keys[130]] = currentProbeList[130] // пикроильменит/износ_механический/IV
-          simpleProbeMap[keys[131]] = currentProbeList[131] // пикроильменит/осколки
-          simpleProbeMap[keys[132]] = currentProbeList[132] // пикроильменит/гипергенные
-          simpleProbeMap[keys[133]] = currentProbeList[133] // пикроильменит/вторичные
-        }
-      }
-    }
-
-    probes.fillSimpleProbes(addAttributes)
-
+    println("probes.size() = ${probes.size}")
     var i = 0
     keys.forEach {
       println("$i $it")
@@ -147,6 +100,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     simpleProbes[0].forEach {
       println(it)
     }
+    probes.fillSimpleProbes(addAgeAttribute, addFindAttribute)
 
     return simpleProbes.stream()
             .map { it[keys[1]] }
@@ -158,7 +112,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell: List<MutableMap<String, String>> = simpleProbes.filter { it[keys[1]] == idWell }
-      calculationsTask.invoke(layersForCurrentWell)
+
       val list = addPointsToIntervals(layersForCurrentWell)
       calculateAbsZForAdditionalPoints(list)
       dotWells.addAll(list)
