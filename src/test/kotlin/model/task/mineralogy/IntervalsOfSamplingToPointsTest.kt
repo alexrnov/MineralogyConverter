@@ -116,7 +116,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
-            "taskName" to "подсветить точки по возрасту;;J1dh")
+            "taskName" to "общая сохранность")
     val task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
