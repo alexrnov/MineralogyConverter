@@ -114,12 +114,20 @@ internal class IntervalsOfSamplingToPointsTest {
   fun perform() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
-    val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
+    var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints,
             "taskName" to "общая сохранность")
-    val task = IntervalsOfSamplingToPoints(parameters)
+    var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
-    val table: Collection<Any?> = task.getTableFromFile()
+    var table: Collection<Any?> = task.getTableFromFile()
+    //table.forEach { task.perform(it) }
+    //task.writeData()
+
+    parameters["inputFile"] = inputFileIntervalWellsOnlyMSD
+    task = IntervalsOfSamplingToPoints(parameters)
+    task.setThreadingTask(mockTask)
+    table = task.getTableFromFile()
     table.forEach { task.perform(it) }
+    task.writeData()
   }
 }

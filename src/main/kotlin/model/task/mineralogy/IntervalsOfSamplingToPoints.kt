@@ -87,8 +87,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     probes.fillSimpleProbes(algorithm.first) // передать алгоритм добавления атрибутов
     calculationsTask = algorithm.second // алогитм для вычислений для текущей задачи
 
-    simpleProbes[0].forEach { println(it) }
-
+    //simpleProbes[0].forEach { println(it) }
     return simpleProbes.stream()
             .map { it[keys[1]] }
             .collect(Collectors.toSet()) // вернуть набор уникальных id скважин

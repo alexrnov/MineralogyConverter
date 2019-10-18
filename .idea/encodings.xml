@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/test/resources/documents/instruction.txt" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/src/test/resources/documents/instruction.txt" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/test/resources/documents/instruction.txt" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/resources/documents/instruction.txt" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/test/resources/documents/instruction.txt" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/src/test/resources/input/intervalWellsOnlyMSD.txt" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/test/resources/output/absForFirstLastProbes.txt" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/test/resources/output/isihogy client/absPointsForRoofOfBaseLayers.txt" charset="windows-1251" />
@@ -20,6 +20,8 @@
     <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with all MSD/topWells.txt" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/test/resources/output/probes without MSD/intervalWells.txt" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/test/resources/output/probes without MSD/topWells.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probesIntervalsToPoints.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/probesIntervalsToPoints.txt" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/test/resources/output/probesIntervalsToPoints.txt" charset="windows-1251" />
   </component>
 </project>
