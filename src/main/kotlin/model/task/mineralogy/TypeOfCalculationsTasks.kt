@@ -2,7 +2,7 @@ package model.task.mineralogy
 
 class TypeOfCalculationsTasks(private val taskName: String, private val keys: List<String>) {
 
-  private var calculationsTask: CalculationsTask = { _ -> }
+  private var calculationsTask: CalculationsTask = { }
   private var addAttributes: AddAttributes = { _, _ -> }
 
   fun getAlgorithm(): Pair<AddAttributes, CalculationsTask> {
@@ -18,7 +18,7 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
   private fun highlightByAge() {
     val ageIndex = taskName.split(";;").run { this.takeIf { it.size > 1 }?.let { this[1].trim() } ?: "" }
     // если входной файл - интервалы по всем точкам наблюдения
-    if (keys.size != numberAttributesAllMSD || ageIndex.isEmpty()) return
+    if (keys.size != numberAttributesAllProbes || ageIndex.isEmpty()) return
     // при чтении файла, в коллекцию упрощенных проб добавлять атрибуты
     addAttributes = { simpleProbeMap, currentProbeList ->
       simpleProbeMap[keys[16]] = currentProbeList[16] // стратиграфия

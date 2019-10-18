@@ -18,15 +18,14 @@ import java.util.stream.Collectors
 typealias AddAttributes = (MutableMap<String, String>, List<String>) -> Unit
 typealias CalculationsTask = (List<MutableMap<String, String>>) -> Unit
 
-
 // количество атрибутов во входном файле интервалов со всеми пробами
 // (с находками МСА и без таковых). В этом файле на одно атрибутивное
 // поле больше("находки"), но оно расположено в самом конце и не влияет
 // на порядок индексов предшедствующх атрибутов
-const val numberAttributesAllMSD = 268
+const val numberAttributesAllProbes = 268
 
 // колчество атрибутов во входном файле интервалов только для непустых проб
-const val numberAttributesOnlyMSD = 267
+const val numberAttributesNonEmptyProbes = numberAttributesAllProbes - 1
 
 /**
  * Задача "Интервалы опробования в точки".
@@ -60,7 +59,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   // указанном во входных параметрах и с наличием находок МСА.
   // Это может быть необходимо для Micromine - когда формирование
   // шлихоминералогических ореолов выполняется по возрастам
-  private var calculationsTask: CalculationsTask = { _ -> }
+  private var calculationsTask: CalculationsTask = { }
 
   init { checkInputParameters() }
 
@@ -80,8 +79,8 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
     if (probes.size < 2) throw IOException("Неверный формат входного файла")
     keys = probes[0].split(";")
-    // или if (keys.size != numberAttributesOnlyMSD && keys.size != numberAttributesAllMSD)
-    if (keys.size !in numberAttributesOnlyMSD..numberAttributesAllMSD)
+    // или if (keys.size != numberAttributesNonEmptyProbes && keys.size != numberAttributesAllProbes)
+    if (keys.size !in numberAttributesNonEmptyProbes..numberAttributesAllProbes)
       throw IOException("Неверный формат входного файла")
 
     val algorithm = TypeOfCalculationsTasks(taskName, keys).getAlgorithm()
@@ -100,7 +99,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     try {
       val idWell = any as String
       val layersForCurrentWell: List<MutableMap<String, String>> = simpleProbes.filter { it[keys[1]] == idWell }
-      calculationsTask.invoke(layersForCurrentWell) // Как паттерн ШАБЛОННЫЙ МЕТОД
+      calculationsTask.invoke(layersForCurrentWell) // Как паттерн ШАБЛОННЫЙ МЕТОД (заменяемая часть алгоритма)
       val list = addPointsToIntervals(layersForCurrentWell)
       calculateAbsZForAdditionalPoints(list)
       dotWells.addAll(list)
@@ -162,7 +161,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       simpleProbeMap[keys[12]] = currentProbeList[12] // to
       simpleProbeMap[keys[23]] = currentProbeList[23] // all MSD
       // добавить набор атрибутов, необходимых в рамках решаемой задачи
-      addAttributes.invoke(simpleProbeMap, currentProbeList)
+      addAttributes.invoke(simpleProbeMap, currentProbeList) // Как паттерн ШАБЛОННЫЙ МЕТОД (заменяемая часть алгоритма)
       simpleProbes.add(simpleProbeMap)
     }
   }
