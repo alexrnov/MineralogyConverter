@@ -1,5 +1,9 @@
 package model.task.mineralogy
 
+import TestUtils.initToolkit
+import TestUtils.inputFileIntervalWellsAllMSD
+import TestUtils.outputFileProbesIntervalsToPoints
+import TestUtils.outputFileRemoveOverlapIntervals
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -13,29 +17,22 @@ import java.nio.file.Paths
 internal class RemoveOverlapIntervalsTest {
 
   private val mockTask = mockk<ThreadTask>()
+  private var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
+          "outputFile" to outputFileRemoveOverlapIntervals)
 
   init {
     initToolkit()
     every { mockTask.printConsole(any()) } just Runs
   }
+
   @Test
   fun perform() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
-    var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
-            "outputFile" to outputFileProbesIntervalsToPoints,
-            "taskName" to "общая сохранность")
-    var task = IntervalsOfSamplingToPoints(parameters)
+    val task = RemoveOverlapIntervals(parameters)
     task.setThreadingTask(mockTask)
-    var table: Collection<Any?> = task.getTableFromFile()
-    //table.forEach { task.perform(it) }
-    //task.writeData()
-
-    parameters["inputFile"] = inputFileIntervalWellsOnlyMSD
-    task = IntervalsOfSamplingToPoints(parameters)
-    task.setThreadingTask(mockTask)
-    table = task.getTableFromFile()
+    val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
-    task.writeData()
+    //task.writeData()
   }
 }

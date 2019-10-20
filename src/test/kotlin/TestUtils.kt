@@ -37,6 +37,9 @@ object TestUtils {
   val outputFileProbesIntervalsToPoints = "." + s + "src" + s + "test" +
           s + "resources" + s + "output" + s + "probesIntervalsToPoints.txt"
 
+  val outputFileRemoveOverlapIntervals = "." + s + "src" + s + "test" +
+          s + "resources" + s + "output" + s + "removeOverlapIntervals.txt"
+
   val outputFilePointsForStarigraphy = "." + s + "src" + s + "test" + s +
           "resources" + s + "output" + s + "isihogy client" +
           s + "absPointsForStratigraphy.txt"
