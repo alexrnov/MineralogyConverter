@@ -103,6 +103,19 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       probesForCurrentWell.forEach {
         println("${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
       }
+
+      val probesWithMSD: List<Map<String, String>> = probesForCurrentWell.filter { (it["Все_МСА"]?.toDouble() ?: 0.0) > 0.0 }
+      val emptyProbes = probesForCurrentWell.toMutableList()
+      emptyProbes.removeAll(probesWithMSD)
+
+      println("-")
+      probesWithMSD.forEach {
+        println("${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
+      }
+      println("-")
+      emptyProbes.forEach {
+        println("${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
+      }
       println("-------------------------------")
 
     } catch(e: Exception) {
