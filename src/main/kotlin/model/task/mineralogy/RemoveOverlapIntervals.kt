@@ -55,33 +55,55 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   override fun getTableFromFile(): Collection<Any?> {
     val br: BufferedReader = Files.newBufferedReader(inputFilePath,
             Charset.forName("windows-1251"))
-    val probesID = HashSet<String>()
+    val probesID = ArrayList<String>()
+    var firstLine = true
     br.use { // try с ресурсами
       var noEnd = true
       var line: String?
       while (noEnd) {
         line = it.readLine()
-        println("line = $line")
-        noEnd = line?.let {x ->
-          val s = x.split(";")
-          println("s[1] = ${s[1]}")
-          probesID.add(s[1]) } ?: false
+        if (line != null) {
+          val lineAsList = line.split(";")
+          if (firstLine) {
+            keys = lineAsList
+            firstLine = false
+          } else probesID.add(lineAsList[1])
+        } else noEnd = false
       }
     }
-
-    probesID.forEach {
-      println(it)
-    }
-
-    return simpleProbes.stream()
-            .map { it[keys[1]] }
-            .collect(Collectors.toSet()) // вернуть набор уникальных id скважин
+    return HashSet(probesID) // вернуть набор уникальных id скважин
   }
 
   @Throws(GeoTaskException::class)
   override fun perform(any: Any?) {
     try {
-      //val idWell = any as String
+      val idWell = any as String
+
+      val br: BufferedReader = Files.newBufferedReader(inputFilePath,
+              Charset.forName("windows-1251"))
+
+      val probesForCurrentWell = ArrayList<Map<String, String>>()
+      br.use { // try с ресурсами
+        var noEnd = true
+        var line: String?
+        while (noEnd) {
+          line = it.readLine()
+          if (line != null) {
+            val currentLineAsList: List<String> = line.split(";")
+            if (currentLineAsList[1] == idWell) {
+              val key = keys.iterator()
+              val v = currentLineAsList.associate { value -> Pair(key.next(), value)}
+              probesForCurrentWell.add(v)
+            }
+          }
+          else noEnd = false
+        }
+      }
+
+      probesForCurrentWell.forEach {
+        println("${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
+      }
+      println("-------------------------------")
 
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let { e.message } ?: "perform error")
