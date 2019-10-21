@@ -62,8 +62,9 @@ internal class RemoveOverlapIntervalsTest {
           (toMSD <= fromEmpty || fromMSD >= toEmpty) -> println("Интервал с МСА за пределами пустой пробы")
           (fromMSD <= fromEmpty && toMSD >= toEmpty) -> println("Интервал с МСА полностью перекрывает пустой интервал")
           (fromMSD > fromEmpty && toMSD < toEmpty) -> println("Интервал с МСА лежит внутри пустого интревала")
-          (toMSD > fromEmpty && fromMSD < fromEmpty) -> println("Интервал с МСА перекрывает пустой интервал сверху")
-          (fromMSD < toEmpty && toMSD >= toEmpty) -> println("Интервал с МСА перекрывает пустую пробу снизу")
+          (toMSD > fromEmpty && fromMSD <= fromEmpty && toMSD < toEmpty) -> println("Интервал с МСА перекрывает пустой интервал сверху")
+          (fromMSD < toEmpty && toMSD >= toEmpty && fromMSD > fromEmpty ) -> println("Интервал с МСА перекрывает пустую пробу снизу")
+          else -> println("Другой случай")
         }
       }
     }
