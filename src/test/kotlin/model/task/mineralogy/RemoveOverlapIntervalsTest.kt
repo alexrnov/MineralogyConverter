@@ -60,7 +60,7 @@ internal class RemoveOverlapIntervalsTest {
       var fromEmpty = pFromEmpty
       var toEmpty = pToEmpty
 
-      println("Empty[$fromEmpty-$toEmpty]")
+      //println("Empty[$fromEmpty-$toEmpty]")
       val list = ArrayList<String>()
 
       for (probeWithMSD in probesWithMSD) {
@@ -68,25 +68,25 @@ internal class RemoveOverlapIntervalsTest {
         val toMSD = probeWithMSD["До"]?.toDouble() ?: 0.0
         when {
           (toMSD <= fromEmpty || fromMSD >= toEmpty) -> {
-            println("1. MSD[$fromMSD-$toMSD], Интервал с МСА за пределами пустой пробы")
+            //println("1. MSD[$fromMSD-$toMSD], Интервал с МСА за пределами пустой пробы")
           }
           (fromMSD <= fromEmpty && toMSD >= toEmpty) -> {
-            println("2. MSD[$fromMSD-$toMSD], Интервал с МСА полностью перекрывает пустой интервал")
+            //println("2. MSD[$fromMSD-$toMSD], Интервал с МСА полностью перекрывает пустой интервал")
             return list // если проба с МСА полностью перекрывает пустой интевал, вернуть пустой список
           }
           (fromMSD > fromEmpty && toMSD < toEmpty) -> {
-            println("3. MSD[$fromMSD-$toMSD], Интервал с МСА лежит внутри пустого интревала")
-            //val list2 = f(fromEmpty, fromMSD)
-            //val list3 = f(toMSD, toEmpty)
-            //list.addAll(list2)
-            //list.addAll(list3)
+            //println("3. MSD[$fromMSD-$toMSD], Интервал с МСА лежит внутри пустого интревала")
+            val list2 = f(fromEmpty, fromMSD)
+            val list3 = f(toMSD, toEmpty)
+            list.addAll(list2)
+            list.addAll(list3)
           }
           (toMSD > fromEmpty && fromMSD <= fromEmpty && toMSD < toEmpty) -> {
-            println("4. MSD[$fromMSD-$toMSD], Интервал с МСА перекрывает пустую пробу сверху")
+            //println("4. MSD[$fromMSD-$toMSD], Интервал с МСА перекрывает пустую пробу сверху")
             fromEmpty = toMSD
           }
           (fromMSD < toEmpty && toMSD >= toEmpty && fromMSD > fromEmpty) -> {
-            println("5. MSD[$fromMSD-$toMSD], Интервал с МСА перекрывает пустую пробу снизу")
+            //println("5. MSD[$fromMSD-$toMSD], Интервал с МСА перекрывает пустую пробу снизу")
             toEmpty = fromMSD
           }
           else -> println("Другой случай")
@@ -96,13 +96,27 @@ internal class RemoveOverlapIntervalsTest {
       return list
     }
 
+    val resultSet = HashSet<String>()
     for (emptyProbe in emptyProbes) {
       val fromEmpty = emptyProbe["От"]?.toDouble() ?: 0.0
       val toEmpty = emptyProbe["До"]?.toDouble() ?: 0.0
       val list = f(fromEmpty, toEmpty)
-      list.forEach { println(it) }
-      println("-------------------------")
+      resultSet.addAll(list)
     }
 
+    println("probesWithMSD: ")
+    probesWithMSD.forEach {
+      println(it)
+    }
+    println("-")
+    println("emptyProbes: ")
+    emptyProbes.forEach {
+      println(it)
+    }
+    println("-")
+    println("resultEmptyProbes: ")
+    resultSet.forEach {
+      println(it)
+    }
   }
 }
