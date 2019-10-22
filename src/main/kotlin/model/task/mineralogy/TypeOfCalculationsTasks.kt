@@ -10,14 +10,23 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
       // точки будут подсвечены по возрасту при условии, что по ним имеются находки
       taskName.contains("подсветить точки по возрасту") -> highlightByAge()
       taskName == "общая сохранность" -> commonSafety()
+      taskName == "добавить точки" ->justAdditionalPoints() // если просто добавить точки
       else -> {}
     }
     return Pair(addAttributes, calculationsTask)
   }
 
+  private fun justAdditionalPoints() {
+    if (keys.size != numberAttributesAllProbes) return
+    addAttributes = { simpleProbeMap, currentProbeList ->
+      simpleProbeMap[keys[16]] = currentProbeList[16] // стратиграфия
+      simpleProbeMap[keys.last()] = currentProbeList[keys.lastIndex] // находки
+    }
+  }
+
   private fun highlightByAge() {
     val ageIndex = taskName.split(";;").run { this.takeIf { it.size > 1 }?.let { this[1].trim() } ?: "" }
-    // если входной файл - интервалы по всем точкам наблюдения
+    // входной файл должен быть файлом с  интерваломи по всем точкам наблюдений
     if (keys.size != numberAttributesAllProbes || ageIndex.isEmpty()) return
     // при чтении файла, в коллекцию упрощенных проб добавлять атрибуты
     addAttributes = { simpleProbeMap, currentProbeList ->

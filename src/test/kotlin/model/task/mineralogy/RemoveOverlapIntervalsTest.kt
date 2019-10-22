@@ -61,6 +61,17 @@ internal class RemoveOverlapIntervalsTest {
   }
 
   @Test
+  fun perform2() {
+    val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
+    Files.deleteIfExists(outputFile)
+    val task = RemoveOverlapIntervals(parameters)
+    task.setThreadingTask(mockTask)
+    val table: Collection<Any?> = task.getTableFromFile()
+    task.perform("126952")
+    //task.writeData()
+  }
+
+  @Test
   fun algorithmTest() {
     var resultSet = HashSet<String>()
     for (emptyProbe in emptyProbes) {

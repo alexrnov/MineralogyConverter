@@ -145,8 +145,7 @@ public class Task4Layout extends TaskLayout {
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("inputFile", inputFileTextField.getText());
     parameters.put("outputFile", outputFileTextField.getText());
-    parameters.put("selectByAge", selectByAgeCheckBox.isSelected());
-    parameters.put("ageIndex", stratigraphicTextField.getText());
+    parameters.put("taskName", "добавить точки");
 
     threadTask = new OneFileThreadTask(mainLayout.getNameOfCurrentTask(),
             parameters);
