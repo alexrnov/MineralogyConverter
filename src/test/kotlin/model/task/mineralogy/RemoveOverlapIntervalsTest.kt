@@ -8,6 +8,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import java.io.File.separator as s
 import model.task.thread.ThreadTask
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -17,7 +18,11 @@ import java.nio.file.Paths
 internal class RemoveOverlapIntervalsTest {
 
   private val mockTask = mockk<ThreadTask>()
-  private var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
+  //private var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
+          //"outputFile" to outputFileRemoveOverlapIntervals)
+
+  private var parameters = mutableMapOf("inputFile" to "." + s + "src" + s + "test" + s +
+          "resources" + s + "input" + s + "intervalWellsAllMSD2.txt",
           "outputFile" to outputFileRemoveOverlapIntervals)
 
   private var probesWithMSD = listOf(
@@ -79,14 +84,17 @@ internal class RemoveOverlapIntervalsTest {
             mapOf("От" to "15.1", "До" to "15.9"), // проба внутри пустого интервала
             mapOf("От" to "17.0", "До" to "18.0"), // проба соответствует пустому интервалу
             mapOf("От" to "17.5", "До" to "18.5"), // проба перекрывает пустой интервал сверху
-            mapOf("От" to "19.5", "До" to "20.5")) // проба перекрывает пустой интервал снизу
-    emptyProbes = listOf(
+            mapOf("От" to "19.5", "До" to "20.5"), // проба перекрывает пустой интервал снизу
+            mapOf("От" to "20.7", "До" to "20.9"), // проба находится за пределами пустого интервала (сверху)
+            mapOf("От" to "33.0", "До" to "35.9")) // проба находится за пределами пустого интервала (снизу)
+     emptyProbes = listOf(
             mapOf("От" to "10.5", "До" to "15.5"),
             mapOf("От" to "8.5", "До" to "16.0"),
             mapOf("От" to "17.0", "До" to "18.0"),
             mapOf("От" to "18.0", "До" to "19.0"),
             mapOf("От" to "19.0", "До" to "20.0"),
-            mapOf("От" to "19.0", "До" to "20.0"))
+            mapOf("От" to "21.0", "До" to "22.0"),
+            mapOf("От" to "30.0", "До" to "32.0"))
     resultSet = HashSet()
     for (emptyProbe in emptyProbes) {
       val fromEmpty = emptyProbe["От"]?.toDouble() ?: 0.0
