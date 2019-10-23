@@ -10,7 +10,7 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
       // точки будут подсвечены по возрасту при условии, что по ним имеются находки
       taskName.contains("подсветить точки по возрасту") -> highlightByAge()
       taskName == "общая сохранность" -> commonSafety()
-      taskName == "добавить точки" ->justAdditionalPoints() // если просто добавить точки
+      taskName == "добавить точки" -> justAdditionalPoints() // если просто добавить точки
       else -> {}
     }
     return Pair(addAttributes, calculationsTask)
