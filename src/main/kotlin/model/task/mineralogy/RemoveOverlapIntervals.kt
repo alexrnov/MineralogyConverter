@@ -54,7 +54,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
             namesOfAttributes = lineAsList
             intervalWellsFile.writeTitle(namesOfAttributes) // записать в выходной файл названия атрибутов
             firstLineOfFile = false
-          } else probesID.add(lineAsList[7] + ";" + lineAsList[8])//else probesID.add(lineAsList[1])
+          } else probesID.add(lineAsList[1])
         } else noEnd = false
       }
     }
@@ -65,18 +65,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   override fun perform(any: Any?) {
     try {
       println(numberWell++)
-      //val idWell = any as String
-      val xyOfWell = any as String
-      val xy = xyOfWell.split(";")
-
-      if (xy.size != 2) {
-        println("нет данных по x/y")
-        return
-      }
-
-      val x = xy[0]
-      val y = xy[1]
-      //println("x = $x, y = $y")
+      val idWell = any as String
 
       val br: BufferedReader = Files.newBufferedReader(inputFilePath,
               Charset.forName("windows-1251"))
@@ -94,10 +83,9 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
           line = it.readLine()
           if (line != null) {
             val currentLineAsList: List<String> = line.split(";")
-            if (currentLineAsList[7] == x && currentLineAsList[8] == y) {
-            //if (currentLineAsList[1] == idWell) {
+            if (currentLineAsList[1] == idWell) {
               val iterator = namesOfAttributes.iterator()
-              // создать отображение с парами название атрибута - его значение
+              // создать отображение с парами: название атрибута - его значение
               val v = currentLineAsList.associate { value -> Pair(iterator.next(), value)}
               probesForCurrentWell.add(v)
             }
@@ -106,19 +94,15 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         }
       }
 
-
-      /*
       println("allProbes: ")
       probesForCurrentWell.forEach {
         println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
       }
-      */
 
       val probesWithMSD: List<Map<String, String>> = probesForCurrentWell.filter { (it["Все_МСА"]?.toDouble() ?: 0.0) > 0.0 }
       val emptyProbes = probesForCurrentWell.toMutableList()
       emptyProbes.removeAll(probesWithMSD)
 
-      /*
       println("-")
       println("probesWithMSD: ")
       probesWithMSD.forEach {
@@ -129,7 +113,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       emptyProbes.forEach {
         println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
       }
-      */
 
       val resultSet = HashSet<String>()
       for (emptyProbe in emptyProbes) {
@@ -137,13 +120,13 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         val toEmpty = emptyProbe["До"]?.toDouble() ?: 0.0
         val idw = emptyProbe["IDW"] ?: "-1"
         resultSet.addAll(overlap(idw, fromEmpty, toEmpty, probesWithMSD))
+        println("resultSet = $resultSet")
       }
 
-      /*
       println("-")
       println("result empty intervals:")
       resultSet.forEach { println(it) }
-      */
+
       val templateList: MutableList<Map<String, String>> = ArrayList()
       if (probesForCurrentWell.isNotEmpty()) {
         resultSet.forEach {
@@ -161,16 +144,15 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       }
       templateList.addAll(probesWithMSD)
 
-      /*
       println("-")
       println("templateList: ")
       templateList.forEach {
         println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
       }
-      */
+
       intervalWellsFile.writeContent(templateList)
 
-      //println("------------------------")
+      println("------------------------")
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let { e.message } ?: "perform error")
     }
