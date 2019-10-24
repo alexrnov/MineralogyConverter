@@ -103,54 +103,35 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       val emptyProbes = probesForCurrentWell.toMutableList()
       emptyProbes.removeAll(probesWithMSD)
 
-      println("-")
-      println("probesWithMSD: ")
-      probesWithMSD.forEach {
-        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
-      }
-      println("-")
-      println("emptyProbes: ")
-      emptyProbes.forEach {
-        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
-      }
-
-      val resultSet = HashSet<String>()
+      val resultIntervals: MutableList<Map<String, String>> = ArrayList()
       for (emptyProbe in emptyProbes) {
         val fromEmpty = emptyProbe["От"]?.toDouble() ?: 0.0
         val toEmpty = emptyProbe["До"]?.toDouble() ?: 0.0
-        val idw = emptyProbe["IDW"] ?: "-1"
-        resultSet.addAll(overlap(idw, fromEmpty, toEmpty, probesWithMSD))
-        println("resultSet = $resultSet")
+        val res: HashSet<String> = overlap(fromEmpty, toEmpty, probesWithMSD)
+        res.forEach {
+          val intervals = it.split(";")
+          if (!resultIntervals.any { probe -> probe["От"] == intervals[0] && probe["До"] == intervals[1] }) {
+            val i = emptyProbe.toMutableMap()
+            i["От"] = intervals[0]
+            i["До"] = intervals[1]
+            resultIntervals.add(i)
+          }
+        }
       }
 
       println("-")
       println("result empty intervals:")
-      resultSet.forEach { println(it) }
-
-      val templateList: MutableList<Map<String, String>> = ArrayList()
-      if (probesForCurrentWell.isNotEmpty()) {
-        resultSet.forEach {
-          val a = it.split(";")
-          if (a.size > 2) {
-            val template = probesForCurrentWell[0].toMutableMap()
-            template["IDW"] = a[0]
-            template["От"] = a[1]
-            template["До"] = a[2]
-            template["Все_МСА"] = "0.0"
-            template["находки"] = "0"
-            templateList.add(template)
-          }
-        }
+      resultIntervals.forEach {
+        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
       }
-      templateList.addAll(probesWithMSD)
-
+      resultIntervals.addAll(probesWithMSD) // добавить к новым пустым интервалам пробы с находками МСА
       println("-")
       println("templateList: ")
-      templateList.forEach {
+      resultIntervals.forEach {
         println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
       }
 
-      intervalWellsFile.writeContent(templateList)
+      intervalWellsFile.writeContent(resultIntervals)
 
       println("------------------------")
     } catch(e: Exception) {
@@ -183,7 +164,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     task.printConsole("Преобразование завершено")
   }
 
-  private fun overlap(idw: String, pFromEmpty: Double, pToEmpty: Double,
+  private fun overlap(pFromEmpty: Double, pToEmpty: Double,
                 probesWithMSD: List<Map<String, String>>): HashSet<String> {
     var fromEmpty = pFromEmpty
     var toEmpty = pToEmpty
@@ -197,8 +178,8 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         (toMSD <= fromEmpty || fromMSD >= toEmpty) -> { } // интервал с МСА за пределами пустой пробы)
         (fromMSD <= fromEmpty && toMSD >= toEmpty) -> return resultSet // если проба с МСА полностью перекрывает пустой интевал, вернуть пустой список
         (fromMSD > fromEmpty && toMSD < toEmpty) -> { // интервал с МСА лежит внутри пустого интревала
-          val set1 = overlap(idw, fromEmpty, fromMSD, probesWithMSD)
-          val set2 = overlap(idw, toMSD, toEmpty, probesWithMSD)
+          val set1 = overlap(fromEmpty, fromMSD, probesWithMSD)
+          val set2 = overlap(toMSD, toEmpty, probesWithMSD)
           resultSet.addAll(set1)
           resultSet.addAll(set2)
         }
@@ -207,7 +188,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         else -> println("Другой случай")
       }
     }
-    if (resultSet.size == 0) resultSet.add("$idw;$fromEmpty;$toEmpty")
+    if (resultSet.size == 0) resultSet.add("$fromEmpty;$toEmpty")
     return resultSet
   }
 }
