@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 import static application.StaticConstants.*;
 
-/** Контроллер для интерфейса задачи "Стратиграфия в точки (ИСИХОГИ) " */
+/** Контроллер для интерфейса задачи "Кровля/подошва пласта (ИСИХОГИ)" */
 public class Task9Layout extends TaskLayout {
 
   @FXML private TextField inputFolderTextField;
@@ -28,7 +28,7 @@ public class Task9Layout extends TaskLayout {
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
   @FXML private CheckBox unionLayersCheckBox;
-  @FXML private CheckBox addPointsCheckBox;
+  @FXML private CheckBox unionPacketsCheckBox;
   @FXML private CheckBox amendmentCheckBox;
 
   private ButtonAnimation inputFolderAnimation;
@@ -42,7 +42,7 @@ public class Task9Layout extends TaskLayout {
     consoleTextArea.setWrapText(true); // автоперенос строк в консоли
 
     createInputFolderButton(new ImageView(getOpenDialogPath()));
-    createOutputFileButton(new ImageView(getOpenDialogPath()));
+    createOutputFolderButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();
     createButtonCancelTask();
 
@@ -64,8 +64,20 @@ public class Task9Layout extends TaskLayout {
       }
     });
 
+    // слушатель для чекбокса объединения сопредельных стратиграфических
+    // пластов с одинаковым индексом; если чекбокс выбран, тогда
+    // активируется checkbox для объеинения пачек, в противном случае он
+    // деактивируется, поскольку не играет самостоятельной роли
+    unionLayersCheckBox.selectedProperty().addListener((arg, oldValue, newValue) -> {
+      if (unionLayersCheckBox.isSelected()) {
+        unionPacketsCheckBox.setDisable(false);
+      } else {
+        unionPacketsCheckBox.setDisable(true);
+      }
+    });
+
     unionLayersCheckBox.setSelected(true);
-    addPointsCheckBox.setSelected(true);
+    unionPacketsCheckBox.setSelected(true);
     amendmentCheckBox.setSelected(true);
 
     // задать предел длины текстового поля для ввода стратиграфического индекса
@@ -95,7 +107,7 @@ public class Task9Layout extends TaskLayout {
             e -> inputFolderAnimation.mouseExited());
   }
 
-  private void createOutputFileButton(ImageView openDialogPathImage) {
+  private void createOutputFolderButton(ImageView openDialogPathImage) {
     outputFileButton.setGraphic(openDialogPathImage);
     outputFileAnimation = new ButtonAnimation(outputFileButton,
             "5 5 5 5", true);
@@ -155,9 +167,9 @@ public class Task9Layout extends TaskLayout {
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("inputFolder", inputFolderTextField.getText());
     parameters.put("outputFile", outputFileTextField.getText());
-    parameters.put("ageIndexes", stratigraphicTextField.getText());
+    parameters.put("ageIndex", stratigraphicTextField.getText());
     parameters.put("unionLayers", unionLayersCheckBox.isSelected());
-    parameters.put("addPoints", addPointsCheckBox.isSelected());
+    parameters.put("unionPackets", unionPacketsCheckBox.isSelected());
     parameters.put("useAmendment", amendmentCheckBox.isSelected());
 
     threadTask = new ManyFilesThreadTask(mainLayout.getNameOfCurrentTask(),
@@ -217,14 +229,12 @@ public class Task9Layout extends TaskLayout {
       inputFolderTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
-
     String outputFile = outputFileTextField.getText();
     if (outputFile.length() <= 4 || !outputFile.substring(outputFile.length() - 4,
             outputFile.length()).equals(".txt")) {
       outputFileTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
-
     if (stratigraphicTextField.getText().trim().length() == 0) {
       stratigraphicTextField.setStyle(getErrorStyleTextField());
       b = false;

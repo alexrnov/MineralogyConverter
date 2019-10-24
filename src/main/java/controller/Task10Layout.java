@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 import static application.StaticConstants.*;
 
-/** Контроллер для интерфейса задачи "Кровля цоколя в точки (ИСИХОГИ)" */
+/** Контроллер для интерфейса задачи "Стратиграфия в точки (ИСИХОГИ) " */
 public class Task10Layout extends TaskLayout {
 
   @FXML private TextField inputFolderTextField;
@@ -27,6 +27,8 @@ public class Task10Layout extends TaskLayout {
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
+  @FXML private CheckBox unionLayersCheckBox;
+  @FXML private CheckBox addPointsCheckBox;
   @FXML private CheckBox amendmentCheckBox;
 
   private ButtonAnimation inputFolderAnimation;
@@ -38,9 +40,7 @@ public class Task10Layout extends TaskLayout {
   private void initialize() {
     consoleTextArea.setEditable(false);
     consoleTextArea.setWrapText(true); // автоперенос строк в консоли
-    // индексы по умолчанию: ордовик, кемрий, палеозой (кимберлиты)
-    // эти индексы подходят для накынского поля
-    stratigraphicTextField.setText("O;G;Pz");
+
     createInputFolderButton(new ImageView(getOpenDialogPath()));
     createOutputFileButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();
@@ -64,6 +64,8 @@ public class Task10Layout extends TaskLayout {
       }
     });
 
+    unionLayersCheckBox.setSelected(true);
+    addPointsCheckBox.setSelected(true);
     amendmentCheckBox.setSelected(true);
 
     // задать предел длины текстового поля для ввода стратиграфического индекса
@@ -154,6 +156,8 @@ public class Task10Layout extends TaskLayout {
     parameters.put("inputFolder", inputFolderTextField.getText());
     parameters.put("outputFile", outputFileTextField.getText());
     parameters.put("ageIndexes", stratigraphicTextField.getText());
+    parameters.put("unionLayers", unionLayersCheckBox.isSelected());
+    parameters.put("addPoints", addPointsCheckBox.isSelected());
     parameters.put("useAmendment", amendmentCheckBox.isSelected());
 
     threadTask = new ManyFilesThreadTask(mainLayout.getNameOfCurrentTask(),

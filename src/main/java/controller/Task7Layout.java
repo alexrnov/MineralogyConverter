@@ -1,5 +1,7 @@
 package controller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -14,23 +16,30 @@ import java.util.concurrent.Executors;
 
 import static application.StaticConstants.*;
 
-/** Контроллер для интерфейса задачи "Устье/забой скважин (ИСИХОГИ)". */
+/**
+ * Контроллер для интерфейса второй задачи Минералогия ИСИХОГИ
+ * в Micromine. В этой задаче используется набор excel-файлов,
+ * которые загружены из ИСИХОГИ
+ */
 public class Task7Layout extends TaskLayout {
 
   @FXML private TextField inputFolderTextField;
-  @FXML private TextField outputFileTextField;
+  @FXML private TextField outputFolderTextField;
+  @FXML private TextField stratigraphicTextField;
   @FXML private Button inputFolderButton;
-  @FXML private Button outputFileButton;
+  @FXML private Button outputFolderButton;
   @FXML private Button runTaskButton;
   @FXML private Button cancelTaskButton;
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
-  @FXML private CheckBox exportAllFieldsCheckBox;
+  @FXML private ComboBox<String> selectionAgeComboBox;
+  @FXML private ComboBox<String> selectionFindsOfCrystalsComboBox;
   @FXML private CheckBox amendmentCheckBox;
+  @FXML private CheckBox createDotFileCheckBox;
 
   private ButtonAnimation inputFolderAnimation;
-  private ButtonAnimation outputFileAnimation;
+  private ButtonAnimation outputFolderAnimation;
   private ButtonAnimation runTaskAnimation;
   private ButtonAnimation cancelTaskAnimation;
 
@@ -40,7 +49,7 @@ public class Task7Layout extends TaskLayout {
     consoleTextArea.setWrapText(true); // автоперенос строк в консоли
 
     createInputFolderButton(new ImageView(getOpenDialogPath()));
-    createOutputFileButton(new ImageView(getOpenDialogPath()));
+    createOutputFolderButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();
     createButtonCancelTask();
 
@@ -50,14 +59,47 @@ public class Task7Layout extends TaskLayout {
       }
     });
 
-    outputFileTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
+    outputFolderTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
       if (newValue) {
-        defaultStyle(outputFileTextField);
+        defaultStyle(outputFolderTextField);
       }
     });
 
+
+    ObservableList<String> ages = FXCollections.observableArrayList("Все пробы",
+            "По всем возрастам", "Без возрастов", "Указать возраст");
+    selectionAgeComboBox.getItems().addAll(ages);
+    selectionAgeComboBox.setValue("Все пробы");
+
+    ObservableList<String> numberCrystals = FXCollections.observableArrayList(
+            "Все пробы", "Есть находки МСА", "Пустые пробы");
+    selectionFindsOfCrystalsComboBox.getItems().addAll(numberCrystals);
+    selectionFindsOfCrystalsComboBox.setValue("Все пробы");
+
+    createDotFileCheckBox.setSelected(true);
     amendmentCheckBox.setSelected(true);
-    exportAllFieldsCheckBox.setSelected(true);
+
+    stratigraphicTextField.setDisable(true);
+
+    // активировать текстовое поле для ввода стратиграфического индекса
+    // только когда выбран пункт меню "Указать возраст"
+    selectionAgeComboBox.setOnAction(e -> {
+      String selectItem = selectionAgeComboBox.getValue();
+      if (selectItem.equals("Указать возраст")) {
+        stratigraphicTextField.setDisable(false);
+      } else {
+        stratigraphicTextField.setDisable(true);
+      }
+    });
+
+    // задать предел длины текстового поля для ввода стратиграфического индекса
+    stratigraphicTextField.textProperty().addListener((ov, oldValue, newValue) -> {
+      final byte maxLength = 9;
+      if (stratigraphicTextField.getText().length() > maxLength) {
+        String s = stratigraphicTextField.getText().substring(0, maxLength);
+        stratigraphicTextField.setText(s);
+      }
+    });
   }
 
   private void createInputFolderButton(ImageView openDialogPathImage) {
@@ -77,21 +119,21 @@ public class Task7Layout extends TaskLayout {
             e -> inputFolderAnimation.mouseExited());
   }
 
-  private void createOutputFileButton(ImageView openDialogPathImage) {
-    outputFileButton.setGraphic(openDialogPathImage);
-    outputFileAnimation = new ButtonAnimation(outputFileButton,
+  private void createOutputFolderButton(ImageView openDialogPathImage) {
+    outputFolderButton.setGraphic(openDialogPathImage);
+    outputFolderAnimation = new ButtonAnimation(outputFolderButton,
             "5 5 5 5", true);
-    outputFileButton.setOnAction(e -> {
-      File f = mineralogy.txtFileSaveDialog();
+    outputFolderButton.setOnAction(e -> {
+      File f = mineralogy.directoryChooser();
       if (f != null) {
-        outputFileTextField.setText(f.getPath());
-        defaultStyle(outputFileTextField);
+        outputFolderTextField.setText(f.getPath());
+        defaultStyle(outputFolderTextField);
       }
     });
-    outputFileButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
-            e -> outputFileAnimation.mouseEntered());
-    outputFileButton.addEventHandler(MouseEvent.MOUSE_EXITED,
-            e -> outputFileAnimation.mouseExited());
+    outputFolderButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
+            e -> outputFolderAnimation.mouseEntered());
+    outputFolderButton.addEventHandler(MouseEvent.MOUSE_EXITED,
+            e -> outputFolderAnimation.mouseExited());
   }
 
   private void createButtonRunTask() {
@@ -137,9 +179,16 @@ public class Task7Layout extends TaskLayout {
     //if (threadTask == null || threadTask.isDone())
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("inputFolder", inputFolderTextField.getText());
-    parameters.put("outputFile", outputFileTextField.getText());
-    parameters.put("exportAllFields", exportAllFieldsCheckBox.isSelected());
+    parameters.put("outputFolder", outputFolderTextField.getText());
+    parameters.put("findsOfCrystals", selectionFindsOfCrystalsComboBox.getValue());
     parameters.put("useAmendment", amendmentCheckBox.isSelected());
+    parameters.put("createDotFile", createDotFileCheckBox.isSelected());
+
+    String s = selectionAgeComboBox.getValue();
+    if (selectionAgeComboBox.getValue().equals("Указать возраст")) {
+      s = s + ":" + stratigraphicTextField.getText();
+    }
+    parameters.put("typeOfSelectionAge", s);
 
     threadTask = new ManyFilesThreadTask(mainLayout.getNameOfCurrentTask(),
             parameters);
@@ -194,14 +243,13 @@ public class Task7Layout extends TaskLayout {
   private boolean checkInputParameters() {
     boolean b = true;
     File inputFolder = new File(inputFolderTextField.getText());
+    File outputFolder = new File(outputFolderTextField.getText());
     if (!inputFolder.isDirectory()) {
       inputFolderTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
-    String outputFile = outputFileTextField.getText();
-    if (outputFile.length() <= 4 || !outputFile.substring(outputFile.length() - 4,
-            outputFile.length()).equals(".txt")) {
-      outputFileTextField.setStyle(getErrorStyleTextField());
+    if (!outputFolder.isDirectory()) {
+      outputFolderTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
     return b;

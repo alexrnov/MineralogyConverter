@@ -14,11 +14,12 @@ import java.util.concurrent.Executors;
 
 import static application.StaticConstants.*;
 
-/** Контроллер для интерфейса задачи "Устье/забой скважин (ИСИХОГИ)". */
-public class Task8Layout extends TaskLayout {
+/** Контроллер для интерфейса задачи "Кровля цоколя в точки (ИСИХОГИ)" */
+public class Task11Layout extends TaskLayout {
 
   @FXML private TextField inputFolderTextField;
   @FXML private TextField outputFileTextField;
+  @FXML private TextField stratigraphicTextField;
   @FXML private Button inputFolderButton;
   @FXML private Button outputFileButton;
   @FXML private Button runTaskButton;
@@ -26,7 +27,6 @@ public class Task8Layout extends TaskLayout {
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
-  @FXML private CheckBox exportAllFieldsCheckBox;
   @FXML private CheckBox amendmentCheckBox;
 
   private ButtonAnimation inputFolderAnimation;
@@ -38,7 +38,9 @@ public class Task8Layout extends TaskLayout {
   private void initialize() {
     consoleTextArea.setEditable(false);
     consoleTextArea.setWrapText(true); // автоперенос строк в консоли
-
+    // индексы по умолчанию: ордовик, кемрий, палеозой (кимберлиты)
+    // эти индексы подходят для накынского поля
+    stratigraphicTextField.setText("O;G;Pz");
     createInputFolderButton(new ImageView(getOpenDialogPath()));
     createOutputFileButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();
@@ -56,8 +58,22 @@ public class Task8Layout extends TaskLayout {
       }
     });
 
+    stratigraphicTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
+      if (newValue) {
+        defaultStyle(stratigraphicTextField);
+      }
+    });
+
     amendmentCheckBox.setSelected(true);
-    exportAllFieldsCheckBox.setSelected(true);
+
+    // задать предел длины текстового поля для ввода стратиграфического индекса
+    stratigraphicTextField.textProperty().addListener((ov, oldValue, newValue) -> {
+      final byte maxLength = 20;
+      if (stratigraphicTextField.getText().length() > maxLength) {
+        String s = stratigraphicTextField.getText().substring(0, maxLength);
+        stratigraphicTextField.setText(s);
+      }
+    });
   }
 
   private void createInputFolderButton(ImageView openDialogPathImage) {
@@ -125,7 +141,6 @@ public class Task8Layout extends TaskLayout {
   }
 
   private void runTask() {
-
     if (threadTask != null && threadTask.isRunning()) {
       return;
     }
@@ -138,7 +153,7 @@ public class Task8Layout extends TaskLayout {
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("inputFolder", inputFolderTextField.getText());
     parameters.put("outputFile", outputFileTextField.getText());
-    parameters.put("exportAllFields", exportAllFieldsCheckBox.isSelected());
+    parameters.put("ageIndexes", stratigraphicTextField.getText());
     parameters.put("useAmendment", amendmentCheckBox.isSelected());
 
     threadTask = new ManyFilesThreadTask(mainLayout.getNameOfCurrentTask(),
@@ -198,10 +213,16 @@ public class Task8Layout extends TaskLayout {
       inputFolderTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
+
     String outputFile = outputFileTextField.getText();
     if (outputFile.length() <= 4 || !outputFile.substring(outputFile.length() - 4,
             outputFile.length()).equals(".txt")) {
       outputFileTextField.setStyle(getErrorStyleTextField());
+      b = false;
+    }
+
+    if (stratigraphicTextField.getText().trim().length() == 0) {
+      stratigraphicTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
     return b;

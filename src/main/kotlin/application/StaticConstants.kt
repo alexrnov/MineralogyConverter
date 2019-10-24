@@ -34,13 +34,14 @@ object StaticConstants {
           Pair("Пробы с МСА (web-сервис)", "/view/Task1Layout.fxml"),
           Pair("Пробы без МСА (web-сервис)", "/view/Task2Layout.fxml"),
           Pair("Все пробы (web-сервис)", "/view/Task3Layout.fxml"),
-          Pair("Интервалы опробования в точки", "/view/Task4Layout.fxml"),
-          Pair("Границы опробования в точки", "/view/Task5Layout.fxml"),
-          Pair("Пробы (ИСИХОГИ)", "/view/Task6Layout.fxml"),
-          Pair("Устье/забой скважин (ИСИХОГИ)", "/view/Task7Layout.fxml"),
-          Pair("Кровля/подошва пласта (ИСИХОГИ)", "/view/Task8Layout.fxml"),
-          Pair("Страт. пласты в точки (ИСИХОГИ)", "/view/Task9Layout.fxml"),
-          Pair("Кровля цоколя в точки (ИСИХОГИ)", "/view/Task10Layout.fxml"))
+          Pair("Убрать наложение проб", "/view/Task4Layout.fxml"),
+          Pair("Интервалы опробования в точки", "/view/Task5Layout.fxml"),
+          Pair("Границы опробования в точки", "/view/Task6Layout.fxml"),
+          Pair("Пробы (ИСИХОГИ)", "/view/Task7Layout.fxml"),
+          Pair("Устье/забой скважин (ИСИХОГИ)", "/view/Task8Layout.fxml"),
+          Pair("Кровля/подошва пласта (ИСИХОГИ)", "/view/Task9Layout.fxml"),
+          Pair("Страт. пласты в точки (ИСИХОГИ)", "/view/Task10Layout.fxml"),
+          Pair("Кровля цоколя в точки (ИСИХОГИ)", "/view/Task11Layout.fxml"))
 
   @JvmStatic val namesOfTasks: List<String> = listOfMenuTasks.stream()
           .map { it.component1() }
