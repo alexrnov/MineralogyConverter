@@ -1,42 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="590.0" prefWidth="518.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Task6Layout">
-   <children>
-      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#b1b1b100" height="51.0" layoutX="14.0" layoutY="205.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="394.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="205.0" />
-      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#ffffff00" height="51.0" layoutX="14.0" layoutY="146.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="491.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="146.0" />
-      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#ffffff00" height="51.0" layoutX="18.0" layoutY="265.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="266.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="265.0" />
-      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#1f93ff00" height="51.0" layoutX="287.0" layoutY="265.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="218.0" AnchorPane.topAnchor="265.0" />
-      <TextField fx:id="inputFolderTextField" layoutX="14.0" layoutY="36.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="34.0" />
-      <TextField fx:id="outputFolderTextField" layoutX="14.0" layoutY="105.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="101.0" />
-      <Label layoutX="14.0" layoutY="14.0" text="Входной каталог с excel-файлами:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="10.0" />
-      <Label layoutX="14.0" layoutY="77.0" text="Выходной каталог с файлами Micromine:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="77.0" />
-      <Button fx:id="outputFolderButton" layoutX="438.0" layoutY="126.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="99.0" />
-      <Button fx:id="inputFolderButton" layoutX="438.0" layoutY="57.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="32.0" />
-      <Button fx:id="runTaskButton" layoutX="298.0" layoutY="355.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="123.0" />
-      <ProgressBar fx:id="progressBar" layoutX="18.0" layoutY="379.0" prefHeight="18.0" prefWidth="259.0" progress="0.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="14.0" />
-      <TextArea fx:id="consoleTextArea" layoutX="14.0" layoutY="212.0" prefHeight="172.0" prefWidth="490.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-      <Label layoutX="11.0" layoutY="328.0" text="Информация по ходу выполнения процесса:" AnchorPane.bottomAnchor="242.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="324.0" />
-      <Label fx:id="processPercentLabel" layoutX="89.0" layoutY="355.0" text="0%" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="89.0" />
-      <Label layoutX="14.0" layoutY="355.0" text="Выполнено:" AnchorPane.bottomAnchor="35.0" />
-      <Button fx:id="cancelTaskButton" layoutX="432.0" layoutY="377.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="14.0" />
-      <CheckBox fx:id="amendmentCheckBox" layoutX="295.0" layoutY="282.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" AnchorPane.leftAnchor="297.0" AnchorPane.topAnchor="279.0" />
-      <Label layoutX="325.0" layoutY="266.0" text="Убрать поправку ИСИХОГИ" AnchorPane.leftAnchor="325.0" AnchorPane.topAnchor="278.0" />
-      <Label layoutX="24.0" layoutY="221.0" text="Выборка по находкам МСА" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="220.0" />
-      <CheckBox fx:id="createDotFileCheckBox" layoutX="24.0" layoutY="279.0" mnemonicParsing="false" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="279.0" />
-      <Label layoutX="51.0" layoutY="278.0" text="Создать файл с точками по пробам" AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="278.0" />
-      <ComboBox fx:id="selectionAgeComboBox" layoutX="215.0" layoutY="154.0" prefHeight="36.0" prefWidth="183.0" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="154.0" />
-      <TextField fx:id="stratigraphicTextField" layoutX="411.0" layoutY="156.0" prefHeight="30.0" prefWidth="84.0" AnchorPane.rightAnchor="23.0" />
-      <Label layoutX="24.0" layoutY="161.0" text="Выборка по стратиграфии" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="161.0" />
-      <ComboBox fx:id="selectionFindsOfCrystalsComboBox" layoutX="215.0" layoutY="213.0" prefHeight="36.0" prefWidth="183.0" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="213.0" />
-   </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="458.0" prefWidth="518.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Task6Layout">
+    <children>
+        <TextField fx:id="inputFileTextField" layoutX="14.0" layoutY="36.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="34.0" />
+        <TextField fx:id="outputFileTextField" layoutX="14.0" layoutY="105.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="101.0" />
+        <Label layoutX="14.0" layoutY="14.0" text="Входной файл интервалов из задачи &quot;Все пробы (web-сервис)&quot;:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="10.0" />
+        <Label layoutX="14.0" layoutY="77.0" text="Выходной файл с точками ABS по верхней/нижней пробам:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="77.0" />
+        <Button fx:id="outputFileButton" layoutX="438.0" layoutY="126.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="99.0" />
+        <Button fx:id="inputFileButton" layoutX="438.0" layoutY="57.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="32.0" />
+        <Button fx:id="runTaskButton" layoutX="343.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="123.0" />
+        <ProgressBar fx:id="progressBar" layoutX="14.0" layoutY="438.0" prefHeight="18.0" prefWidth="259.0" progress="0.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="14.0" />
+        <TextArea fx:id="consoleTextArea" layoutX="14.0" layoutY="229.0" prefHeight="215.0" prefWidth="490.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="171.0" />
+        <Label layoutX="14.0" layoutY="205.0" text="Информация по ходу выполнения процесса:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="149.0" />
+        <Label fx:id="processPercentLabel" layoutX="89.0" layoutY="416.0" text="0%" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="89.0" />
+        <Label layoutX="14.0" layoutY="416.0" text="Выполнено:" AnchorPane.bottomAnchor="40.0" />
+        <Button fx:id="cancelTaskButton" layoutX="452.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="14.0" />
+    </children>
 </AnchorPane>

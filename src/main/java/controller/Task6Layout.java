@@ -1,12 +1,10 @@
 package controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import model.task.thread.ManyFilesThreadTask;
+import model.task.thread.OneFileThreadTask;
 
 import java.io.File;
 import java.util.HashMap;
@@ -14,32 +12,24 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static application.Mineralogy.logger;
 import static application.StaticConstants.*;
 
-/**
- * Контроллер для интерфейса второй задачи Минералогия ИСИХОГИ
- * в Micromine. В этой задаче используется набор excel-файлов,
- * которые загружены из ИСИХОГИ
- */
+/** Контроллер для интерфейса задачи "ABS верхняя/нижняя пробы". */
 public class Task6Layout extends TaskLayout {
 
-  @FXML private TextField inputFolderTextField;
-  @FXML private TextField outputFolderTextField;
-  @FXML private TextField stratigraphicTextField;
-  @FXML private Button inputFolderButton;
-  @FXML private Button outputFolderButton;
+  @FXML private TextField inputFileTextField;
+  @FXML private TextField outputFileTextField;
+  @FXML private Button inputFileButton;
+  @FXML private Button outputFileButton;
   @FXML private Button runTaskButton;
   @FXML private Button cancelTaskButton;
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
-  @FXML private ComboBox<String> selectionAgeComboBox;
-  @FXML private ComboBox<String> selectionFindsOfCrystalsComboBox;
-  @FXML private CheckBox amendmentCheckBox;
-  @FXML private CheckBox createDotFileCheckBox;
 
-  private ButtonAnimation inputFolderAnimation;
-  private ButtonAnimation outputFolderAnimation;
+  private ButtonAnimation inputFileAnimation;
+  private ButtonAnimation outputFileAnimation;
   private ButtonAnimation runTaskAnimation;
   private ButtonAnimation cancelTaskAnimation;
 
@@ -48,92 +38,57 @@ public class Task6Layout extends TaskLayout {
     consoleTextArea.setEditable(false);
     consoleTextArea.setWrapText(true); // автоперенос строк в консоли
 
-    createInputFolderButton(new ImageView(getOpenDialogPath()));
-    createOutputFolderButton(new ImageView(getOpenDialogPath()));
+    createInputFileButton(new ImageView(getOpenDialogPath()));
+    createOutputFileButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();
     createButtonCancelTask();
 
-    inputFolderTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
+    inputFileTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
       if (newValue) {
-        defaultStyle(inputFolderTextField);
+        defaultStyle(inputFileTextField);
       }
     });
 
-    outputFolderTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
+    outputFileTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
       if (newValue) {
-        defaultStyle(outputFolderTextField);
+        defaultStyle(outputFileTextField);
       }
     });
 
-
-    ObservableList<String> ages = FXCollections.observableArrayList("Все пробы",
-            "По всем возрастам", "Без возрастов", "Указать возраст");
-    selectionAgeComboBox.getItems().addAll(ages);
-    selectionAgeComboBox.setValue("Все пробы");
-
-    ObservableList<String> numberCrystals = FXCollections.observableArrayList(
-            "Все пробы", "Есть находки МСА", "Пустые пробы");
-    selectionFindsOfCrystalsComboBox.getItems().addAll(numberCrystals);
-    selectionFindsOfCrystalsComboBox.setValue("Все пробы");
-
-    createDotFileCheckBox.setSelected(true);
-    amendmentCheckBox.setSelected(true);
-
-    stratigraphicTextField.setDisable(true);
-
-    // активировать текстовое поле для ввода стратиграфического индекса
-    // только когда выбран пункт меню "Указать возраст"
-    selectionAgeComboBox.setOnAction(e -> {
-      String selectItem = selectionAgeComboBox.getValue();
-      if (selectItem.equals("Указать возраст")) {
-        stratigraphicTextField.setDisable(false);
-      } else {
-        stratigraphicTextField.setDisable(true);
-      }
-    });
-
-    // задать предел длины текстового поля для ввода стратиграфического индекса
-    stratigraphicTextField.textProperty().addListener((ov, oldValue, newValue) -> {
-      final byte maxLength = 9;
-      if (stratigraphicTextField.getText().length() > maxLength) {
-        String s = stratigraphicTextField.getText().substring(0, maxLength);
-        stratigraphicTextField.setText(s);
-      }
-    });
   }
 
-  private void createInputFolderButton(ImageView openDialogPathImage) {
-    inputFolderButton.setGraphic(openDialogPathImage);
-    inputFolderAnimation = new ButtonAnimation(inputFolderButton,
+  private void createInputFileButton(ImageView openDialogPathImage) {
+    inputFileButton.setGraphic(openDialogPathImage);
+    inputFileAnimation = new ButtonAnimation(inputFileButton,
             "5 5 5 5", true);
-    inputFolderButton.setOnAction(e -> {
-      File f = mineralogy.directoryChooser();
+    inputFileButton.setOnAction(e -> {
+      File f = mineralogy.txtFileOpenDialog();
       if (f != null) {
-        inputFolderTextField.setText(f.getPath());
-        defaultStyle(inputFolderTextField);
+        inputFileTextField.setText(f.getPath());
+        defaultStyle(inputFileTextField);
       }
     });
-    inputFolderButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
-            e -> inputFolderAnimation.mouseEntered());
-    inputFolderButton.addEventHandler(MouseEvent.MOUSE_EXITED,
-            e -> inputFolderAnimation.mouseExited());
+    inputFileButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
+            e -> inputFileAnimation.mouseEntered());
+    inputFileButton.addEventHandler(MouseEvent.MOUSE_EXITED,
+            e -> inputFileAnimation.mouseExited());
   }
 
-  private void createOutputFolderButton(ImageView openDialogPathImage) {
-    outputFolderButton.setGraphic(openDialogPathImage);
-    outputFolderAnimation = new ButtonAnimation(outputFolderButton,
+  private void createOutputFileButton(ImageView openDialogPathImage) {
+    outputFileButton.setGraphic(openDialogPathImage);
+    outputFileAnimation = new ButtonAnimation(outputFileButton,
             "5 5 5 5", true);
-    outputFolderButton.setOnAction(e -> {
-      File f = mineralogy.directoryChooser();
+    outputFileButton.setOnAction(e -> {
+      File f = mineralogy.txtFileSaveDialog();
       if (f != null) {
-        outputFolderTextField.setText(f.getPath());
-        defaultStyle(outputFolderTextField);
+        outputFileTextField.setText(f.getPath());
+        defaultStyle(outputFileTextField);
       }
     });
-    outputFolderButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
-            e -> outputFolderAnimation.mouseEntered());
-    outputFolderButton.addEventHandler(MouseEvent.MOUSE_EXITED,
-            e -> outputFolderAnimation.mouseExited());
+    outputFileButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
+            e -> outputFileAnimation.mouseEntered());
+    outputFileButton.addEventHandler(MouseEvent.MOUSE_EXITED,
+            e -> outputFileAnimation.mouseExited());
   }
 
   private void createButtonRunTask() {
@@ -178,19 +133,10 @@ public class Task6Layout extends TaskLayout {
 
     //if (threadTask == null || threadTask.isDone())
     Map<String, Object> parameters = new HashMap<>();
-    parameters.put("inputFolder", inputFolderTextField.getText());
-    parameters.put("outputFolder", outputFolderTextField.getText());
-    parameters.put("findsOfCrystals", selectionFindsOfCrystalsComboBox.getValue());
-    parameters.put("useAmendment", amendmentCheckBox.isSelected());
-    parameters.put("createDotFile", createDotFileCheckBox.isSelected());
+    parameters.put("inputFile", inputFileTextField.getText());
+    parameters.put("outputFile", outputFileTextField.getText());
 
-    String s = selectionAgeComboBox.getValue();
-    if (selectionAgeComboBox.getValue().equals("Указать возраст")) {
-      s = s + ":" + stratigraphicTextField.getText();
-    }
-    parameters.put("typeOfSelectionAge", s);
-
-    threadTask = new ManyFilesThreadTask(mainLayout.getNameOfCurrentTask(),
+    threadTask = new OneFileThreadTask(mainLayout.getNameOfCurrentTask(),
             parameters);
 
     threadTask.setOnRunning(event -> {
@@ -242,16 +188,19 @@ public class Task6Layout extends TaskLayout {
    */
   private boolean checkInputParameters() {
     boolean b = true;
-    File inputFolder = new File(inputFolderTextField.getText());
-    File outputFolder = new File(outputFolderTextField.getText());
-    if (!inputFolder.isDirectory()) {
-      inputFolderTextField.setStyle(getErrorStyleTextField());
+    File inputFile = new File(inputFileTextField.getText());
+    if (!inputFile.isFile()) {
+      inputFileTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
-    if (!outputFolder.isDirectory()) {
-      outputFolderTextField.setStyle(getErrorStyleTextField());
+
+    String outputFile = outputFileTextField.getText();
+    if (outputFile.length() <= 4 || !outputFile.substring(outputFile.length() - 4,
+                    outputFile.length()).equals(".txt")) {
+      outputFileTextField.setStyle(getErrorStyleTextField());
       b = false;
     }
+
     return b;
   }
 

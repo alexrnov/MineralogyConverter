@@ -17,7 +17,7 @@
       <TextField fx:id="inputFolderTextField" layoutX="14.0" layoutY="36.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="34.0" />
       <TextField fx:id="outputFileTextField" layoutX="14.0" layoutY="105.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="101.0" />
       <Label layoutX="14.0" layoutY="14.0" text="Входной каталог с excel-файлами:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="10.0" />
-      <Label layoutX="14.0" layoutY="77.0" text="Выходной файл с точками по стратиграфическим интервалам:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="77.0" />
+      <Label layoutX="14.0" layoutY="77.0" text="Выходной файл с точками кровли/подошвы пласта:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="77.0" />
       <Button fx:id="outputFileButton" layoutX="438.0" layoutY="126.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="99.0" />
       <Button fx:id="inputFolderButton" layoutX="438.0" layoutY="57.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="32.0" />
       <Button fx:id="runTaskButton" layoutX="343.0" layoutY="484.0" mnemonicParsing="false" text="Button" AnchorPane.rightAnchor="123.0" AnchorPane.topAnchor="484.0" />
@@ -35,8 +35,8 @@
       <Label layoutX="25.0" layoutY="222.0" text="Стратиграфический индекс:" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="222.0" />
       <Label layoutX="52.0" layoutY="172.0" text="c одинаковым страт. индексом" AnchorPane.leftAnchor="51.0" AnchorPane.topAnchor="172.0" />
       <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#ffffff00" height="51.0" layoutX="289.0" layoutY="149.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="218.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="149.0" />
-      <Label layoutX="326.0" layoutY="155.0" text="Добавить дополнительные" AnchorPane.leftAnchor="326.0" AnchorPane.topAnchor="155.0" />
-      <CheckBox fx:id="addPointsCheckBox" layoutX="299.0" layoutY="163.0" mnemonicParsing="false" AnchorPane.leftAnchor="298.0" AnchorPane.topAnchor="163.0" />
-      <Label layoutX="325.0" layoutY="172.0" text="точки для интервалов" AnchorPane.leftAnchor="326.0" AnchorPane.topAnchor="172.0" />
+      <Label layoutX="326.0" layoutY="155.0" text="Объединить пачки для" AnchorPane.leftAnchor="326.0" AnchorPane.topAnchor="155.0" />
+      <CheckBox fx:id="unionPacketsCheckBox" layoutX="299.0" layoutY="163.0" mnemonicParsing="false" AnchorPane.leftAnchor="298.0" AnchorPane.topAnchor="163.0" />
+      <Label layoutX="325.0" layoutY="172.0" text="указанного индекса" AnchorPane.leftAnchor="326.0" AnchorPane.topAnchor="172.0" />
    </children>
 </AnchorPane>
