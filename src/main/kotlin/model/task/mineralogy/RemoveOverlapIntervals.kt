@@ -1,5 +1,6 @@
 package model.task.mineralogy
 
+import application.Mineralogy.logger
 import model.exception.GeoTaskException
 import model.file.MicromineTextFile
 import model.task.GeoTaskOneFile
@@ -12,8 +13,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 /**
- * Задача "В интервалах пустых проб удалить те интервалы, которые
- * перекрываются с интервалами непустых проб".
+ * Реализация задачи "Убрать наложение проб". В интервалах пустых проб
+ * удаляются те интервалы, которые перекрываются с интервалами непустых проб".
  */
 class RemoveOverlapIntervals
 
@@ -74,7 +75,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       /*
       * Из файла считываются все пробы по текущей скважине. Чтение файла
       * для каждой скважины производится для того, чтобы не загружать
-      * весь файл в память, т.к. он можен занимать несколько десятков мб
+      * весь файл в память, т.к. он может занимать несколько десятков мб
       */
       br.use { // try с ресурсами
         var noEnd = true
@@ -93,73 +94,56 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
           else noEnd = false
         }
       }
-
+      /*
       println("allProbes: ")
       probesForCurrentWell.forEach {
         println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
       }
+      */
 
       val probesWithMSD: List<Map<String, String>> = probesForCurrentWell.filter { (it["Все_МСА"]?.toDouble() ?: 0.0) > 0.0 }
       val emptyProbes = probesForCurrentWell.toMutableList()
       emptyProbes.removeAll(probesWithMSD)
 
-      println("-")
-      println("probesWithMSD: ")
-      probesWithMSD.forEach {
-        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
-      }
-      println("-")
-      println("emptyProbes: ")
-      emptyProbes.forEach {
-        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
-      }
-
-      val resultSet = HashSet<String>()
-      for (emptyProbe in emptyProbes) {
+      val resultIntervals: MutableList<Map<String, String>> = ArrayList()
+      for (emptyProbe in emptyProbes) { // перебор пустых проб для текущей скважины
         val fromEmpty = emptyProbe["От"]?.toDouble() ?: 0.0
         val toEmpty = emptyProbe["До"]?.toDouble() ?: 0.0
-        val idw = emptyProbe["IDW"] ?: "-1"
-        resultSet.addAll(overlap(idw, fromEmpty, toEmpty, probesWithMSD))
-        println("resultSet = $resultSet")
-      }
-
-      println("-")
-      println("result empty intervals:")
-      resultSet.forEach { println(it) }
-
-      val templateList: MutableList<Map<String, String>> = ArrayList()
-      if (probesForCurrentWell.isNotEmpty()) {
-        resultSet.forEach {
-          val a = it.split(";")
-          if (a.size > 2) {
-            val template = probesForCurrentWell[0].toMutableMap()
-            template["IDW"] = a[0]
-            template["От"] = a[1]
-            template["До"] = a[2]
-            template["Все_МСА"] = "0.0"
-            template["находки"] = "0"
-            templateList.add(template)
+        // перебор неперекрывающихся интервалов, полученных после проверки текущего пустого интервала
+        overlap(fromEmpty, toEmpty, probesWithMSD).forEach {
+          val intervals = it.split(";")
+          // если в результирующую коллекцию еще не добавлена пустая проба с такими промежутками "От" и "До", добавить эту пробу
+          if (!resultIntervals.any { probe -> probe["От"] == intervals[0] && probe["До"] == intervals[1] }) {
+            val p = emptyProbe.toMutableMap()
+            p["От"] = intervals[0]
+            p["До"] = intervals[1]
+            resultIntervals.add(p)
           }
         }
       }
-      templateList.addAll(probesWithMSD)
-
+      /*
       println("-")
-      println("templateList: ")
-      templateList.forEach {
+      println("result empty intervals:")
+      resultIntervals.forEach {
         println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
       }
-
-      intervalWellsFile.writeContent(templateList)
-
-      println("------------------------")
+      */
+      resultIntervals.addAll(probesWithMSD) // добавить к новым пустым интервалам пробы с находками МСА
+      /*
+      println("-")
+      println("templateList: ")
+      resultIntervals.forEach {
+        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
+      }
+      */
+      intervalWellsFile.writeContent(resultIntervals)
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let { e.message } ?: "perform error")
     }
   }
 
   @Throws(SecurityException::class, IOException::class)
-  override fun writeData() { }
+  override fun writeData() { } // запись в файл производится в perform()
 
   @Throws(IllegalArgumentException::class)
   private fun checkInputParameters() {
@@ -183,31 +167,38 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     task.printConsole("Преобразование завершено")
   }
 
-  private fun overlap(idw: String, pFromEmpty: Double, pToEmpty: Double,
+  /**
+   * Пустая проба сопоставляется с непустыми пробами на предмет пространственного
+   * наложения. Если пустая проба делится на две, из-за того что ее пересекает
+   * непустая проба, тогда каждая новая проба рекурсивно проверяется на наличие
+   * наложений и затем возвращает новый список неперекрывающихся проб обратно.
+   * При этом могут возникать дублирования, чтобы этого не происходило - новые интервалы
+   * добавляются в хеш-множество.
+   */
+  private fun overlap(pFromEmpty: Double, pToEmpty: Double,
                 probesWithMSD: List<Map<String, String>>): HashSet<String> {
-    var fromEmpty = pFromEmpty
+    var fromEmpty = pFromEmpty // изначальные границы пустого интервала, которые могут быть впоследствии укорочены
     var toEmpty = pToEmpty
 
     val resultSet = HashSet<String>()
-
-    for (probeWithMSD in probesWithMSD) {
+    for (probeWithMSD in probesWithMSD) { // сопоставить пустую пробу с непустыми пробами
       val fromMSD = probeWithMSD["От"]?.toDouble() ?: 0.0
       val toMSD = probeWithMSD["До"]?.toDouble() ?: 0.0
       when {
-        (toMSD <= fromEmpty || fromMSD >= toEmpty) -> { } // интервал с МСА за пределами пустой пробы)
-        (fromMSD <= fromEmpty && toMSD >= toEmpty) -> return resultSet // если проба с МСА полностью перекрывает пустой интевал, вернуть пустой список
-        (fromMSD > fromEmpty && toMSD < toEmpty) -> { // интервал с МСА лежит внутри пустого интревала
-          val set1 = overlap(idw, fromEmpty, fromMSD, probesWithMSD)
-          val set2 = overlap(idw, toMSD, toEmpty, probesWithMSD)
-          resultSet.addAll(set1)
-          resultSet.addAll(set2)
+        (toMSD <= fromEmpty || fromMSD >= toEmpty) -> { } // интервал с МСА за пределами пустой пробы - пустая проба остается без изменений)
+        (fromMSD <= fromEmpty && toMSD >= toEmpty) -> return resultSet // если проба с МСА полностью перекрывает пустой интевал - пустой интервал удаляется
+        (fromMSD > fromEmpty && toMSD < toEmpty) -> { // интервал с МСА лежит внутри пустого интревала - разделить пустой интервал на два
+          val set1 = overlap(fromEmpty, fromMSD, probesWithMSD) // рекурсивно проверить первый новый интервал на оверлап
+          val set2 = overlap(toMSD, toEmpty, probesWithMSD) // рекурсивно проверить второй новый интервал на оверлап
+          resultSet.addAll(set1) // добавить новые неперекрывающие интервалы по первому пустому интервалу
+          resultSet.addAll(set2) // добавить новые неперекрывающие интервалы по второму пустому интервалу
         }
-        (toMSD > fromEmpty && fromMSD <= fromEmpty && toMSD < toEmpty) -> fromEmpty = toMSD // интервал с МСА перекрывает пустую пробу сверху
-        (fromMSD < toEmpty && toMSD >= toEmpty && fromMSD > fromEmpty) -> toEmpty = fromMSD // интервал с МСА перекрывает пустую пробу снизу
-        else -> println("Другой случай")
+        (toMSD > fromEmpty && fromMSD <= fromEmpty && toMSD < toEmpty) -> fromEmpty = toMSD // интервал с МСА перекрывает пустую пробу сверху - укоротить пустую пробу сверху
+        (fromMSD < toEmpty && toMSD >= toEmpty && fromMSD > fromEmpty) -> toEmpty = fromMSD // интервал с МСА перекрывает пустую пробу снизу - укоротить пустую пробу снизу
+        else -> logger.info("Неизвестный случай для перекрывающихся интервалов. ID пробы: ${probeWithMSD["ID"]}")
       }
     }
-    if (resultSet.size == 0) resultSet.add("$idw;$fromEmpty;$toEmpty")
+    if (resultSet.size == 0) resultSet.add("$fromEmpty;$toEmpty")
     return resultSet
   }
 }
