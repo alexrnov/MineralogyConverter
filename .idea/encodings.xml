@@ -17,6 +17,7 @@
     <file url="file://$PROJECT_DIR$/src/test/resources/output/probes with all MSD/topWells.txt" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/test/resources/output/probes without MSD/intervalWells.txt" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/test/resources/output/probes without MSD/topWells.txt" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/test/resources/output/probesIntervalsToPoints.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/removeOverlapIntervals.txt" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/output/removeOverlapIntervals.txt" charset="windows-1251" />
   </component>
 </project>

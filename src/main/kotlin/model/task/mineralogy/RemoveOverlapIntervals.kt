@@ -30,7 +30,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   // названия необходимых атрибутов во входном/выходном файле
   private var namesOfAttributes: List<String> = ArrayList()
 
-  private var numberWell = 0
   private var intervalWellsFile: MicromineTextFile
 
   init {
@@ -44,6 +43,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
             Charset.forName("windows-1251"))
     val probesID = ArrayList<String>()
     var firstLineOfFile = true
+    /* Сначала из файла считываются все уникальные id скважин */
     br.use { // try с ресурсами
       var noEnd = true
       var line: String?
@@ -65,7 +65,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   @Throws(GeoTaskException::class)
   override fun perform(any: Any?) {
     try {
-      println(numberWell++)
       val idWell = any as String
 
       val br: BufferedReader = Files.newBufferedReader(inputFilePath,
@@ -94,12 +93,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
           else noEnd = false
         }
       }
-      /*
-      println("allProbes: ")
-      probesForCurrentWell.forEach {
-        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
-      }
-      */
 
       val probesWithMSD: List<Map<String, String>> = probesForCurrentWell.filter { (it["Все_МСА"]?.toDouble() ?: 0.0) > 0.0 }
       val emptyProbes = probesForCurrentWell.toMutableList()
@@ -121,21 +114,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
           }
         }
       }
-      /*
-      println("-")
-      println("result empty intervals:")
-      resultIntervals.forEach {
-        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
-      }
-      */
       resultIntervals.addAll(probesWithMSD) // добавить к новым пустым интервалам пробы с находками МСА
-      /*
-      println("-")
-      println("templateList: ")
-      resultIntervals.forEach {
-        println("${it["IDW"]} ${it["ID"]} ${it["От"]} ${it["До"]} ${it["Тип_пробы"]} ${it["Все_МСА"]}")
-      }
-      */
       intervalWellsFile.writeContent(resultIntervals)
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let { e.message } ?: "perform error")

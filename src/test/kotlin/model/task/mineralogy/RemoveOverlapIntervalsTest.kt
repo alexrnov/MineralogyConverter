@@ -2,7 +2,6 @@ package model.task.mineralogy
 
 import TestUtils.initToolkit
 import TestUtils.inputFileIntervalWellsAllMSD
-import TestUtils.outputFileProbesIntervalsToPoints
 import TestUtils.outputFileRemoveOverlapIntervals
 import io.mockk.Runs
 import io.mockk.every
@@ -30,7 +29,7 @@ internal class RemoveOverlapIntervalsTest {
   @Disabled
   @Test
   fun `perform for all wells`() {
-    val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
+    val outputFile = Paths.get(outputFileRemoveOverlapIntervals)
     Files.deleteIfExists(outputFile)
     val task = RemoveOverlapIntervals(parameters)
     task.setThreadingTask(mockTask)
@@ -40,12 +39,14 @@ internal class RemoveOverlapIntervalsTest {
 
   @Test
   fun perform() {
-    val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
+    val outputFile = Paths.get(outputFileRemoveOverlapIntervals)
     Files.deleteIfExists(outputFile)
     val task = RemoveOverlapIntervals(parameters)
     task.setThreadingTask(mockTask)
     task.getTableFromFile()
     task.perform("126952")
+    assertTrue(Files.exists(outputFile))
+    assertEquals(15054, outputFile.toFile().length())
   }
 
   @Test
@@ -68,7 +69,7 @@ internal class RemoveOverlapIntervalsTest {
             mapOf("От" to "21.0", "До" to "22.0"),
             mapOf("От" to "30.0", "До" to "32.0"))
 
-    fun f(pFromEmpty: Double, pToEmpty: Double): HashSet<String> {
+    fun removeOverlap(pFromEmpty: Double, pToEmpty: Double): HashSet<String> {
       var fromEmpty = pFromEmpty
       var toEmpty = pToEmpty
       val list = HashSet<String>()
@@ -86,8 +87,8 @@ internal class RemoveOverlapIntervalsTest {
           }
           (fromMSD > fromEmpty && toMSD < toEmpty) -> {
             //println("3. MSD[$fromMSD-$toMSD], Интервал с МСА лежит внутри пустого интревала")
-            val list2 = f(fromEmpty, fromMSD)
-            val list3 = f(toMSD, toEmpty)
+            val list2 = removeOverlap(fromEmpty, fromMSD)
+            val list3 = removeOverlap(toMSD, toEmpty)
             list.addAll(list2)
             list.addAll(list3)
           }
@@ -110,7 +111,7 @@ internal class RemoveOverlapIntervalsTest {
     for (emptyProbe in emptyProbes) {
       val fromEmpty = emptyProbe["От"]?.toDouble() ?: 0.0
       val toEmpty = emptyProbe["До"]?.toDouble() ?: 0.0
-      resultSet.addAll(f(fromEmpty, toEmpty))
+      resultSet.addAll(removeOverlap(fromEmpty, toEmpty))
     }
     println("probesWithMSD: ")
     probesWithMSD.forEach { println(it) }
