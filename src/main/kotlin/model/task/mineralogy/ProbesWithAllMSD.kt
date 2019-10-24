@@ -162,7 +162,8 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
         }
       } else {
         intervalWells.forEach {
-          it["находки"] = "1.0"
+          // иногда атрибут "Все МСА" может быть = 0, хотя файл с непустыми пробами
+          it["находки"] = if (it["Все МСА"]?.toDouble() ?: 0.0 > 0.0) "1.0" else "0.0"
         }
       }
       task.printConsole("Из файла прочитано скважин: ${topWells.size}")
