@@ -27,7 +27,7 @@ internal class IntervalsOfSamplingToPointsTest {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
-            "outputFile" to outputFileProbesIntervalsToPoints,
+            "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 5,
             "taskName" to "подсветить точки по возрасту;;J1dh")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
@@ -57,7 +57,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsOnlyMSD,
-            "outputFile" to outputFileProbesIntervalsToPoints,
+            "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
             "taskName" to "подсветить точки по возрасту;;J1dh"))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
@@ -75,7 +75,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsAllMSD,
-            "outputFile" to outputFileProbesIntervalsToPoints,
+            "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
             "taskName" to "подсветить точки по возрасту;;J1tn"))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
@@ -115,7 +115,7 @@ internal class IntervalsOfSamplingToPointsTest {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
-            "outputFile" to outputFileProbesIntervalsToPoints,
+            "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
             "taskName" to "общая сохранность")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)

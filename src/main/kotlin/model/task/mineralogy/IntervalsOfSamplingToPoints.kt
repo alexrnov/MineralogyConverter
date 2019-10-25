@@ -37,7 +37,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   private val inputFile: String by parameters
   private val outputFile: String by parameters
-  
+  private val frequency: Int by parameters
   private val taskName: String by parameters
 
   private lateinit var inputFilePath: Path
@@ -61,34 +61,42 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   // Это может быть необходимо для Micromine - когда формирование
   // шлихоминералогических ореолов выполняется по возрастам
   private var calculationsTask: CalculationsTask = { }
-
-  init { checkInputParameters() }
+  private var addAttributes: AddAttributes = { _, _ -> }
+  private var dotWellsFile: MicromineTextFile
+  init {
+    checkInputParameters()
+    dotWellsFile = MicromineTextFile(outputFilePath)
+  }
 
   @Throws(SecurityException::class, IOException::class)
   override fun getTableFromFile(): Collection<Any?> {
     val br: BufferedReader = Files.newBufferedReader(inputFilePath,
             Charset.forName("windows-1251"))
-    val probes = ArrayList<String>()
+
+    var firstLine = true
     br.use { // try с ресурсами
       var noEnd = true
       var line: String?
       while (noEnd) {
         line = it.readLine()
-        noEnd = line?.let { probes.add(line) } ?: false
+        if (line!= null) {
+          val lineAsString = line.split(";")
+          if (lineAsString.size !in numberAttributesNonEmptyProbes..numberAttributesAllProbes)
+            throw IOException("Неверный формат входного файла")
+          if (firstLine) {
+            keys = lineAsString.toList()
+            val algorithm = TypeOfCalculationsTasks(taskName, keys).getAlgorithm()
+            addAttributes = algorithm.first // передать алгоритм добавления атрибутов
+            calculationsTask = algorithm.second // алогитм для вычислений для текущей задачи
+            dotWellsFile.writeTitle(keys)
+            firstLine = false
+          } else simpleProbes.add(probeWithNecessaryAttributes(lineAsString, addAttributes))
+        } else noEnd = false
       }
     }
 
-    if (probes.size < 2) throw IOException("Неверный формат входного файла")
-    keys = probes[0].split(";")
-    // или if (keys.size != numberAttributesNonEmptyProbes && keys.size != numberAttributesAllProbes)
-    if (keys.size !in numberAttributesNonEmptyProbes..numberAttributesAllProbes)
-      throw IOException("Неверный формат входного файла")
+    if (simpleProbes.size < 2) throw IOException("Неверный формат входного файла")
 
-    val algorithm = TypeOfCalculationsTasks(taskName, keys).getAlgorithm()
-    probes.fillSimpleProbes(algorithm.first) // передать алгоритм добавления атрибутов
-    calculationsTask = algorithm.second // алогитм для вычислений для текущей задачи
-
-    //simpleProbes[0].forEach { println(it) }
     return simpleProbes.stream()
             .map { it[keys[1]] }
             .collect(Collectors.toSet()) // вернуть набор уникальных id скважин
@@ -100,9 +108,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       val idWell = any as String
       val layersForCurrentWell: List<MutableMap<String, String>> = simpleProbes.filter { it[keys[1]] == idWell }
       calculationsTask.invoke(layersForCurrentWell) // Как паттерн ШАБЛОННЫЙ МЕТОД (заменяемая часть алгоритма)
-      val list = addPointsToIntervals(layersForCurrentWell)
+      val list = addPointsToIntervals(layersForCurrentWell, frequency)
       calculateAbsZForAdditionalPoints(list)
-      dotWells.addAll(list)
+      //dotWells.addAll(list)
+      dotWellsFile.writeContent(list)
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let { e.message } ?: "perform error")
     }
@@ -110,10 +119,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   @Throws(SecurityException::class, IOException::class)
   override fun writeData() {
-    val title = dotWells[0].keys.toList()
-    val dotWellsFile = MicromineTextFile(outputFilePath)
-    dotWellsFile.writeTitle(title)
-    dotWellsFile.writeContent(dotWells)
+    //val title = dotWells[0].keys.toList()
+    //val dotWellsFile = MicromineTextFile(outputFilePath)
+    //dotWellsFile.writeTitle(title)
+    //dotWellsFile.writeContent(dotWells)
   }
 
   @Throws(IllegalArgumentException::class)
@@ -142,27 +151,23 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   }
 
   /**
-   * Функция расширения для списка проб, которая читает эти пробы, и
-   * заполняет на основе прочитанных данных коллекцию с упрощенными
-   * пробами (т.е. имеющими меньшее количество атрибутов)
+   * Функция читает пробы, и возвращает коллекцию упрощенных
+   * проб (т.е. имеющих меньшее количество атрибутов, необходимое для
+   * требуемых вычислительных задач)
    */
   @Throws(IOException::class)
-  private inline fun List<String>.fillSimpleProbes(addAttributes: AddAttributes) {
-    for (i in 1 until this.size) {
-      val currentProbeList = this[i].split(";")
-      if (currentProbeList.size != keys.size)
-        throw IOException("Неверный формат входного файла")
-      val simpleProbeMap = HashMap<String, String>()
-      simpleProbeMap[keys[1]] = currentProbeList[1] // ID
-      simpleProbeMap[keys[7]] = currentProbeList[7] // east
-      simpleProbeMap[keys[8]] = currentProbeList[8] // north
-      simpleProbeMap[keys[9]] = currentProbeList[9] // z
-      simpleProbeMap[keys[11]] = currentProbeList[11] // from
-      simpleProbeMap[keys[12]] = currentProbeList[12] // to
-      simpleProbeMap[keys[23]] = currentProbeList[23] // all MSD
-      // добавить набор атрибутов, необходимых в рамках решаемой задачи
-      addAttributes.invoke(simpleProbeMap, currentProbeList) // Как паттерн ШАБЛОННЫЙ МЕТОД (заменяемая часть алгоритма)
-      simpleProbes.add(simpleProbeMap)
-    }
+  private inline fun probeWithNecessaryAttributes(currentProbeList: List<String>, addAttributes: AddAttributes):
+          MutableMap<String, String> {
+    val simpleProbeMap = HashMap<String, String>()
+    simpleProbeMap[keys[1]] = currentProbeList[1] // ID
+    simpleProbeMap[keys[7]] = currentProbeList[7] // east
+    simpleProbeMap[keys[8]] = currentProbeList[8] // north
+    simpleProbeMap[keys[9]] = currentProbeList[9] // z
+    simpleProbeMap[keys[11]] = currentProbeList[11] // from
+    simpleProbeMap[keys[12]] = currentProbeList[12] // to
+    simpleProbeMap[keys[23]] = currentProbeList[23] // all MSD
+    // добавить набор атрибутов, необходимых в рамках решаемой задачи
+    addAttributes.invoke(simpleProbeMap, currentProbeList) // Как паттерн ШАБЛОННЫЙ МЕТОД (заменяемая часть алгоритма)
+    return simpleProbeMap
   }
 }
