@@ -23,29 +23,43 @@ internal class IntervalsOfSamplingToPointsTest {
   }
 
   @Test
-  fun `input interval file with all probes_highlight by age`() {
+  fun `highlight by find_input interval file with all probes`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
-            "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 5,
-            "taskName" to "подсветить точки по возрасту;;J1dh")
+            "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
+            "taskName" to "выделить точки по находкам")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     var table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
-    task.writeData()
+
+  }
+
+  @Test
+  fun `highlight by find and age_input interval file with all probes`() {
+    val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
+    Files.deleteIfExists(outputFile)
+    val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
+            "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 5,
+            "taskName" to "выделить точки по находкам и возрасту;;J1dh")
+    var task = IntervalsOfSamplingToPoints(parameters)
+    task.setThreadingTask(mockTask)
+    var table: Collection<Any?> = task.getTableFromFile()
+    table.forEach { task.perform(it) }
+
     assertTrue(Files.exists(outputFile))
     assertEquals(54547862, outputFile.toFile().length())
     assertIterableEquals(listOf("Стратиграфия", "east", "От", "north", "Z", "До", "находки", "ID",
             "Все_МСА", "generateZ"), task.getCurrentPoints[0].keys.toList())
 
     Files.deleteIfExists(outputFile)
-    parameters["taskName"] = "подсветить точки по возрасту;;J1uk"
+    parameters["taskName"] = "выделить точки по находкам и возрасту;;J1uk"
     task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     table = task.getTableFromFile()
     table.forEach { task.perform(it) }
-    task.writeData()
+
     assertTrue(Files.exists(outputFile))
     // размер файла будет такой же, даже несмотря на то, что
     // во входных параметрах указан другой стратиграфический индекс.
@@ -56,17 +70,17 @@ internal class IntervalsOfSamplingToPointsTest {
   }
 
   @Test
-  fun `input interval file with non-empty probes_highlight by age`() {
+  fun `highlight by find and age_input interval file with non-empty probes`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsOnlyMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
-            "taskName" to "подсветить точки по возрасту;;J1dh"))
+            "taskName" to "выделить точки по находкам и возрасту;;J1dh"))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
-    task.writeData()
+
     assertTrue(Files.exists(outputFile))
     assertEquals(576351, outputFile.toFile().length())
     // атрибутов "Стратиграфия" и "находки" быть не должно
@@ -81,7 +95,7 @@ internal class IntervalsOfSamplingToPointsTest {
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
-            "taskName" to "подсветить точки по возрасту;;J1tn"))
+            "taskName" to "выделить точки по находкам и возрасту;;J1tn"))
     task.setThreadingTask(mockTask)
     task.test = true
     val table: Collection<Any?> = task.getTableFromFile()
@@ -123,18 +137,16 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
-            "taskName" to "общая сохранность")
+            "taskName" to "вычислить общую сохранность")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     var table: Collection<Any?> = task.getTableFromFile()
     //table.forEach { task.perform(it) }
-    //task.writeData()
 
     parameters["inputFile"] = inputFileIntervalWellsOnlyMSD
     task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     table = task.getTableFromFile()
     table.forEach { task.perform(it) }
-    task.writeData()
   }
 }

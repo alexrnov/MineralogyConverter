@@ -7,10 +7,9 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
 
   fun getAlgorithm(): Pair<AddAttributes, CalculationsTask> {
     when {
-      // точки будут подсвечены по возрасту при условии, что по ним имеются находки
-      taskName.contains("подсветить точки по возрасту") -> highlightByAge()
-      taskName == "общая сохранность" -> commonSafety()
-      taskName == "добавить точки" -> justAdditionalPoints() // если просто добавить точки
+      taskName == "выделить точки по находкам" -> justAdditionalPoints() // дополнительные точки будут выделены по возрасту (находки 0.0 или 1.0)
+      taskName.contains("выделить точки по находкам и возрасту") -> highlightByAge() // точки будут выделены по возрасту при условии, что по ним имеются находки
+      taskName == "вычислить общую сохранность" -> commonSafety() // у дополнительных точек будет дополнительный параметр - общая сохранность
       else -> {}
     }
     return Pair(addAttributes, calculationsTask)
