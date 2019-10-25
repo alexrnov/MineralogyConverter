@@ -35,7 +35,7 @@ internal class IntervalsOfSamplingToPointsTest {
     table.forEach { task.perform(it) }
     task.writeData()
     assertTrue(Files.exists(outputFile))
-    assertEquals(14229079, outputFile.toFile().length())
+    assertEquals(54547862, outputFile.toFile().length())
 
     Files.deleteIfExists(outputFile)
     parameters["taskName"] = "подсветить точки по возрасту;;J1uk"
@@ -48,7 +48,7 @@ internal class IntervalsOfSamplingToPointsTest {
     // размер файла будет такой же, даже несмотря на то, что
     // во входных параметрах указан другой стратиграфический индекс.
     // Т.е. изменение "1.0" на "0.0" и обратно не меняет размер файла
-    assertEquals(14229079, outputFile.toFile().length())
+    assertEquals(54547862, outputFile.toFile().length())
   }
 
   @Test

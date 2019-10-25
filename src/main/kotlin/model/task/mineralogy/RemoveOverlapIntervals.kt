@@ -27,7 +27,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   private lateinit var inputFilePath: Path
   private lateinit var outputFilePath: Path
 
-  // названия необходимых атрибутов во входном/выходном файле
+  // названия необходимых атрибутов во входном/выходном файлах
   private var namesOfAttributes: List<String> = ArrayList()
 
   private var intervalWellsFile: MicromineTextFile
@@ -51,14 +51,16 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         line = it.readLine()
         if (line != null) {
           val lineAsList = line.split(";")
+          if (lineAsList.size < 2) throw IOException("${this.javaClass.simpleName}: error format file")
           if (firstLineOfFile) {
-            namesOfAttributes = lineAsList
+            namesOfAttributes = lineAsList // namesOfAttributes останется неизменной, поскольку дальнейшее присваивание коллекции lineAsList новых значений не повреждает коллекцию namesOfAttributes
             intervalWellsFile.writeTitle(namesOfAttributes) // записать в выходной файл названия атрибутов
             firstLineOfFile = false
           } else probesID.add(lineAsList[1])
         } else noEnd = false
       }
     }
+    if (probesID.isEmpty()) throw IOException("${this.javaClass.simpleName}: file is empty")
     return HashSet(probesID) // вернуть набор уникальных id скважин
   }
 
@@ -83,6 +85,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
           line = it.readLine()
           if (line != null) {
             val currentLineAsList: List<String> = line.split(";")
+            if (currentLineAsList.size != namesOfAttributes.size) {
+              throw GeoTaskException("${this.javaClass.simpleName}: Amount values for current line " +
+                      "not correspond with amount fields of attributes")
+            }
             if (currentLineAsList[1] == idWell) {
               val iterator = namesOfAttributes.iterator()
               // создать отображение с парами: название атрибута - его значение
@@ -174,7 +180,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         }
         (toMSD > fromEmpty && fromMSD <= fromEmpty && toMSD < toEmpty) -> fromEmpty = toMSD // интервал с МСА перекрывает пустую пробу сверху - укоротить пустую пробу сверху
         (fromMSD < toEmpty && toMSD >= toEmpty && fromMSD > fromEmpty) -> toEmpty = fromMSD // интервал с МСА перекрывает пустую пробу снизу - укоротить пустую пробу снизу
-        else -> logger.info("Неизвестный случай для перекрывающихся интервалов. ID пробы: ${probeWithMSD["ID"]}")
+        else -> logger.info("${this.javaClass.simpleName}: unknown case for overlaps intervals. ID of probe: ${probeWithMSD["ID"]}")
       }
     }
     if (resultSet.size == 0) resultSet.add("$fromEmpty;$toEmpty")

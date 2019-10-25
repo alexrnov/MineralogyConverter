@@ -64,8 +64,11 @@ fun calculateAbsZForAdditionalPoints(intervalWells: List<MutableMap<String, Stri
  * [intervals] - коллекция стратиграфических интервалов по всем скважинам
  * Возвращаются размноженные стратиграфические интервалы с
  * дополнительными точками
+ * [frequency] - коэффициент для плотности расположения точек, чем больше
+ * коэффициент, тем плотнее друг к другу располагаются дополнительные точки
+ * рекомендуемые значения: 1 - 5, где идиница - точки идут через метр, двойка - через пол метра и т.д.
  */
-fun addPointsToIntervals(intervals: List<Map<String, String>>):
+fun addPointsToIntervals(intervals: List<Map<String, String>>, frequency: Int = 1):
     List<MutableMap<String, String>> {
   var start: Double // начало интервала
   var end: Double // конец интервала
@@ -80,7 +83,7 @@ fun addPointsToIntervals(intervals: List<Map<String, String>>):
     // val ceil = Math.ceil(length)
     // если интервал меньше одного метра все равно добавлять точки
     var ceil = if (length <= 1.0) 2.0 else Math.ceil(length)
-    ceil *= 5 // участить точки в пять раз (возможно, нужно добавить настройку этого параметра в интерфейсе)
+    ceil *= frequency // участить точки
     // определить шаг, через который будут идти дополнительные точки
     // ceil() округляет число до большего: 0.1 вернет 1. Если
     // интервал меньше одного метра, точки добавлены не будут

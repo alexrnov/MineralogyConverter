@@ -37,6 +37,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   private val inputFile: String by parameters
   private val outputFile: String by parameters
+  
   private val taskName: String by parameters
 
   private lateinit var inputFilePath: Path

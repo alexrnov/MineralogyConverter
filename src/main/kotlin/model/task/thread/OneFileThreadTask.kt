@@ -76,6 +76,7 @@ class OneFileThreadTask(private val nameOfTask: String,
         geoTask.perform(line)
       } catch (e: GeoTaskException) {
         printConsole("Ошибка вычислений. См. описание ошибки в лог-файле")
+        logger.warning(e.message)
         return false
       }
       performed += increment
