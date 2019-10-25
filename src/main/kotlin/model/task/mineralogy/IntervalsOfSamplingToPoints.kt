@@ -43,14 +43,18 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   private lateinit var inputFilePath: Path
   private lateinit var outputFilePath: Path
 
+  private var dotWellsFile: MicromineTextFile
+
   // коллекция с пробами, которые были считаны из файла.
   // Для проб остаются только необходимые атрибуты
   private val simpleProbes = ArrayList<MutableMap<String, String>>()
 
-  private var currentPoints: List<MutableMap<String, String>> = ArrayList()
-  val getCurrentPoints get() = CollectionUtils.copyListWithSubMap(currentPoints.toList())
+  private var currentPoints: List<MutableMap<String, String>> = ArrayList() // дополнительные точки по текущей скважине
+  val getCurrentPoints get() = CollectionUtils.copyListWithSubMap(currentPoints.toList()) // используется в тесте
+  // коллекция содержит информацию по всем точкам. Эти данные необходимы
+  // для проверки в тесте
   val allPoints: MutableList<MutableMap<String, String>> = ArrayList()
-  var test = false
+  var test = false // переменная определяет используется ли данный класс в тесте
 
   // названия атрибутов во входном файле
   private var namesOfAttributes: List<String> = ArrayList()
@@ -59,11 +63,12 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   // во входных параметрах и с наличием находок МСА. Это может быть необходимо
   // для Micromine - когда формирование шлихоминералогических ореолов выполняется по возрастам
   private var calculationsTask: CalculationsTask = { }
-
   // функция добавляет из исходного файла только те атрибуты, которые нужны для вычислений
   private var addAttributes: AddAttributes = { _, _ -> }
-  private var dotWellsFile: MicromineTextFile
+
   private var firstWell = true
+  var numberOfPoints = 0 // общее количесвто точек, записываемых в файл
+
   init {
     checkInputParameters()
     dotWellsFile = MicromineTextFile(outputFilePath)
@@ -83,20 +88,19 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         if (line!= null) {
           val lineAsString = line.split(";")
           if (lineAsString.size !in numberAttributesNonEmptyProbes..numberAttributesAllProbes)
-            throw IOException("Неверный формат входного файла")
-          if (firstLine) {
-            namesOfAttributes = lineAsString.toList()
+            throw IOException("${this.javaClass.simpleName}: Incorrect format of input file")
+          if (firstLine) { // если заголовок - считать атрибуты и определить алгоритмы для задачи
+            namesOfAttributes = lineAsString // namesOfAttributes останется неизменной, поскольку дальнейшее присваивание коллекции lineAsList новых значений не повреждает коллекцию namesOfAttributes
             val algorithm = TypeOfCalculationsTasks(taskName, namesOfAttributes).getAlgorithm()
             addAttributes = algorithm.first // передать алгоритм добавления атрибутов
             calculationsTask = algorithm.second // алогитм для вычислений для текущей задачи
-            //dotWellsFile.writeTitle(namesOfAttributes)
             firstLine = false
           } else simpleProbes.add(probeWithNecessaryAttributes(lineAsString, addAttributes))
         } else noEnd = false
       }
     }
 
-    if (simpleProbes.size < 2) throw IOException("Неверный формат входного файла")
+    if (simpleProbes.size < 2) throw IOException("${this.javaClass.simpleName}: Incorrect format of input file")
 
     return simpleProbes.stream()
             .map { it[namesOfAttributes[1]] }
@@ -112,24 +116,21 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       currentPoints = addPointsToIntervals(layersForCurrentWell, frequency)
       calculateAbsZForAdditionalPoints(currentPoints)
 
+      // из первой пробы считать все названия атрибутов и записать их в выходной текстовый файл
       if (firstWell && currentPoints.isNotEmpty()) {
         dotWellsFile.writeTitle(currentPoints[0].keys.toList())
         firstWell = false
       }
-      if (test) allPoints.addAll(currentPoints)
+      if (test) allPoints.addAll(currentPoints) // необходимо для теста
       dotWellsFile.writeContent(currentPoints)
+      numberOfPoints += currentPoints.size
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let { e.message } ?: "perform error")
     }
   }
 
   @Throws(SecurityException::class, IOException::class)
-  override fun writeData() {
-    //val title = dotWells[0].namesOfAttributes.toList()
-    //val dotWellsFile = MicromineTextFile(outputFilePath)
-    //dotWellsFile.writeTitle(title)
-    //dotWellsFile.writeContent(dotWells)
-  }
+  override fun writeData() { } // запись в файл производится в perform(), чтобы избежать memory overload
 
   @Throws(IllegalArgumentException::class)
   private fun checkInputParameters() {
@@ -137,7 +138,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
       inputFilePath = Paths.get(inputFile)
       outputFilePath = Paths.get(outputFile)
     } catch (e: InvalidPathException) {
-      throw IllegalArgumentException("invalid path input or output file")
+      throw IllegalArgumentException("${this.javaClass.simpleName}: invalid path input or output file")
     }
   }
 
@@ -153,18 +154,19 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
 
   override fun printReport() {
     task.printConsole("")
-    task.printConsole("В выходной файл записано точек: ")
+    task.printConsole("В выходной файл записано точек: $numberOfPoints")
   }
 
   /**
    * Функция читает пробы, и возвращает коллекцию упрощенных
    * проб (т.е. имеющих меньшее количество атрибутов, необходимое для
-   * требуемых вычислительных задач)
+   * требуемых вычислительных задач), иначе возможен memory overload
    */
   @Throws(IOException::class)
   private inline fun probeWithNecessaryAttributes(currentProbeList: List<String>, addAttributes: AddAttributes):
           MutableMap<String, String> {
     val simpleProbeMap = HashMap<String, String>()
+    // обязательные атрибуты
     simpleProbeMap[namesOfAttributes[1]] = currentProbeList[1] // ID
     simpleProbeMap[namesOfAttributes[7]] = currentProbeList[7] // east
     simpleProbeMap[namesOfAttributes[8]] = currentProbeList[8] // north

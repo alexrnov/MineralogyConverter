@@ -88,6 +88,7 @@ internal class IntervalsOfSamplingToPointsTest {
     table.forEach { task.perform(it) }
     val currentPoints = task.allPoints
     assertEquals(242145, currentPoints.size)
+    assertEquals(242145, task.numberOfPoints)
     assertEquals(12,
             currentPoints.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
                     .filter { it["находки"] == "1.0" }

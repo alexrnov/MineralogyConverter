@@ -128,7 +128,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   }
 
   @Throws(SecurityException::class, IOException::class)
-  override fun writeData() { } // запись в файл производится в perform()
+  override fun writeData() { } // запись в файл производится в perform(), чтобы избежать memory overload
 
   @Throws(IllegalArgumentException::class)
   private fun checkInputParameters() {
