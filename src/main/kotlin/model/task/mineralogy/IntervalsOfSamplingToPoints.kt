@@ -54,7 +54,10 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   // коллекция содержит информацию по всем точкам. Эти данные необходимы
   // для проверки в тесте
   val allPoints: MutableList<MutableMap<String, String>> = ArrayList()
-  var test = false // переменная определяет используется ли данный класс в тесте
+  // переменная определяет используется ли данный класс в тесте. Может привести
+  // к memory overhead, если большой входной файл или много дополнительных точек,
+  // и коллекция allPoints получится большой
+  var test = false
 
   // названия атрибутов во входном файле
   private var namesOfAttributes: List<String> = ArrayList()
@@ -70,6 +73,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   var numberOfPoints = 0 // общее количесвто точек, записываемых в файл
 
   init {
+    println("frequency = $frequency")
     checkInputParameters()
     dotWellsFile = MicromineTextFile(outputFilePath)
   }

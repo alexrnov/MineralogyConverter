@@ -26,14 +26,23 @@ internal class IntervalsOfSamplingToPointsTest {
   fun `highlight by find_input interval file with all probes`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
-    val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
+    var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
             "taskName" to "выделить точки по находкам")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
+    task.test = true
     var table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
+    println(table.size)
 
+    parameters["frequency"] = 2
+    task = IntervalsOfSamplingToPoints(parameters)
+    task.setThreadingTask(mockTask)
+    task.test = true
+    table = task.getTableFromFile()
+    table.forEach { task.perform(it) }
+    println(table.size)
   }
 
   @Test
