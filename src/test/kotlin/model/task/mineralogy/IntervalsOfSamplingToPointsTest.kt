@@ -23,7 +23,7 @@ internal class IntervalsOfSamplingToPointsTest {
   }
 
   @Test
-  fun `input interval file with all probes`() {
+  fun `input interval file with all probes_highlight by age`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
@@ -36,6 +36,8 @@ internal class IntervalsOfSamplingToPointsTest {
     task.writeData()
     assertTrue(Files.exists(outputFile))
     assertEquals(54547862, outputFile.toFile().length())
+    assertIterableEquals(listOf("Стратиграфия", "east", "От", "north", "Z", "До", "находки", "ID",
+            "Все_МСА", "generateZ"), task.getCurrentPoints[0].keys.toList())
 
     Files.deleteIfExists(outputFile)
     parameters["taskName"] = "подсветить точки по возрасту;;J1uk"
@@ -49,10 +51,12 @@ internal class IntervalsOfSamplingToPointsTest {
     // во входных параметрах указан другой стратиграфический индекс.
     // Т.е. изменение "1.0" на "0.0" и обратно не меняет размер файла
     assertEquals(54547862, outputFile.toFile().length())
+    assertIterableEquals(listOf("Стратиграфия", "east", "От", "north", "Z", "До", "находки", "ID",
+            "Все_МСА", "generateZ"), task.getCurrentPoints[0].keys.toList())
   }
 
   @Test
-  fun `input interval file with non-empty probes`() {
+  fun `input interval file with non-empty probes_highlight by age`() {
     val outputFile = Paths.get(outputFileProbesIntervalsToPoints)
     Files.deleteIfExists(outputFile)
     val task = IntervalsOfSamplingToPoints(mapOf(
@@ -65,8 +69,9 @@ internal class IntervalsOfSamplingToPointsTest {
     task.writeData()
     assertTrue(Files.exists(outputFile))
     assertEquals(576351, outputFile.toFile().length())
-    assertEquals(false, task.getDotWells[1].containsKey("находки"))
-    assertEquals(false, task.getDotWells[2].containsKey("Стратиграфия"))
+    // атрибутов "Стратиграфия" и "находки" быть не должно
+    assertIterableEquals(listOf("east", "От", "north", "Z", "До", "ID",
+            "Все_МСА", "generateZ"), task.getCurrentPoints[0].keys.toList())
   }
 
   @Test
@@ -78,34 +83,35 @@ internal class IntervalsOfSamplingToPointsTest {
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
             "taskName" to "подсветить точки по возрасту;;J1tn"))
     task.setThreadingTask(mockTask)
+    task.test = true
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
-    val dotWells = task.getDotWells
-    assertEquals(242145, dotWells.size)
+    val currentPoints = task.allPoints
+    assertEquals(242145, currentPoints.size)
     assertEquals(12,
-            dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
+            currentPoints.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
                     .filter { it["находки"] == "1.0" }
                     .count())
     assertEquals(0,
-            dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
+            currentPoints.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
                     .filter { it["находки"] != "1.0" }
                     .count())
     // у всех скважин со стратиграфией "J1tn" и ненулевым количеством
     // "Все_МСА" должен быть атрибут "находки" со значением "1.0"
-    assertEquals(dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
+    assertEquals(currentPoints.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
             .count(),
-            dotWells.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
+            currentPoints.filter { (it["Стратиграфия"] == "J1tn!") && it["Все_МСА"] != "0" }
                     .filter { it["находки"] == "1.0" }
                     .count())
 
     assertEquals(2613,
-            dotWells.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
+            currentPoints.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
                     .count())
     // все точки с другими стратиграфическимим индексами (например J1dh)
     // , даже если атрибут "Все_МСА" != 0, должны иметь значение
     // атрибута "находки" = 0.0
     assertEquals(0,
-            dotWells.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
+            currentPoints.filter { (it["Стратиграфия"] == "J1dh") && it["Все_МСА"] != "0" }
                     .filter { it["находки"] == "1.0" }
                     .count())
   }
