@@ -2,7 +2,9 @@ package model.task.mineralogy
 
 class TypeOfCalculationsTasks(private val taskName: String, private val keys: List<String>) {
 
+  // функция определяет алгоритм для текущей задачи
   private var calculationsTask: CalculationsTask = { }
+  // функция добавляет из исходного файла только те атрибуты, которые нужны для вычислений
   private var addAttributes: AddAttributes = { _, _ -> }
 
   fun getAlgorithm(): Pair<AddAttributes, CalculationsTask> {
@@ -22,6 +24,7 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
       simpleProbeMap[keys.last()] = currentProbeList[keys.lastIndex] // находки
     }
   }
+
 
   private fun highlightByAge() {
     val ageIndex = taskName.split(";;").run { this.takeIf { it.size > 1 }?.let { this[1].trim() } ?: "" }

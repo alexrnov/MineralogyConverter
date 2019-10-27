@@ -62,9 +62,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   // названия атрибутов во входном файле
   private var namesOfAttributes: List<String> = ArrayList()
 
-  // функция выполняет выделение точек со стратиграфическим индексом, указанном
-  // во входных параметрах и с наличием находок МСА. Это может быть необходимо
-  // для Micromine - когда формирование шлихоминералогических ореолов выполняется по возрастам
+  // функция определяет алгоритм для текущей задачи
   private var calculationsTask: CalculationsTask = { }
   // функция добавляет из исходного файла только те атрибуты, которые нужны для вычислений
   private var addAttributes: AddAttributes = { _, _ -> }
@@ -73,7 +71,6 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   var numberOfPoints = 0 // общее количесвто точек, записываемых в файл
 
   init {
-    println("frequency = $frequency")
     checkInputParameters()
     dotWellsFile = MicromineTextFile(outputFilePath)
   }
