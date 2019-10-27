@@ -4,12 +4,13 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="527.0" prefWidth="518.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Task5Layout">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="630.0" prefWidth="518.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Task5Layout">
     <children>
         <TextField fx:id="inputFileTextField" layoutX="14.0" layoutY="36.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="46.0" />
         <TextField fx:id="outputFileTextField" layoutX="14.0" layoutY="105.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="108.0" />
@@ -20,7 +21,7 @@
         <Button fx:id="runTaskButton" layoutX="343.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="123.0" />
         <ProgressBar fx:id="progressBar" layoutX="14.0" layoutY="438.0" prefHeight="18.0" prefWidth="259.0" progress="0.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="14.0" />
         <TextArea fx:id="consoleTextArea" layoutX="14.0" layoutY="255.0" prefHeight="215.0" prefWidth="490.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-        <Label layoutX="14.0" layoutY="218.0" text="Информация по ходу выполнения процесса:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="221.0" />
+        <Label layoutX="14.0" layoutY="218.0" text="Информация по ходу выполнения процесса:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="320.0" />
         <Label fx:id="processPercentLabel" layoutX="89.0" layoutY="416.0" text="0%" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="89.0" />
         <Label layoutX="14.0" layoutY="416.0" text="Выполнено:" AnchorPane.bottomAnchor="40.0" />
         <Button fx:id="cancelTaskButton" layoutX="452.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="14.0" />
@@ -30,5 +31,8 @@
       <TextField fx:id="stratigraphicTextField" layoutX="410.0" layoutY="166.0" prefHeight="30.0" prefWidth="84.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="169.0" />
       <Label layoutX="61.0" layoutY="181.0" prefHeight="20.0" prefWidth="328.0" text="при условии, что есть находки МСА" AnchorPane.leftAnchor="55.0" AnchorPane.topAnchor="183.0" />
       <Label layoutX="24.0" layoutY="22.0" text="или из задачи &quot;Пробы с МСА (web-сервис)&quot;:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="23.0" />
+      <RadioButton fx:id="highlightByFind" layoutX="24.0" layoutY="229.0" mnemonicParsing="false" text="RadioButton" />
+      <RadioButton fx:id="highlightByFindAndAge" layoutX="24.0" layoutY="262.0" mnemonicParsing="false" text="RadioButton" />
+      <RadioButton fx:id="commonSafety" layoutX="24.0" layoutY="298.0" mnemonicParsing="false" text="RadioButton" />
     </children>
 </AnchorPane>

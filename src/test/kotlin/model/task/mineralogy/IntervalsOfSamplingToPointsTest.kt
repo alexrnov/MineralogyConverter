@@ -58,7 +58,7 @@ internal class IntervalsOfSamplingToPointsTest {
     table.forEach { task.perform(it) }
 
     assertTrue(Files.exists(outputFile))
-    assertEquals(54547862, outputFile.toFile().length())
+    assertEquals(14229079, outputFile.toFile().length())
     assertIterableEquals(listOf("Стратиграфия", "east", "От", "north", "Z", "До", "находки", "ID",
             "Все_МСА", "generateZ"), task.getCurrentPoints[0].keys.toList())
 
@@ -73,7 +73,7 @@ internal class IntervalsOfSamplingToPointsTest {
     // размер файла будет такой же, даже несмотря на то, что
     // во входных параметрах указан другой стратиграфический индекс.
     // Т.е. изменение "1.0" на "0.0" и обратно не меняет размер файла
-    assertEquals(54547862, outputFile.toFile().length())
+    assertEquals(14229079, outputFile.toFile().length())
     assertIterableEquals(listOf("Стратиграфия", "east", "От", "north", "Z", "До", "находки", "ID",
             "Все_МСА", "generateZ"), task.getCurrentPoints[0].keys.toList())
   }

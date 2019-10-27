@@ -24,11 +24,16 @@ public class Task5Layout extends TaskLayout {
   @FXML private Button outputFileButton;
   @FXML private Button runTaskButton;
   @FXML private Button cancelTaskButton;
+
+  @FXML private RadioButton highlightByFind;
+  @FXML private RadioButton highlightByFindAndAge;
+  @FXML private RadioButton commonSafety;
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
   @FXML private CheckBox selectByAgeCheckBox;
 
+  private ToggleGroup toggleGroup = new ToggleGroup();
   private ButtonAnimation inputFileAnimation;
   private ButtonAnimation outputFileAnimation;
   private ButtonAnimation runTaskAnimation;
@@ -43,6 +48,10 @@ public class Task5Layout extends TaskLayout {
     createOutputFileButton(new ImageView(getOpenDialogPath()));
     createButtonRunTask();
     createButtonCancelTask();
+
+    highlightByFind.setToggleGroup(toggleGroup);
+    highlightByFindAndAge.setToggleGroup(toggleGroup);
+    commonSafety.setToggleGroup(toggleGroup);
 
     inputFileTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
       if (newValue) defaultStyle(inputFileTextField);
