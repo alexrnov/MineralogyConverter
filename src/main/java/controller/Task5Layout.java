@@ -1,7 +1,7 @@
 package controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static application.StaticConstants.*;
 
@@ -28,16 +26,16 @@ public class Task5Layout extends TaskLayout {
   @FXML private Button outputFileButton;
   @FXML private Button runTaskButton;
   @FXML private Button cancelTaskButton;
+  @FXML private ComboBox<Integer> frequencyComboBox;
 
-  @FXML private RadioButton highlightByFind;
-  @FXML private RadioButton highlightByFindAndAge;
-  @FXML private RadioButton commonSafety;
+  @FXML private RadioButton highlightByFindRadioButton;
+  @FXML private RadioButton highlightByFindAndAgeRadioButton;
+  @FXML private RadioButton commonSafetyRadioButton;
   @FXML private TextArea consoleTextArea;
   @FXML private ProgressBar progressBar;
   @FXML private Label processPercentLabel;
-  @FXML private CheckBox selectByAgeCheckBox;
 
-  private ToggleGroup toggleGroup = new ToggleGroup();
+  private ToggleGroup toggleGroup = new ToggleGroup(); // группа радио-кнопок
   private ButtonAnimation inputFileAnimation;
   private ButtonAnimation outputFileAnimation;
   private ButtonAnimation runTaskAnimation;
@@ -53,18 +51,23 @@ public class Task5Layout extends TaskLayout {
     createButtonRunTask();
     createButtonCancelTask();
 
-    highlightByFind.setToggleGroup(toggleGroup);
-    highlightByFind.setUserData("highlightByFind");
-    highlightByFind.setSelected(true);
-    highlightByFindAndAge.setToggleGroup(toggleGroup);
-    highlightByFindAndAge.setUserData("highlightByFindAndAge");
-    commonSafety.setToggleGroup(toggleGroup);
-    commonSafety.setUserData("commonSafety");
+    stratigraphicTextField.setDisable(true);
+    highlightByFindRadioButton.setToggleGroup(toggleGroup);
+    highlightByFindRadioButton.setUserData("highlightByFind");
+    highlightByFindRadioButton.setSelected(true);
+    highlightByFindAndAgeRadioButton.setToggleGroup(toggleGroup);
+    highlightByFindAndAgeRadioButton.setUserData("highlightByFindAndAge");
+    commonSafetyRadioButton.setToggleGroup(toggleGroup);
+    commonSafetyRadioButton.setUserData("commonSafety");
 
-
+    // слушатель событий переключения радио-кнопок в группе радио-кнопок
     toggleGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
-      if (toggleGroup.getSelectedToggle() != null) {
-        System.out.println(toggleGroup.getSelectedToggle().getUserData().toString());
+      if (newToggle.getUserData().toString().equals("highlightByFindAndAge")) {
+        stratigraphicTextField.setDisable(false);
+      }
+      if (oldToggle.getUserData().toString().equals("highlightByFindAndAge")) {
+        stratigraphicTextField.setDisable(true);
+        defaultStyle(stratigraphicTextField);
       }
     });
 
@@ -80,15 +83,9 @@ public class Task5Layout extends TaskLayout {
       if (newValue) defaultStyle(stratigraphicTextField);
     });
 
-    stratigraphicTextField.setDisable(true);
-    selectByAgeCheckBox.setSelected(false);
-    selectByAgeCheckBox.setOnAction( e -> {
-      if (selectByAgeCheckBox.isSelected()) {
-        stratigraphicTextField.setDisable(false);
-      } else {
-        stratigraphicTextField.setDisable(true);
-      }
-    });
+    ObservableList<Integer> volumes = FXCollections.observableArrayList(1, 2, 3, 4, 5);
+    frequencyComboBox.getItems().addAll(volumes);
+    frequencyComboBox.setValue(1);
   }
 
   private void createInputFileButton(ImageView openDialogPathImage) {
@@ -157,20 +154,21 @@ public class Task5Layout extends TaskLayout {
 
   private void runTask() {
 
-    if (threadTask != null && threadTask.isRunning()) {
-      return;
-    }
+    if (threadTask != null && threadTask.isRunning()) return;
 
-    if (!checkInputParameters()) {
-      return;
-    }
+    if (!checkInputParameters()) return;
 
     //if (threadTask == null || threadTask.isDone())
     Map<String, Object> parameters = new HashMap<>();
     parameters.put("inputFile", inputFileTextField.getText());
     parameters.put("outputFile", outputFileTextField.getText());
-    parameters.put("frequency", 5);
-    parameters.put("taskName", "добавить точки");
+    parameters.put("frequency", frequencyComboBox.getValue());
+
+    if (highlightByFindAndAgeRadioButton.isSelected()) {
+      parameters.put("taskName", "highlightByFindAndAge" + ";;" + stratigraphicTextField.getText());
+    } else {
+      parameters.put("taskName", toggleGroup.getSelectedToggle().getUserData().toString());
+    }
 
     threadTask = new OneFileThreadTask(mainLayout.getNameOfCurrentTask(),
             parameters);
@@ -237,7 +235,8 @@ public class Task5Layout extends TaskLayout {
       b = false;
     }
 
-    if (selectByAgeCheckBox.isSelected() && stratigraphicTextField.getText().trim().isEmpty()) {
+    if (toggleGroup.getSelectedToggle().getUserData().toString().equals("highlightByFindAndAge")
+            && stratigraphicTextField.getText().trim().isEmpty()) {
       stratigraphicTextField.setStyle(getErrorStyleTextField());
       b = false;
     }

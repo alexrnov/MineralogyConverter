@@ -9,9 +9,9 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
 
   fun getAlgorithm(): Pair<AddAttributes, CalculationsTask> {
     when {
-      taskName == "выделить точки по находкам" -> justAdditionalPoints() // дополнительные точки будут выделены по возрасту (находки 0.0 или 1.0)
-      taskName.contains("выделить точки по находкам и возрасту") -> highlightByAge() // точки будут выделены по возрасту при условии, что по ним имеются находки
-      taskName == "вычислить общую сохранность" -> commonSafety() // у дополнительных точек будет дополнительный параметр - общая сохранность
+      taskName == "highlightByFind" -> justAdditionalPoints() // дополнительные точки будут выделены по возрасту (находки 0.0 или 1.0)
+      taskName.contains("highlightByFindAndAge") -> highlightByAge() // точки будут выделены по возрасту при условии, что по ним имеются находки
+      taskName == "commonSafety" -> commonSafety() // у дополнительных точек будет дополнительный параметр - общая сохранность
       else -> {}
     }
     return Pair(addAttributes, calculationsTask)
@@ -24,7 +24,6 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
       simpleProbeMap[keys.last()] = currentProbeList[keys.lastIndex] // находки
     }
   }
-
 
   private fun highlightByAge() {
     val ageIndex = taskName.split(";;").run { this.takeIf { it.size > 1 }?.let { this[1].trim() } ?: "" }

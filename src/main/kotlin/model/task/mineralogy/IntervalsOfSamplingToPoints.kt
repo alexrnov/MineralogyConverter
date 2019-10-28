@@ -27,9 +27,7 @@ const val numberAttributesAllProbes = 268
 // колчество атрибутов во входном файле интервалов только для непустых проб
 const val numberAttributesNonEmptyProbes = numberAttributesAllProbes - 1
 
-/**
- * Задача "Интервалы опробования в точки".
- */
+/** Задача "Интервалы опробования в точки". */
 class IntervalsOfSamplingToPoints
 
 @Throws(IllegalArgumentException::class)
@@ -147,9 +145,16 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     task.printConsole("Входные параметры: ")
     task.printConsole("Входной файл: ${ inputFilePath.toAbsolutePath() }")
     task.printConsole("Выходной файл: ${ outputFilePath.toAbsolutePath() }")
-    var s = "Дополнительные вычисления: "
-    s += if (taskName.isNotEmpty()) taskName else "нет"
-    task.printConsole(s)
+    task.printConsole("Коэффициент для дополнительных точек: $frequency")
+    var s = "Задача:"
+    when {
+      taskName == "highlightByFind" -> task.printConsole("$s выделить точки по наличию находок МСА")
+      taskName.contains("highlightByFindAndAge") -> {
+        val ageIndex = taskName.split(";;").run { this.takeIf { it.size > 1 }?.let { this[1].trim() } ?: "" }
+        task.printConsole("$s выделить точки со стратиграфическим индексом, при условии, что есть находки МСА; возраст: $ageIndex")
+      }
+      taskName == "commonSafety" -> task.printConsole("$s суммарная сохранность")
+    }
     task.printConsole("")
   }
 

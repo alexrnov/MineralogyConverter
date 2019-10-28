@@ -28,7 +28,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
-            "taskName" to "выделить точки по находкам")
+            "taskName" to "highlightByFind")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     //task.test = true
@@ -51,7 +51,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     val parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
-            "taskName" to "выделить точки по находкам и возрасту;;J1dh")
+            "taskName" to "highlightByFindAndAge;;J1dh")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     var table: Collection<Any?> = task.getTableFromFile()
@@ -63,7 +63,7 @@ internal class IntervalsOfSamplingToPointsTest {
             "Все_МСА", "generateZ"), task.getCurrentPoints[0].keys.toList())
 
     Files.deleteIfExists(outputFile)
-    parameters["taskName"] = "выделить точки по находкам и возрасту;;J1uk"
+    parameters["taskName"] = "highlightByFindAndAge;;J1uk"
     task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     table = task.getTableFromFile()
@@ -85,7 +85,7 @@ internal class IntervalsOfSamplingToPointsTest {
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsOnlyMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
-            "taskName" to "выделить точки по находкам и возрасту;;J1dh"))
+            "taskName" to "highlightByFindAndAge;;J1dh"))
     task.setThreadingTask(mockTask)
     val table: Collection<Any?> = task.getTableFromFile()
     table.forEach { task.perform(it) }
@@ -104,7 +104,7 @@ internal class IntervalsOfSamplingToPointsTest {
     val task = IntervalsOfSamplingToPoints(mapOf(
             "inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
-            "taskName" to "выделить точки по находкам и возрасту;;J1tn"))
+            "taskName" to "highlightByFindAndAge;;J1tn"))
     task.setThreadingTask(mockTask)
     task.test = true
     val table: Collection<Any?> = task.getTableFromFile()
@@ -146,7 +146,7 @@ internal class IntervalsOfSamplingToPointsTest {
     Files.deleteIfExists(outputFile)
     var parameters = mutableMapOf("inputFile" to inputFileIntervalWellsAllMSD,
             "outputFile" to outputFileProbesIntervalsToPoints, "frequency" to 1,
-            "taskName" to "вычислить общую сохранность")
+            "taskName" to "commonSafety")
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     var table: Collection<Any?> = task.getTableFromFile()
