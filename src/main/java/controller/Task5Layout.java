@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static application.StaticConstants.*;
 
@@ -62,6 +64,11 @@ public class Task5Layout extends TaskLayout {
       @Override
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldToggle, Toggle newToggle) {
         System.out.println(newToggle.toString());
+        Pattern pattern = Pattern.compile("id=.+[,]");
+        Matcher matcher = pattern.matcher(newToggle.toString());
+        while(matcher.find()) {
+          System.out.println(matcher.start() + " " + matcher.end());
+        }
       }
     });
 
