@@ -54,21 +54,17 @@ public class Task5Layout extends TaskLayout {
     createButtonCancelTask();
 
     highlightByFind.setToggleGroup(toggleGroup);
-    highlightByFind.setId("a");
+    highlightByFind.setUserData("highlightByFind");
     highlightByFind.setSelected(true);
     highlightByFindAndAge.setToggleGroup(toggleGroup);
+    highlightByFindAndAge.setUserData("highlightByFindAndAge");
     commonSafety.setToggleGroup(toggleGroup);
+    commonSafety.setUserData("commonSafety");
 
 
-    toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-      @Override
-      public void changed(ObservableValue<? extends Toggle> observable, Toggle oldToggle, Toggle newToggle) {
-        System.out.println(newToggle.toString());
-        Pattern pattern = Pattern.compile("id=.+[,]");
-        Matcher matcher = pattern.matcher(newToggle.toString());
-        while(matcher.find()) {
-          System.out.println(matcher.start() + " " + matcher.end());
-        }
+    toggleGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
+      if (toggleGroup.getSelectedToggle() != null) {
+        System.out.println(toggleGroup.getSelectedToggle().getUserData().toString());
       }
     });
 
