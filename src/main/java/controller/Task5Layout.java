@@ -1,5 +1,7 @@
 package controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -50,8 +52,18 @@ public class Task5Layout extends TaskLayout {
     createButtonCancelTask();
 
     highlightByFind.setToggleGroup(toggleGroup);
+    highlightByFind.setId("a");
+    highlightByFind.setSelected(true);
     highlightByFindAndAge.setToggleGroup(toggleGroup);
     commonSafety.setToggleGroup(toggleGroup);
+
+
+    toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+      @Override
+      public void changed(ObservableValue<? extends Toggle> observable, Toggle oldToggle, Toggle newToggle) {
+        System.out.println(newToggle.toString());
+      }
+    });
 
     inputFileTextField.focusedProperty().addListener((arg, oldValue, newValue) -> {
       if (newValue) defaultStyle(inputFileTextField);
