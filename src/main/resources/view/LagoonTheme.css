@@ -326,3 +326,42 @@
     -fx-border-color:rgba(88,130,212,1.0);
     -fx-border-radius:2px;
 }
+
+.radio-button .radio {
+    -fx-border-width: 1px;
+    -fx-border-color: #000;
+    -fx-background-color:white;
+    -fx-background-image: null;
+    -fx-border-radius: 15px;
+    -fx-padding: 4px;
+}
+.radio-button .radio:selected {
+    -fx-background-color: white;
+    -fx-background-image: null;
+}
+.radio-button -radio:armed {
+    -fx-background-color: white;
+    -fx-background-image: null;
+}
+.radio-button -radio:determinate {
+    -fx-background-color: white;
+    -fx-background-image: null;
+}
+.radio-button -radio:indeterminate {
+    -fx-background-color: white;
+    -fx-background-image: null;
+}
+
+.radio-button .dot {
+    -fx-background-radius: 15px;
+    -fx-padding: 8px;
+    /*цвет выделенной радио-кнопки */
+    -fx-mark-highlight-color: #2298cc;
+    -fx-mark-color: #2298cc;
+}
+
+.radio-button .radio:hover {
+    -fx-border-color: #535353;
+    -fx-border-radius: 130px;
+}
+

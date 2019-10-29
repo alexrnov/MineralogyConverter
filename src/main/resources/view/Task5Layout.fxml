@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="518.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Task5Layout">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="655.0" prefWidth="518.0" stylesheets="@LagoonTheme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Task5Layout">
     <children>
-      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#b1b1b100" height="127.0" layoutX="14.0" layoutY="209.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="491.0" />
+      <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#b1b1b100" height="127.0" layoutX="14.0" layoutY="209.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="491.0" AnchorPane.topAnchor="210.0" />
         <TextField fx:id="inputFileTextField" layoutX="14.0" layoutY="36.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="46.0" />
         <TextField fx:id="outputFileTextField" layoutX="14.0" layoutY="105.0" prefHeight="32.0" prefWidth="436.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="108.0" />
         <Label layoutX="14.0" layoutY="14.0" text="Входной файл интервалов из задачи &quot;Все пробы (web-сервис)&quot;:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="7.0" />
@@ -22,21 +22,21 @@
         <Button fx:id="runTaskButton" layoutX="343.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="123.0" />
         <ProgressBar fx:id="progressBar" layoutX="14.0" layoutY="438.0" prefHeight="18.0" prefWidth="259.0" progress="0.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="14.0" />
         <TextArea fx:id="consoleTextArea" layoutX="14.0" layoutY="255.0" prefHeight="215.0" prefWidth="490.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-        <Label layoutX="14.0" layoutY="218.0" text="Информация по ходу выполнения процесса:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="340.0" />
+        <Label layoutX="14.0" layoutY="218.0" text="Информация по ходу выполнения процесса:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="345.0" />
         <Label fx:id="processPercentLabel" layoutX="89.0" layoutY="416.0" text="0%" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="89.0" />
         <Label layoutX="14.0" layoutY="416.0" text="Выполнено:" AnchorPane.bottomAnchor="40.0" />
         <Button fx:id="cancelTaskButton" layoutX="452.0" layoutY="431.0" mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="14.0" />
       <TextField fx:id="stratigraphicTextField" layoutX="410.0" layoutY="259.0" prefHeight="30.0" prefWidth="84.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="259.0" />
       <Label layoutX="24.0" layoutY="22.0" text="или из задачи &quot;Пробы с МСА (web-сервис)&quot;:" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="23.0" />
-      <RadioButton fx:id="highlightByFindRadioButton" layoutX="23.0" layoutY="227.0" mnemonicParsing="false" />
-      <RadioButton fx:id="highlightByFindAndAgeRadioButton" layoutX="23.0" layoutY="265.0" mnemonicParsing="false" />
-      <RadioButton fx:id="commonSafetyRadioButton" layoutX="23.0" layoutY="301.0" mnemonicParsing="false" />
-      <Label layoutX="50.0" layoutY="226.0" text="Выделить точки по наличию находок МСА" />
-      <Label layoutX="50.0" layoutY="255.0" prefHeight="20.0" prefWidth="328.0" text="Выделить точки со стратиграфическим индексом,  " />
-      <Label layoutX="50.0" layoutY="272.0" prefHeight="20.0" prefWidth="328.0" text="при условии, что есть находки МСА" />
-      <Label layoutX="50.0" layoutY="300.0" text="Суммарная сохранность" />
+      <RadioButton fx:id="highlightByFindRadioButton" layoutX="23.0" layoutY="227.0" mnemonicParsing="false" AnchorPane.topAnchor="227.0" />
+      <RadioButton fx:id="highlightByFindAndAgeRadioButton" layoutX="23.0" layoutY="265.0" mnemonicParsing="false" AnchorPane.topAnchor="264.0" />
+      <RadioButton fx:id="commonSafetyRadioButton" layoutX="23.0" layoutY="301.0" mnemonicParsing="false" AnchorPane.topAnchor="301.0" />
+      <Label layoutX="50.0" layoutY="226.0" text="Выделить точки по наличию находок МСА" AnchorPane.topAnchor="226.0" />
+      <Label layoutX="50.0" layoutY="255.0" prefHeight="20.0" prefWidth="328.0" text="Выделить точки со стратиграфическим индексом,  " AnchorPane.topAnchor="256.0" />
+      <Label layoutX="50.0" layoutY="272.0" prefHeight="20.0" prefWidth="328.0" text="при условии, что есть находки МСА" AnchorPane.topAnchor="273.0" />
+      <Label layoutX="50.0" layoutY="300.0" text="Суммарная сохранность" AnchorPane.topAnchor="300.0" />
       <Rectangle arcHeight="15.0" arcWidth="15.0" fill="#b1b1b100" height="51.0" layoutX="14.0" layoutY="155.0" stroke="#cccccc" strokeType="INSIDE" strokeWidth="1.3" width="491.0" AnchorPane.topAnchor="150.0" />
-      <ComboBox fx:id="frequencyComboBox" layoutX="445.0" layoutY="164.0" prefHeight="34.0" prefWidth="52.0" AnchorPane.topAnchor="158.0" />
+      <ComboBox fx:id="frequencyComboBox" layoutX="435.0" layoutY="164.0" prefHeight="34.0" prefWidth="62.0" AnchorPane.topAnchor="158.0" />
       <Label layoutX="26.0" layoutY="170.0" text="Коэффициент для дополнительных точек" AnchorPane.topAnchor="165.0" />
     </children>
 </AnchorPane>
