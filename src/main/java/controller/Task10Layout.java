@@ -1,5 +1,7 @@
 package controller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -30,6 +32,7 @@ public class Task10Layout extends TaskLayout {
   @FXML private CheckBox unionLayersCheckBox;
   @FXML private CheckBox addPointsCheckBox;
   @FXML private CheckBox amendmentCheckBox;
+  @FXML private ComboBox<Integer> frequencyComboBox;
 
   private ButtonAnimation inputFolderAnimation;
   private ButtonAnimation outputFileAnimation;
@@ -76,6 +79,10 @@ public class Task10Layout extends TaskLayout {
         stratigraphicTextField.setText(s);
       }
     });
+
+    ObservableList<Integer> volumes = FXCollections.observableArrayList(1, 2, 3, 4, 5);
+    frequencyComboBox.getItems().addAll(volumes);
+    frequencyComboBox.setValue(1);
   }
 
   private void createInputFolderButton(ImageView openDialogPathImage) {
@@ -158,6 +165,7 @@ public class Task10Layout extends TaskLayout {
     parameters.put("ageIndexes", stratigraphicTextField.getText());
     parameters.put("unionLayers", unionLayersCheckBox.isSelected());
     parameters.put("addPoints", addPointsCheckBox.isSelected());
+    parameters.put("frequency", frequencyComboBox.getValue());
     parameters.put("useAmendment", amendmentCheckBox.isSelected());
 
     threadTask = new ManyFilesThreadTask(mainLayout.getNameOfCurrentTask(),

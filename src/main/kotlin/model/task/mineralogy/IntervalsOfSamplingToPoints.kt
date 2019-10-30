@@ -146,7 +146,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
     task.printConsole("Входной файл: ${ inputFilePath.toAbsolutePath() }")
     task.printConsole("Выходной файл: ${ outputFilePath.toAbsolutePath() }")
     task.printConsole("Коэффициент для дополнительных точек: $frequency")
-    var s = "Задача:"
+    val s = "Задача:"
     when {
       taskName == "highlightByFind" -> task.printConsole("$s выделить точки по наличию находок МСА")
       taskName.contains("highlightByFindAndAge") -> {

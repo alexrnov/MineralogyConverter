@@ -55,6 +55,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
   private val ageIndexes: String by parameters // стратиграфический индекс
   private val unionLayers: Boolean by parameters // нужно ли объединять пласты
   private val addPoints: Boolean by parameters // нужно ли объединять пачки
+  private val frequency: Int by parameters // плотность точек
   private val useAmendment: Boolean by parameters // поправка ИСИХОГИ
 
   var ageIndexesAsSet: MutableSet<String> = HashSet()
@@ -118,7 +119,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       }
 
       if (addPoints) {
-        stratigraphicTable = addPointsToIntervals(stratigraphicTable)
+        stratigraphicTable = addPointsToIntervals(stratigraphicTable, frequency)
         // скорректировать точки в местах сопряжения пластов
         correctPointsOfIntervals(stratigraphicTable)
       }
@@ -269,8 +270,12 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
     task.printConsole(ageIndexes)
     task.printConsole("Объединить сопредельные пласты с одинаковым " +
             "стратиграфическим индексом: " + if (unionLayers) "Да" else "Нет")
-    task.printConsole("Записать дополнительные точки" +
-            if (addPoints) "Да" else "Нет")
+    val s = "Записать дополнительные точки:"
+    if (addPoints) {
+      task.printConsole("$s Да")
+      task.printConsole("Коэффициент для дополнительных точек: $frequency")
+    } else task.printConsole("$s Нет")
+
     task.printConsole("Убрать поправку ИСИХОГИ для координат X и Y: " +
             if (useAmendment) "Да" else "Нет")
     task.printConsole("")
