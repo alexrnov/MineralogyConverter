@@ -123,27 +123,33 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
         println("safePicroilmenite = $safePicroilmenite")
         */
 
-        val allSafe = if (safePyrope > 0.0 && safePicroilmenite > 0.0) ((safePyrope + safePicroilmenite) / 2)
-        else (safePyrope + safePicroilmenite)
-
+        val allSafe: Double = if (safePyrope > 0.0 && safePicroilmenite > 0.0) {
+          (safePyrope + safePicroilmenite) / 2
+        } else if (safePyrope == 0.0 && safePicroilmenite== 0.0) {
+          -1.0
+        } else {
+          (safePyrope + safePicroilmenite)
+        }
         layer["общая сохранность"] = (Math.round(allSafe * 100.0) / 100.0).toString()
-        /*
-        println("-")
-        println("all safe = ${layer["общая сохранность"]}")
-        println("------------------------------")
-        */
-        /*
-        if (layer["ID"] == "177649") {
-          println(layer)
-        }
-        */
-        /*
-        if (safePyrope == 0.0 && safePicroilmenite == 0.0) {
-          println(layer["ID"])
-        }
-        */
       }
+
+      /*
+      layersForCurrentWell.forEach { layer ->
+        val v = layer["общая сохранность"]?.toDouble() ?: -1.0
+        if (v == -1.0) {
+          layer["интерп_сохр"] = "0.0"
+        } else {
+          layer["интерп_сохр"] = "1.0"
+        }
+      }
+      */
+
+      val list = layersForCurrentWell.filter {
+        val v = it["общая сохранность"]?.toDouble() ?: -1.0
+        v != -1.0
+      }
+      layersForCurrentWell.clear()
+      layersForCurrentWell.addAll(list)
     }
   }
-
 }

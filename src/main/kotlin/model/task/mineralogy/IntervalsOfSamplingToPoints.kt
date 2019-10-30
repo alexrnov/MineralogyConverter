@@ -16,7 +16,7 @@ import java.nio.file.Paths
 import java.util.stream.Collectors
 
 typealias AddAttributes = (MutableMap<String, String>, List<String>) -> Unit
-typealias CalculationsTask = (List<MutableMap<String, String>>) -> Unit
+typealias CalculationsTask = (MutableList<MutableMap<String, String>>) -> Unit
 
 // количество атрибутов во входном файле интервалов со всеми пробами
 // (с находками МСА и без таковых). В этом файле на одно атрибутивное
@@ -110,7 +110,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   override fun perform(any: Any?) {
     try {
       val idWell = any as String
-      val layersForCurrentWell: List<MutableMap<String, String>> = simpleProbes.filter { it[namesOfAttributes[1]] == idWell }
+      val layersForCurrentWell: MutableList<MutableMap<String, String>> = simpleProbes.filter { it[namesOfAttributes[1]] == idWell }.toMutableList()
       calculationsTask.invoke(layersForCurrentWell) // Как паттерн ШАБЛОННЫЙ МЕТОД (заменяемая часть алгоритма)
       currentPoints = addPointsToIntervals(layersForCurrentWell, frequency)
       calculateAbsZForAdditionalPoints(currentPoints)
@@ -121,7 +121,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
         firstWell = false
       }
       if (test) allPoints.addAll(currentPoints) // необходимо для теста
-      dotWellsFile.writeContent(currentPoints)
+      if (currentPoints.isNotEmpty()) dotWellsFile.writeContent(currentPoints)
       numberOfPoints += currentPoints.size
     } catch(e: Exception) {
       throw GeoTaskException(e.message?.let { e.message } ?: "perform error")

@@ -150,12 +150,14 @@ internal class IntervalsOfSamplingToPointsTest {
     var task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     var table: Collection<Any?> = task.getTableFromFile()
-    //table.forEach { task.perform(it) }
+    table.forEach { task.perform(it) }
 
+    /*
     parameters["inputFile"] = inputFileIntervalWellsOnlyMSD
     task = IntervalsOfSamplingToPoints(parameters)
     task.setThreadingTask(mockTask)
     table = task.getTableFromFile()
     table.forEach { task.perform(it) }
+    */
   }
 }

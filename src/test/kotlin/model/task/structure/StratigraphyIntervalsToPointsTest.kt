@@ -35,7 +35,7 @@ internal class StratigraphyIntervalsToPointsTest {
     parameters = mutableMapOf("inputFolder" to inputFolderIsihogyClient,
             "outputFile" to outputFilePointsForStarigraphy,
             "ageIndexes" to " J1sn\$;;J1sn#; J1sn@; ;J1sn!", "unionLayers" to false,
-            "addPoints" to false, "useAmendment" to true)
+            "addPoints" to false, "frequency" to 1, "useAmendment" to true)
   }
 
   @AfterEach
