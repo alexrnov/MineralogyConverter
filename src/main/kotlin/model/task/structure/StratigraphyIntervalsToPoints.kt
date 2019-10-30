@@ -266,8 +266,7 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
     task.printConsole(inputFolder)
     task.printConsole("Выходной файл для Micromine: ")
     task.printConsole("${outputFilePath.toAbsolutePath()}")
-    task.printConsole("Стратиграфический индекс/индексы: ")
-    task.printConsole(ageIndexes)
+    task.printConsole("Стратиграфический индекс/индексы: $ageIndexes")
     task.printConsole("Объединить сопредельные пласты с одинаковым " +
             "стратиграфическим индексом: " + if (unionLayers) "Да" else "Нет")
     val s = "Записать дополнительные точки:"
