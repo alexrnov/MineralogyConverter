@@ -124,15 +124,22 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
         */
 
         val allSafe: Double = if (safePyrope > 0.0 && safePicroilmenite > 0.0) {
-          (safePyrope + safePicroilmenite) / 2
-        } else if (safePyrope == 0.0 && safePicroilmenite== 0.0) {
-          -1.0
+          (safePyrope + safePicroilmenite) / 2 //
+        } else if (safePyrope == 0.0 && safePicroilmenite == 0.0) {
+          -1.0 // если по пробе нет находок пиропов/пикроильменитов, вернуть -1.0
         } else {
           (safePyrope + safePicroilmenite)
         }
         layer["общая сохранность"] = (Math.round(allSafe * 100.0) / 100.0).toString()
       }
 
+      // ТРЕБУЕТСЯ ПРОВЕРКА И ПЕРЕРАБОТКА
+      /*
+      * Используется, когда нужно сформировать данные для построения контуров
+      * ореолов по сохранности. Пробам, где есть только хромшпинелид,
+      * присваивается значение 0.0, так как по ним нет сохранности, и ореолы
+      * не будут строится по этим пробам
+      */
       /*
       layersForCurrentWell.forEach { layer ->
         val v = layer["общая сохранность"]?.toDouble() ?: -1.0
@@ -144,7 +151,12 @@ class TypeOfCalculationsTasks(private val taskName: String, private val keys: Li
       }
       */
 
-      val list = layersForCurrentWell.filter {
+      /*
+      * Используется, когда нужно сформировать данные для расчета сохранности
+      * по ореолам. Значения для проб, где найдеы толкько хромшпинелиды,
+      * не учитываются
+      */
+      val list = layersForCurrentWell.filter { // убрать значения со хромшпинелидами
         val v = it["общая сохранность"]?.toDouble() ?: -1.0
         v != -1.0
       }

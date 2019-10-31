@@ -66,7 +66,7 @@ constructor(parameters: Map<String, Any>): GeoTaskOneFile(parameters) {
   private var addAttributes: AddAttributes = { _, _ -> }
 
   private var firstWell = true
-  var numberOfPoints = 0 // общее количесвто точек, записываемых в файл
+  var numberOfPoints = 0 // общее количество точек, записываемых в файл
 
   init {
     checkInputParameters()
