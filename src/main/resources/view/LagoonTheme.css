@@ -104,6 +104,7 @@
 элементы управления для текущей выбранной задачи */
 #content-pane {
     -fx-background-color: #e8e8e8;
+    -fx-border-color: #ff9100
 }
 
 .label {
@@ -396,4 +397,3 @@
     -fx-border-radius: 10px;
     -fx-padding: 4px;
 }
-
