@@ -24,6 +24,7 @@ object TypeOfGeoTask {
       namesOfTasks[8] -> RoofAndSoleStratigraphicLayer(parameters)
       namesOfTasks[9] -> StratigraphyIntervalsToPoints(parameters)
       namesOfTasks[10] -> RoofOfBaseLayersToPoints(parameters)
+      namesOfTasks[11] -> ProbesWithMSDAndGenEmpty(parameters)
       else -> throw IllegalArgumentException("incorrect name of task")
     }
 }

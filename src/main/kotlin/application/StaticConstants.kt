@@ -41,7 +41,8 @@ object StaticConstants {
           Pair("Устье/забой скважин (ИСИХОГИ)", "/view/Task8Layout.fxml"),
           Pair("Кровля/подошва пласта (ИСИХОГИ)", "/view/Task9Layout.fxml"),
           Pair("Страт. пласты в точки (ИСИХОГИ)", "/view/Task10Layout.fxml"),
-          Pair("Кровля цоколя в точки (ИСИХОГИ)", "/view/Task11Layout.fxml"))
+          Pair("Кровля цоколя в точки (ИСИХОГИ)", "/view/Task11Layout.fxml"),
+          Pair("Пробы с МСА и пустые (web-сервис)", "/view/Task12Layout.fxml"))
 
   @JvmStatic val namesOfTasks: List<String> = listOfMenuTasks.stream()
           .map { it.component1() }
