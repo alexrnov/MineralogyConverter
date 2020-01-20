@@ -49,6 +49,37 @@
 }
 */
 
+.list-view .scroll-bar:vertical .thumb {
+    /* вертикальный градиент */
+    /*-fx-background-color: linear-gradient(to left, rgba(23,207,245,1.0), #0ca8dc, rgba(23,207,245,1.0));*/
+    /*-fx-background-color: linear-gradient(to left, #f2f2f2, #e8e8e8, #f2f2f2);*/
+    /*-fx-background-color: linear-gradient(to left, #c4e8ff, #99d8ff, #c4e8ff);*/
+    /*-fx-background-color: linear-gradient(to left, #e1e1e1, #cecece, #e1e1e1);*/
+    -fx-background-color: linear-gradient(to left, #f2f2f2, #e1e1e1, #f2f2f2);
+    -fx-background-radius: 5em;
+}
+
+.list-view .scroll-bar {
+    -fx-background-color: #c8c8c8;
+    -fx-font-size: 15px;
+}
+
+.list-view .scroll-bar:vertical .track {
+    -fx-background-color: #c8c8c8;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0em;
+}
+
+.list-view .increment-button {
+    -fx-background-color: #transparent;
+    -fx-border-color: #c8c8c8;
+}
+
+.list-view .decrement-button {
+    -fx-background-color: #transparent;
+    -fx-border-color: #c8c8c8;
+}
+
 /* стиль для текстового поля ввода */
 .text-field {
     -fx-font-size: 10pt;

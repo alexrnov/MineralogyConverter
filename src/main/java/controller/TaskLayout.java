@@ -61,8 +61,7 @@ abstract public class TaskLayout {
       // блокировать родительское окно
       stage.initModality(Modality.APPLICATION_MODAL);
       stage.show();
-    }
-    catch(IOException e) {
+    } catch(IOException e) {
       logger.warning("Error create \"cancel task dialog\"");
     }
   }
