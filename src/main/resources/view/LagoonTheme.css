@@ -71,12 +71,12 @@
 }
 
 .list-view .increment-button {
-    -fx-background-color: #transparent;
+    -fx-background-color: transparent;
     -fx-border-color: #c8c8c8;
 }
 
 .list-view .decrement-button {
-    -fx-background-color: #transparent;
+    -fx-background-color: transparent;
     -fx-border-color: #c8c8c8;
 }
 

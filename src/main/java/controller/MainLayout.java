@@ -90,6 +90,7 @@ public class MainLayout {
 
       scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
       scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+      //scrollPane.setStyle("-fx-padding: 1 1 1 1;");
       // добавить интерфейс для выбранной задачи
       //contentTaskAnchor.getChildren().setAll(ap);
       contentTaskAnchor.getChildren().setAll(scrollPane);
@@ -151,11 +152,3 @@ public class MainLayout {
     return nameOfCurrentTask;
   }
 }
-
-
-
-
-
-
-
-
