@@ -3,6 +3,7 @@ package model.task.mineralogy
 import application.Mineralogy
 import application.Mineralogy.logger
 import model.constants.CommonConstants
+import model.constants.CommonConstants.nameOfAttributeDepth
 import model.constants.ProbesWithMSDConstants.indexAndNameOfColumns
 import model.constants.ProbesWithMSDConstants.requiredKeysTopWell
 import model.exception.DataException
@@ -117,6 +118,15 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       assignIDToIntervals(topWells, intervalWells)
       checkSequenceIntervals(intervalWells)
       defineDepthOfWells(topWells, intervalWells)
+      topWells.forEach {
+        var addedDepth: Double = (it[nameOfAttributeDepth]?: "0.0").toDouble() + 100.0
+        addedDepth = Math.round(addedDepth * 100.0) / 100.0
+        it[nameOfAttributeDepth] = addedDepth.toString()
+      }
+      println(topWells[0])
+
+      
+
 
       if (useReferenceVolume) updateCrystalNumberWithMSD(intervalWells, probeVolume)
       // сортировать сначала по ID, потом по отметке кровли пробы
