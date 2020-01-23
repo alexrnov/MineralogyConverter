@@ -4,16 +4,20 @@ import application.Mineralogy
 import application.Mineralogy.logger
 import model.constants.CommonConstants
 import model.constants.CommonConstants.nameOfAttributeDepth
+import model.constants.ProbesWithMSDConstants
+import model.constants.ProbesWithMSDConstants.firstIndexOfNumberCrystal
+import model.constants.ProbesWithMSDConstants.firstIndexOfNumberMineral
 import model.constants.ProbesWithMSDConstants.indexAndNameOfColumns
+import model.constants.ProbesWithMSDConstants.lastIndexOfNumberCrystal
+import model.constants.ProbesWithMSDConstants.lastIndexOfNumberMineral
 import model.constants.ProbesWithMSDConstants.requiredKeysTopWell
 import model.exception.DataException
 import model.exception.ExcelException
 import model.exception.GeoTaskException
 import model.file.MicromineTextFile
 import model.task.GeoTaskManyFiles
-import model.utils.CollectionUtils
+import model.utils.*
 import model.utils.CollectionUtils.copyListWithSubMap
-import model.utils.ExcelUtils
 import model.utils.ExcelUtils.getSheetOfWebResource
 import model.utils.ExcelUtils.getTableOfProbesWithMSD
 import model.utils.WebServiceUtils.assignIDToIntervals
@@ -26,8 +30,6 @@ import model.utils.WebServiceUtils.makeAmendment
 import model.utils.WebServiceUtils.replaceCommaForWells
 import model.utils.WebServiceUtils.selectionByGeologicalAge
 import model.utils.WebServiceUtils.updateCrystalNumberWithMSD
-import model.utils.averageZByInterval
-import model.utils.checkWorkingObjects
 import java.io.File
 import java.io.File.separator
 import java.io.IOException
@@ -118,17 +120,58 @@ constructor(parameters: Map<String, Any>): GeoTaskManyFiles(parameters) {
       assignIDToIntervals(topWells, intervalWells)
       checkSequenceIntervals(intervalWells)
       defineDepthOfWells(topWells, intervalWells)
+
       topWells.forEach {
         var addedDepth: Double = (it[nameOfAttributeDepth]?: "0.0").toDouble() + 100.0
         addedDepth = Math.round(addedDepth * 100.0) / 100.0
         it[nameOfAttributeDepth] = addedDepth.toString()
       }
-      println(topWells[0])
-
-      
-
 
       if (useReferenceVolume) updateCrystalNumberWithMSD(intervalWells, probeVolume)
+
+      topWells.forEach { well ->
+        val layersForCurrentWell = intervalWells.filter { it["IDW"] == well["IDW"] }
+
+        if (layersForCurrentWell.size == 8) {
+          layersForCurrentWell.forEach {
+            println(it["IDW"] + " " + it["От"] + " " + it["До"] + " " + it["Все МСА"] + " " + it["Пиропы"] + " " + it["Пикроильмениты"])
+          }
+        }
+        if (layersForCurrentWell.isNotEmpty()) {
+          val emptyProbe = layersForCurrentWell[0].toMutableMap()
+          emptyProbe["От"] = "0.00"
+          emptyProbe["До"] = well[nameOfAttributeDepth].toString()
+          // перебрать все значения с количеством кристаллов МСА для различных типов
+          // минералов, и заменить эти значения на нулевые
+          (firstIndexOfNumberCrystal..lastIndexOfNumberCrystal).forEach {
+            val key: String = indexAndNameOfColumns[it]?:"unknown_key"
+            emptyProbe[key] = "0.0"
+          }
+
+          // перебрать все значения с количеством минералов (альмандин, гроссуляр)
+          // и заменить эти значения на нулевые
+          (firstIndexOfNumberMineral..lastIndexOfNumberMineral).forEach {
+            val key: String = indexAndNameOfColumns[it]?:"unknown_key"
+            emptyProbe[key] = "0.0"
+          }
+
+          intervalWells.add(emptyProbe)
+        } else {
+          TODO("logger")
+        }
+      }
+      println("--------------------")
+      topWells.forEach { well ->
+        val layersForCurrentWell = intervalWells.filter { it["IDW"] == well["IDW"] }
+        if (layersForCurrentWell.size == 9) {
+          layersForCurrentWell.forEach {
+            println(it["IDW"] + " " + it["От"] + " " + it["До"] + " " + it["Все МСА"] + " " + it["Пиропы"] + " " + it["Пикроильмениты"])
+
+          }
+        }
+      }
+
+
       // сортировать сначала по ID, потом по отметке кровли пробы
       intervalWells = intervalWells.sortedWith(
               compareBy({ it["IDW"]!!.toInt() }, { it["От"]!!.toDouble() })).toMutableList()
