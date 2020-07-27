@@ -4,19 +4,19 @@ Java-FX program for perform tasks of Micromine. More than 65,000 mineralogical s
 UI-interface:
 
 <p align="center">
-  <img src="https://github.com/alexrnov/Files/blob/master/Mineralogy1.jpg" width="350" title="UI">
+  <img src="https://github.com/alexrnov/Files/blob/master/Mineralogy1.png" width="350" title="UI">
 </p>
 
 <p align="center">
-  <img src="https://github.com/alexrnov/Files/blob/master/Mineralogy2.jpg" width="350" title="UI">
+  <img src="https://github.com/alexrnov/Files/blob/master/Mineralogy2.png" width="350" title="UI">
 </p>
 
 <p align="center">
-  <img src="https://github.com/alexrnov/Files/blob/master/Mineralogy3.jpg" width="350" title="UI">
+  <img src="https://github.com/alexrnov/Files/blob/master/Mineralogy3.png" width="350" title="UI">
 </p>
 
 <p align="center">
-  <img src="https://github.com/alexrnov/Files/blob/master/Mineralogy4.jpg" width="350" title="UI">
+  <img src="https://github.com/alexrnov/Files/blob/master/Mineralogy4.png" width="350" title="UI">
 </p>
 
 Results in Micromine:
